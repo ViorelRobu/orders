@@ -22,11 +22,12 @@ class CreateOrderDetailsTable extends Migration
             $table->double('latime', 6,2);
             $table->double('lungime', 7,3);
             $table->double('bucati', 4);
-            $table->string('eticheta');
-            $table->string('stick_panou');
-            $table->string('ean_pal');
-            $table->string('ean_picior');
-            $table->string('paletizare');
+            $table->double('volum', 6, 3);
+            $table->string('eticheta')->nullable();
+            $table->string('stick_panou')->nullable();
+            $table->string('ean_pal')->nullable();
+            $table->string('ean_picior')->nullable();
+            $table->string('paletizare')->nullable();
             $table->timestamps();
 
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('restrict');

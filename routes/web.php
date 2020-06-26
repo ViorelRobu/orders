@@ -20,3 +20,6 @@ Route::get('/home', function() {
 })->name('home')->middleware('auth');
 Route::get('/orders', 'OrdersController@index')->middleware('auth');
 Route::get('/orders/fetch', 'OrdersController@fetch')->name('orders.index')->middleware('auth');
+Route::post('/orders/add', 'OrdersController@create')->middleware('auth');
+Route::get('/orders/{order}', 'OrdersController@show')->name('details.index')->middleware('auth');
+Route::post('/orders/details/add', 'OrdersController@addDetails')->middleware('auth');
