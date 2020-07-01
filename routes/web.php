@@ -15,11 +15,12 @@ use Illuminate\Support\Facades\Route;
 
 Auth::routes();
 
-Route::get('/home', function() {
-    return view('home');
-})->name('home')->middleware('auth');
-Route::get('/orders', 'OrdersController@index')->middleware('auth');
-Route::get('/orders/fetch', 'OrdersController@fetch')->name('orders.index')->middleware('auth');
-Route::post('/orders/add', 'OrdersController@create')->middleware('auth');
-Route::get('/orders/{order}', 'OrdersController@show')->name('details.index')->middleware('auth');
-Route::post('/orders/details/add', 'OrdersController@addDetails')->middleware('auth');
+Route::middleware(['auth'])->group(function () {
+    Route::prefix('/countries')->group(function () {
+        Route::get('/', 'CountriesController@index');
+        Route::get('/all', 'CountriesController@fetchAll')->name('countries.index');
+        Route::get('/fetch', 'CountriesController@fetch')->name('countries.fetch');
+        Route::post('/add','CountriesController@create');
+        Route::patch('/{country}/update', 'CountriesController@update');
+    });
+});
