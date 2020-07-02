@@ -188,17 +188,17 @@ return [
 
     'use_route_url' => false,
 
-    'dashboard_url' => 'home',
+    'dashboard_url' => '/',
 
     'logout_url' => 'logout',
 
     'login_url' => 'login',
 
-    'register_url' => 'register',
+    'register_url' => false,
 
-    'password_reset_url' => 'password/reset',
+    'password_reset_url' => false,
 
-    'password_email_url' => 'password/email',
+    'password_email_url' => false,
 
     'profile_url' => false,
 
@@ -236,12 +236,16 @@ return [
             'search' => false,
             'topnav' => true,
         ],
+        'NOMENCLATOR',
         [
-            'text'        => 'Comenzi',
-            'url'         => 'orders',
-            'icon'        => 'far fa-fw fa-file',
-//            'label'       => 4,
-//            'label_color' => 'success',
+            'text' => 'Tari',
+            'url' => 'countries',
+            'icon' => 'fas fa-fw fa-cog',
+        ],
+        [
+            'text' => 'Clienti',
+            'url' => 'customers',
+            'icon' => 'fas fa-fw fa-cog',
         ],
         ['header' => 'account_settings'],
         [

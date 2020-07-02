@@ -71,6 +71,13 @@
             });
         }
 
+        $('#newCountry').on('hidden.bs.modal', function () {
+            $('#name').val('');
+            $('.modal-title').html('Tara noua');
+            $('#newCountryForm').attr('action', '/countries/add');
+            $("input[name='_method']").val('POST');
+        });
+
     </script>
 @stop
 
