@@ -19,22 +19,23 @@ class CustomerTest extends TestCase
      */
     public function testUnauthenticatedUsersCannotSeeCustomers()
     {
-        $response = $this->get('/customers');
-        $response->assertRedirect('/login');
+        $this->denyAccess('/customers', 'get');
+        $this->denyAccess('/customers/all', 'get');
+        $this->denyAccess('/customers/fetch', 'get');
+        $this->denyAccess('/customers/add', 'post');
+        $this->denyAccess('/customers/1/update', 'patch');
     }
 
     /**
-     * Logged in users can access the countries API endpoints
+     * Logged in users can access the customers API endpoints
      *
      * @return void
      */
-    public function testLoggedInUsersCanViewCountries()
+    public function testLoggedInUsersCanViewCustomers()
     {
-        $user = factory(User::class)->create();
-        $response = $this->actingAs($user)->get('/customers');
-        $response->assertStatus(200);
-        $response = $this->actingAs($user)->get('/customers/all');
-        $response->assertStatus(200);
+        $this->allowAccess('/customers', 'get');
+        $this->allowAccess('/customers/all', 'get');
+        $this->allowAccess('/customers/fetch', 'get');
     }
 
     public function testLoggedInUsersCanAddCustomer()

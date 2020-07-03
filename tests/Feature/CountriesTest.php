@@ -18,8 +18,11 @@ class CountriesTest extends TestCase
      */
     public function testUnauthenticatedUsersCannotSeeCountries()
     {
-        $response = $this->get('/countries');
-        $response->assertRedirect('/login');
+        $this->denyAccess('/countries', 'get');
+        $this->denyAccess('/countries/all', 'get');
+        $this->denyAccess('/countries/fetch', 'get');
+        $this->denyAccess('/countries/add', 'post');
+        $this->denyAccess('/countries/1/update', 'patch');
     }
 
     /**
@@ -29,11 +32,9 @@ class CountriesTest extends TestCase
      */
     public function testLoggedInUsersCanViewCountries()
     {
-        $user = factory(User::class)->create();
-        $response = $this->actingAs($user)->get('/countries');
-        $response->assertStatus(200);
-        $response = $this->actingAs($user)->get('/countries/all');
-        $response->assertStatus(200);
+        $this->allowAccess('/countries', 'get');
+        $this->allowAccess('/countries/all', 'get');
+        $this->allowAccess('/countries/fetch', 'get');
     }
 
     /**
