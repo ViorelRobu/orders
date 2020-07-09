@@ -30,10 +30,10 @@ abstract class TestCase extends BaseTestCase
      * @param string $type
      * @param array $data
      */
-    public function allowAccess($uri, $type = 'get', $data = [])
+    public function allowAccess($uri)
     {
         $user = factory(User::class)->create();
-        $response = $this->actingAs($user)->$type($uri, $data);
+        $response = $this->actingAs($user)->get($uri);
         $response->assertStatus(200);
     }
 }

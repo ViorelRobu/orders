@@ -33,11 +33,16 @@ class CustomerTest extends TestCase
      */
     public function testLoggedInUsersCanViewCustomers()
     {
-        $this->allowAccess('/customers', 'get');
-        $this->allowAccess('/customers/all', 'get');
-        $this->allowAccess('/customers/fetch', 'get');
+        $this->allowAccess('/customers');
+        $this->allowAccess('/customers/all');
+        $this->allowAccess('/customers/fetch');
     }
 
+    /**
+     * Logged in users can add a new customer
+     *
+     * @return void
+     */
     public function testLoggedInUsersCanAddCustomer()
     {
         $user = factory(User::class)->create();
@@ -53,6 +58,11 @@ class CustomerTest extends TestCase
         ]);
     }
 
+    /**
+     * Logged in users can update the customer details
+     *
+     * @return void
+     */
     public function testLoggedInUsersCanUpdateCustomerDetails()
     {
         $user = factory(User::class)->create();

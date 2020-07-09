@@ -30,6 +30,7 @@ Route::middleware(['auth'])->group(function () {
     Route::prefix('/customers')->group(function () {
         Route::get('/', 'CustomersController@index');
         Route::get('/all', 'CustomersController@fetchAll')->name('customers.index');
+        Route::get('/fetch', 'CustomersController@fetch')->name('customers.fetch');
         Route::post('/add', 'CustomersController@create');
         Route::patch('/{customer}/update', 'CustomersController@update');
     });

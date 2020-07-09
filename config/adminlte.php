@@ -236,25 +236,31 @@ return [
             'search' => false,
             'topnav' => true,
         ],
-        'NOMENCLATOR',
+        'SETARI',
         [
-            'text' => 'Tari',
-            'url' => 'countries',
+            'text' => 'Nomenclator',
             'icon' => 'fas fa-fw fa-cog',
+            'submenu' => [
+                [
+                    'text' => 'Tari',
+                    'url' => 'countries',
+                    'icon' => 'fas fa-fw fa-cog',
+                ],
+                [
+                    'text' => 'Clienti',
+                    'url' => 'customers',
+                    'icon' => 'fas fa-fw fa-cog',
+                ],
+            ]
         ],
+//        ['header' => 'account_settings'],
         [
-            'text' => 'Clienti',
-            'url' => 'customers',
-            'icon' => 'fas fa-fw fa-cog',
-        ],
-        ['header' => 'account_settings'],
-        [
-            'text' => 'profile',
+            'text' => 'Profil',
             'url'  => 'admin/settings',
             'icon' => 'fas fa-fw fa-user',
         ],
         [
-            'text' => 'change_password',
+            'text' => 'Schimba parola',
             'url'  => 'admin/settings',
             'icon' => 'fas fa-fw fa-lock',
         ],

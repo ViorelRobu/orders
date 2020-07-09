@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Country;
 use App\Customer;
 use Exception;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
+use Illuminate\Http\JsonResponse;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\View\View;
@@ -20,7 +22,8 @@ class CustomersController extends Controller
      */
     public function index()
     {
-        return view('customers.index');
+        $countries = Country::all();
+        return view('customers.index', ['countries' => $countries]);
     }
 
     /**
@@ -33,12 +36,30 @@ class CustomersController extends Controller
     {
         $customers = Customer::all();
 
+        $customers->map(function($item, $index){
+            $country = Country::find($item->country_id);
+            $item->country_id = $country->name;
+        });
+
         return DataTables::of($customers)
             ->addIndexColumn()
             ->addColumn('actions', function($customers) {
                 return view('customers.partials.actions', ['customer' => $customers]);
             })
             ->make(true);
+    }
+
+    /**
+     * Get the details for a single customer
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function fetch(Request $request)
+    {
+        $customer = Customer::findOrFail($request->id);
+
+        return (new JsonResponse(['message' => 'success', 'message_type' => 'success', 'data' => $customer]));
     }
 
     /**

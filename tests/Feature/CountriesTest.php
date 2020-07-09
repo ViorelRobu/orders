@@ -32,9 +32,9 @@ class CountriesTest extends TestCase
      */
     public function testLoggedInUsersCanViewCountries()
     {
-        $this->allowAccess('/countries', 'get');
-        $this->allowAccess('/countries/all', 'get');
-        $this->allowAccess('/countries/fetch', 'get');
+        $this->allowAccess('/countries');
+        $this->allowAccess('/countries/all');
+        $this->allowAccess('/countries/fetch');
     }
 
     /**
