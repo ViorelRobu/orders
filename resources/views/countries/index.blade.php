@@ -34,7 +34,7 @@
 @stop
 @section('js')
     <script>
-        $('#countries').DataTable({
+        let table = $('#countries').DataTable({
             processing: true,
             serverSide: true,
             ajax: "{{ route('countries.index') }}",
@@ -43,6 +43,31 @@
                 {data: 'name', name: 'name'},
                 {data: 'actions', name: 'actions'},
             ]
+        });
+
+        $('#save').click(function(event) {
+            event.preventDefault();
+            let country = $('#name').val();
+            axios.post('/countries/add', {
+                name: country
+            }).then(function(response) {
+                $('#newCountry').modal('hide');
+                table.draw()
+            })
+        });
+
+        $('#update').click(function(event) {
+            event.preventDefault();
+            let id = $('#id').val();
+            let uri = '/countries/' + id + '/update';
+            let country = $('#name').val();
+            axios.post(uri, {
+                name: country,
+                _method: 'patch'
+            }).then(function(response) {
+                $('#newCountry').modal('hide');
+                table.draw()
+            })
         });
 
         const fetch = id => {
@@ -59,6 +84,10 @@
                             $('.modal-title').html('Editeaza');
                             $('#newCountryForm').attr('action', '/countries/' + id + '/update');
                             $("input[name='_method']").val('PATCH');
+                            $('#id').val(id);
+                            $('#save').hide();
+                            $('#update').show();
+
 
                             break;
                         case 'danger':
@@ -76,6 +105,8 @@
             $('.modal-title').html('Tara noua');
             $('#newCountryForm').attr('action', '/countries/add');
             $("input[name='_method']").val('POST');
+            $('#save').show();
+            $('#update').hide();
         });
 
     </script>

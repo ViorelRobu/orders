@@ -12,6 +12,7 @@
                 <form id="newCountryForm" action="/countries/add" method="post">
                     @method('POST')
                     @csrf
+                    <input type="hidden" name="id" id="id">
                     <div class="row">
                         <div class="form-group col-lg-12">
                             <label for="">Nume tara</label>
@@ -21,7 +22,8 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Inchide</button>
-                        <button type="submit" class="btn btn-primary">Salveaza</button>
+                        <button type="submit" id="save" class="btn btn-primary">Creaza</button>
+                        <button type="submit" id="update" style="display:none" class="btn btn-primary hidden">Modifica</button>
                     </div>
                 </form>
             </div>

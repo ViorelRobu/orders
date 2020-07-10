@@ -57,7 +57,7 @@ class CustomersController extends Controller
      */
     public function fetch(Request $request)
     {
-        $customer = Customer::findOrFail($request->id);
+        $customer = Customer::find($request->id);
 
         return (new JsonResponse(['message' => 'success', 'message_type' => 'success', 'data' => $customer]));
     }

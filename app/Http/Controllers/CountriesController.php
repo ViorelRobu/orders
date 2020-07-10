@@ -54,7 +54,10 @@ class CountriesController extends Controller
         $country->name = $request->name;
         $country->save();
 
-        return back();
+        return response()->json([
+            'created' => true,
+            'message' => 'Intrare adaugata in baza de date!'
+        ], 201);
     }
 
     /**
@@ -69,7 +72,10 @@ class CountriesController extends Controller
         $country->name = $request->name;
         $country->save();
 
-        return back();
+        return response()->json([
+            'updated' => true,
+            'message' => 'Intrare modificata cu succes!'
+        ]);
     }
 
     /**
