@@ -67,15 +67,19 @@ class CustomersController extends Controller
      *
      * @param Customer $customer
      * @param Request $request
-     * @return RedirectResponse
+     * @return JsonResponse
      */
     public function create(Customer $customer, Request $request)
     {
+        $customer->fibu = $request->fibu;
         $customer->name = $request->name;
         $customer->country_id = $request->country_id;
         $customer->save();
 
-        return back();
+        return response()->json([
+            'created' => true,
+            'message' => 'Intrare adaugata in baza de date!'
+        ], 201);
     }
 
     /**
@@ -83,14 +87,18 @@ class CustomersController extends Controller
      *
      * @param Customer $customer
      * @param Request $request
-     * @return RedirectResponse
+     * @return JsonResponse
      */
     public function update(Customer $customer, Request $request)
     {
+        $customer->fibu = $request->fibu;
         $customer->name = $request->name;
         $customer->country_id = $request->country_id;
         $customer->save();
 
-        return back();
+        return response()->json([
+            'updated' => true,
+            'message' => 'Intrare modificata cu succes!'
+        ]);
     }
 }

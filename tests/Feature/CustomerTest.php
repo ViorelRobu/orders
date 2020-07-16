@@ -47,12 +47,19 @@ class CustomerTest extends TestCase
     {
         $user = factory(User::class)->create();
         $customer = 'Client nou!';
+        $fibu = 123456;
         $country = factory(Country::class)->create();
-        $response = $this->actingAs($user)->post('/customers/add', [
+        $response = $this->actingAs($user)->json('POST', '/customers/add', [
+            'fibu' => $fibu,
             'name' => $customer,
             'country_id' => $country->id
         ]);
+
+        $response->assertStatus(201)
+            ->assertJson(['created' => true]);
+
         $this->assertDatabaseHas('customers', [
+            'fibu' => $fibu,
             'name' => $customer,
             'country_id' => $country->id
         ]);
@@ -66,22 +73,32 @@ class CustomerTest extends TestCase
     public function testLoggedInUsersCanUpdateCustomerDetails()
     {
         $user = factory(User::class)->create();
+        $fibu = 123456;
+        $newFibu = 456789;
         $customer = 'Client nou!';
         $newCustomer = 'Alt client';
         $country = factory(Country::class, 3)->create();
         $this->actingAs($user)->post('/customers/add', [
+            'fibu' => $fibu,
             'name' => $customer,
             'country_id' => $country[0]->id
         ]);
-        $this->patch('/customers/1/update', [
+        $response = $this->json('PATCH', '/customers/1/update', [
+            'fibu' => $newFibu,
             'name' => $newCustomer,
             'country_id' => $country[1]->id
         ]);
+
+        $response->assertStatus(200)
+            ->assertJson(['updated' => true]);
+
         $this->assertDatabaseHas('customers', [
+            'fibu' => $newFibu,
             'name' => $newCustomer,
             'country_id' => $country[1]->id
         ]);
         $this->assertDatabaseMissing('customers', [
+            'fibu' => $fibu,
             'name' => $customer,
             'country_id' => $country[0]->id
         ]);

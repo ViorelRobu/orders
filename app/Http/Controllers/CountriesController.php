@@ -47,7 +47,7 @@ class CountriesController extends Controller
      *
      * @param Country $country
      * @param Request $request
-     * @return RedirectResponse
+     * @return JsonResponse
      */
     public function create(Country $country, Request $request)
     {
@@ -65,7 +65,7 @@ class CountriesController extends Controller
      *
      * @param Country $country
      * @param Request $request
-     * @return RedirectResponse
+     * @return JsonResponse
      */
     public function update(Country $country, Request $request)
     {

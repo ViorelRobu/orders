@@ -32,6 +32,10 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/all', 'CustomersController@fetchAll')->name('customers.index');
         Route::get('/fetch', 'CustomersController@fetch')->name('customers.fetch');
         Route::post('/add', 'CustomersController@create');
-        Route::patch('/{customer}/update', 'CustomersController@update');
+        Route::prefix('/{customer}')->group(function() {
+            Route::patch('/update', 'CustomersController@update');
+            Route::get('/destinations', 'DestinationController@fetch')->name('destination.fetch');
+            Route::post('/destinations/find', 'DestinationController@findOrNew')->name('destination.findOrNew');
+        });
     });
 });

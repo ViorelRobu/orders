@@ -12,13 +12,19 @@
                 <form action="/customers/add" method="POST" id="newCustomerForm">
                     @method('POST')
                     @csrf
+                    <input type="hidden" name="id" id="id">
+                    <div class="form-group">
+                        <label for="fibu">FIBU</label>
+                        <input type="text"
+                               class="form-control" name="fibu" id="fibu" aria-describedby="fibu" placeholder="FIBU">
+                    </div>
                     <div class="form-group">
                         <label for="name">Nume client</label>
                         <input type="text"
-                               class="form-control" name="name" id="name" aria-describedby="helpId" placeholder="Nume client">
+                               class="form-control" name="name" id="name" aria-describedby="name" placeholder="Nume client">
                     </div>
                     <div class="form-group">
-                        <label for=""></label>
+                        <label for="">Tara</label>
                         <select class="form-control" name="country_id" id="country_id">
                            @foreach($countries as $country)
                                 <option value="{{ $country->id }}">{{ $country->name }}</option>
@@ -26,7 +32,8 @@
                         </select>
                     </div>
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Inchide</button>
-                    <button type="submit" class="btn btn-primary">Salveaza</button>
+                    <button type="submit" id="save" class="btn btn-primary">Salveaza</button>
+                    <button type="submit" id="update" style="display:none" class="btn btn-primary hidden">Modifica</button>
                 </form>
             </div>
             <div class="modal-footer">

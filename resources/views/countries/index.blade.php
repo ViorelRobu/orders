@@ -34,10 +34,13 @@
 @stop
 @section('js')
     <script>
+        let country = $('#name').val();
+
         let table = $('#countries').DataTable({
             processing: true,
             serverSide: true,
             ajax: "{{ route('countries.index') }}",
+            order: [[1, 'asc']],
             columns: [
                 {data: 'DT_RowIndex', name: 'DT_RowIndex'},
                 {data: 'name', name: 'name'},
@@ -60,7 +63,6 @@
             event.preventDefault();
             let id = $('#id').val();
             let uri = '/countries/' + id + '/update';
-            let country = $('#name').val();
             axios.post(uri, {
                 name: country,
                 _method: 'patch'
