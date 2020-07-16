@@ -35,6 +35,11 @@
         </div>
     </div>
 @stop
+
+@section('footer')
+    @include('footer')
+@stop
+
 @section('js')
     <script>
         let table = $('#customers').DataTable({
