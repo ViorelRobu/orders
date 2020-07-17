@@ -8,13 +8,19 @@ use Exception;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
 use Illuminate\Http\JsonResponse;
-use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Illuminate\View\View;
 use Yajra\DataTables\DataTables;
 
 class CustomersController extends Controller
 {
+    protected $rules = [
+            'fibu' => 'required',
+            'name' => 'required',
+            'country_id' => 'required'
+        ];
+
     /**
      * Show the all customers page
      *
@@ -73,17 +79,28 @@ class CustomersController extends Controller
      * @param Request $request
      * @return JsonResponse
      */
-    public function create(Customer $customer, Request $request)
+    public function store(Customer $customer, Request $request)
     {
-        $customer->fibu = $request->fibu;
-        $customer->name = $request->name;
-        $customer->country_id = $request->country_id;
-        $customer->save();
+        $validator = Validator::make($request->all(), $this->rules);
+
+        if ($validator->passes()) {
+            $customer->fibu = $validator->valid()['fibu'];
+            $customer->name = $validator->valid()['name'];
+            $customer->country_id = $validator->valid()['country_id'];
+            $customer->save();
+
+            return response()->json([
+                'created' => true,
+                'message' => 'Intrare adaugata in baza de date!',
+                'type' => 'success'
+            ], 201);
+        }
 
         return response()->json([
-            'created' => true,
-            'message' => 'Intrare adaugata in baza de date!'
-        ], 201);
+            'created' => false,
+            'message' => 'A aparut o eroare. Verificati daca ati completat corect toate campurile marcate cu stea si reincercati.',
+            'type' => 'error'
+        ]);
     }
 
     /**
@@ -95,14 +112,24 @@ class CustomersController extends Controller
      */
     public function update(Customer $customer, Request $request)
     {
-        $customer->fibu = $request->fibu;
-        $customer->name = $request->name;
-        $customer->country_id = $request->country_id;
-        $customer->save();
+        $validator = Validator::make($request->all(), $this->rules);
+
+        if ($validator->passes()) {
+            $customer->fibu = $validator->valid()['fibu'];
+            $customer->name = $validator->valid()['name'];
+            $customer->country_id = $validator->valid()['country_id'];
+            $customer->save();
+            return response()->json([
+                'updated' => true,
+                'message' => 'Intrare modificata in baza de date!',
+                'type' => 'success'
+            ]);
+        }
 
         return response()->json([
-            'updated' => true,
-            'message' => 'Intrare modificata cu succes!'
+            'updated' => false,
+            'message' => 'A aparut o eroare. Verificati daca ati completat corect toate campurile marcate cu stea si reincercati.',
+            'type' => 'error'
         ]);
     }
 }

@@ -17,7 +17,7 @@
                         <div class="form-group col-lg-12">
                             <label for="">Nume tara</label>
                             <input type="text"
-                                   class="form-control" name="name" id="name" aria-describedby="helpId" placeholder="Nume tara">
+                                   class="form-control" name="name" id="name" aria-describedby="helpId" placeholder="Nume tara" required>
                         </div>
                     </div>
                     <div class="modal-footer">

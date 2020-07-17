@@ -23,7 +23,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/', 'CountriesController@index');
         Route::get('/all', 'CountriesController@fetchAll')->name('countries.index');
         Route::get('/fetch', 'CountriesController@fetch')->name('countries.fetch');
-        Route::post('/add','CountriesController@create');
+        Route::post('/add','CountriesController@store');
         Route::patch('/{country}/update', 'CountriesController@update');
     });
 
@@ -31,7 +31,7 @@ Route::middleware(['auth'])->group(function () {
         Route::get('/', 'CustomersController@index');
         Route::get('/all', 'CustomersController@fetchAll')->name('customers.index');
         Route::get('/fetch', 'CustomersController@fetch')->name('customers.fetch');
-        Route::post('/add', 'CustomersController@create');
+        Route::post('/add', 'CustomersController@store');
         Route::prefix('/{customer}')->group(function() {
             Route::patch('/update', 'CustomersController@update');
             Route::get('/destinations', 'DestinationController@fetch')->name('destination.fetch');

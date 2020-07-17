@@ -42,7 +42,7 @@
 
 @section('js')
     <script>
-    const getDestinations = id => {
+        const getDestinations = id => {
         $.ajax({
             url: '/customers/' + id + '/destinations',
             dataType: 'json',
@@ -110,15 +110,25 @@
                 $('#newCustomer').modal('hide');
                 Swal.fire({
                     position: 'top-end',
-                    type: 'success',
+                    type: response.data.type,
                     title: 'Succes',
                     titleText: response.data.message,
                     showConfirmButton: false,
-                    timer: 1500,
+                    timer: 5000,
                     toast: true
                 });
                 table.draw()
-            })
+            }).catch(function(err) {
+                Swal.fire({
+                    position: 'top-end',
+                    type: 'error',
+                    title: 'Eroare',
+                    titleText: err,
+                    showConfirmButton: false,
+                    timer: 5000,
+                    toast: true
+                });
+            });
         });
 
         $('#update').click(function(event) {
@@ -137,15 +147,26 @@
                 $('#newCustomer').modal('hide');
                 Swal.fire({
                     position: 'top-end',
-                    type: 'success',
+                    type: response.data.type,
                     title: 'Succes',
                     title: response.data.message,
                     showConfirmButton: false,
-                    timer: 1500,
+                    timer: 5000,
                     toast: true
                 });
                 table.draw()
-            })
+            }).catch(function(err) {
+                console.log(err);
+                Swal.fire({
+                    position: 'top-end',
+                    type: 'error',
+                    title: 'Eroare',
+                    titleText: err,
+                    showConfirmButton: false,
+                    timer: 5000,
+                    toast: true
+                });
+            });
         });
 
         $('#newCustomer').on('hidden.bs.modal', function () {

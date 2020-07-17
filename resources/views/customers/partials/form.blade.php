@@ -14,18 +14,18 @@
                     @csrf
                     <input type="hidden" name="id" id="id">
                     <div class="form-group">
-                        <label for="fibu">FIBU</label>
+                        <label for="fibu">FIBU*</label>
                         <input type="text"
-                               class="form-control" name="fibu" id="fibu" aria-describedby="fibu" placeholder="FIBU">
+                               class="form-control" name="fibu" id="fibu" aria-describedby="fibu" placeholder="FIBU" required>
                     </div>
                     <div class="form-group">
-                        <label for="name">Nume client</label>
+                        <label for="name">Nume client*</label>
                         <input type="text"
-                               class="form-control" name="name" id="name" aria-describedby="name" placeholder="Nume client">
+                               class="form-control" name="name" id="name" aria-describedby="name" placeholder="Nume client" required>
                     </div>
                     <div class="form-group">
-                        <label for="">Tara</label>
-                        <select class="form-control" name="country_id" id="country_id">
+                        <label for="">Tara*</label>
+                        <select class="form-control" name="country_id" id="country_id" required>
                            @foreach($countries as $country)
                                 <option value="{{ $country->id }}">{{ $country->name }}</option>
                            @endforeach
