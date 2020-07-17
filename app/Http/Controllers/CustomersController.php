@@ -59,6 +59,10 @@ class CustomersController extends Controller
     {
         $customer = Customer::find($request->id);
 
+        $country = Country::find($customer->country_id);
+        $customer->country = $country->name;
+
+
         return (new JsonResponse(['message' => 'success', 'message_type' => 'success', 'data' => $customer]));
     }
 

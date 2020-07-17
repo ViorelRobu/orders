@@ -42,6 +42,48 @@
 
 @section('js')
     <script>
+    const getDestinations = id => {
+        $.ajax({
+            url: '/customers/' + id + '/destinations',
+            dataType: 'json',
+            data: {id: id},
+            type: 'GET',
+            success: function(response){
+                    $.each(response.data, function(key, value) {
+                        let destination = `<p>${key+1}. ${value.address}, ${value.country_id}</p>`
+                        $('#destinations').append(destination)
+                    })
+                }
+            });
+    }
+
+    const fetch = id => {
+        $.ajax({
+            url: '/customers/fetch',
+            dataType: 'json',
+            data: {id: id},
+            type: 'GET',
+            success: function(response){
+                $('#fibu').val(response.data.fibu);
+                $('#name').val(response.data.name);
+                $('.modal-title').html('Editeaza');
+                $('#newCustomerForm').attr('action', '/customers/' + id + '/update');
+                $("input[name='_method']").val('PATCH');
+                $('#country_id').val(response.data.country_id);
+                $('#select2-country_id-container').html(response.data.country);
+                $('#select2-country_id-container').attr('title', response.data.country);
+                $('#id').val(id);
+                $('#save').hide();
+                $('#update').show();
+            }
+        });
+    }
+
+    $(document).ready(function() {
+        $('#country_id').select2({
+            width: '100%'
+        });
+
         let table = $('#customers').DataTable({
             processing: true,
             serverSide: true,
@@ -54,52 +96,6 @@
                 {data: 'actions', name: 'actions'},
             ]
         });
-
-        const getDestinations = id => {
-            $.ajax({
-                url: '/customers/' + id + '/destinations',
-                dataType: 'json',
-                data: {id: id},
-                type: 'GET',
-                success: function(response){
-                        $.each(response.data, function(key, value) {
-                            let destination = `<p>${key+1}. ${value.address}, ${value.country_id}</p>`
-                            $('#destinations').append(destination)
-                        })
-                    }
-                });
-        }
-
-        const fetch = id => {
-            $.ajax({
-                url: '/customers/fetch',
-                dataType: 'json',
-                data: {id: id},
-                type: 'GET',
-                success: function(response){
-                    switch(response.message_type){
-                        case 'success':
-
-                            $('#fibu').val(response.data.fibu);
-                            $('#name').val(response.data.name);
-                            $('.modal-title').html('Editeaza');
-                            $('#newCustomerForm').attr('action', '/customers/' + id + '/update');
-                            $("input[name='_method']").val('PATCH');
-                            $('#country_id').val(response.data.country_id);
-                            $('#id').val(id);
-                            $('#save').hide();
-                            $('#update').show();
-
-                            break;
-                        case 'danger':
-                            alert('A aparut o eroare la incarcarea clientului. Reincarcati pagina si reincercati.')
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            });
-        }
 
         $('#save').click(function(event) {
             event.preventDefault();
@@ -141,9 +137,12 @@
             $('.modal-title').html('Creaza client nou');
             $('#newCustomerForm').attr('action', '/customers/add');
             $("input[name='_method']").val('POST');
+            $('#select2-country_id-container').html('');
+            $('#select2-country_id-container').attr('title', '');
             $('#save').show();
             $('#update').hide();
         });
+    });
     </script>
 @stop
 

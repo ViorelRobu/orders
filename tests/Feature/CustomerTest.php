@@ -7,6 +7,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 use App\Country;
+use App\Customer;
 
 class CustomerTest extends TestCase
 {
@@ -33,9 +34,14 @@ class CustomerTest extends TestCase
      */
     public function testLoggedInUsersCanViewCustomers()
     {
+        // seed the data
+        $country = factory(Country::class)->create();
+        $customer = factory(Customer::class)->create();
+
+        // run asserts
         $this->allowAccess('/customers');
         $this->allowAccess('/customers/all');
-        $this->allowAccess('/customers/fetch');
+        $this->allowAccess('/customers/fetch?id=1');
     }
 
     /**
