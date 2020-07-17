@@ -39,7 +39,25 @@
 
 @section('js')
     <script>
-        let country = $('#name').val();
+    const fetch = id => {
+        $.ajax({
+            url: 'countries/fetch',
+            dataType: 'json',
+            data: {id: id},
+            type: 'GET',
+            success: function(response){
+                        $('#name').val(response.data.name);
+                        $('.modal-title').html('Editeaza');
+                        $('#newCountryForm').attr('action', '/countries/' + id + '/update');
+                        $("input[name='_method']").val('PATCH');
+                        $('#id').val(id);
+                        $('#save').hide();
+                        $('#update').show();
+            }
+        });
+    }
+
+    $(document).ready(function() {
 
         let table = $('#countries').DataTable({
             processing: true,
@@ -60,6 +78,15 @@
                 name: country
             }).then(function(response) {
                 $('#newCountry').modal('hide');
+                Swal.fire({
+                    position: 'top-end',
+                    type: 'success',
+                    title: 'Succes',
+                    title: response.data.message,
+                    showConfirmButton: false,
+                    timer: 1500,
+                    toast: true
+                });
                 table.draw()
             })
         });
@@ -68,44 +95,26 @@
             event.preventDefault();
             let id = $('#id').val();
             let uri = '/countries/' + id + '/update';
+            let country = $('#name').val();
             axios.post(uri, {
                 name: country,
                 _method: 'patch'
             }).then(function(response) {
                 $('#newCountry').modal('hide');
+                Swal.fire({
+                    position: 'top-end',
+                    type: 'success',
+                    title: 'Succes',
+                    title: response.data.message,
+                    showConfirmButton: false,
+                    timer: 1500,
+                    toast: true
+                });
                 table.draw()
             })
         });
 
-        const fetch = id => {
-            $.ajax({
-                url: 'countries/fetch',
-                dataType: 'json',
-                data: {id: id},
-                type: 'GET',
-                success: function(response){
-                    switch(response.message_type){
-                        case 'success':
 
-                            $('#name').val(response.data.name);
-                            $('.modal-title').html('Editeaza');
-                            $('#newCountryForm').attr('action', '/countries/' + id + '/update');
-                            $("input[name='_method']").val('PATCH');
-                            $('#id').val(id);
-                            $('#save').hide();
-                            $('#update').show();
-
-
-                            break;
-                        case 'danger':
-                            alert('A aparut o eroare la incarcarea tarii. Reincarcati pagina si reincercati.')
-                            break;
-                        default:
-                            break;
-                    }
-                }
-            });
-        }
 
         $('#newCountry').on('hidden.bs.modal', function () {
             $('#name').val('');
@@ -115,6 +124,7 @@
             $('#save').show();
             $('#update').hide();
         });
+    })
 
     </script>
 @stop

@@ -108,6 +108,15 @@
                 country_id: country_id
             }).then(function(response) {
                 $('#newCustomer').modal('hide');
+                Swal.fire({
+                    position: 'top-end',
+                    type: 'success',
+                    title: 'Succes',
+                    titleText: response.data.message,
+                    showConfirmButton: false,
+                    timer: 1500,
+                    toast: true
+                });
                 table.draw()
             })
         });
@@ -126,6 +135,15 @@
                 _method: 'patch'
             }).then(function(response) {
                 $('#newCustomer').modal('hide');
+                Swal.fire({
+                    position: 'top-end',
+                    type: 'success',
+                    title: 'Succes',
+                    title: response.data.message,
+                    showConfirmButton: false,
+                    timer: 1500,
+                    toast: true
+                });
                 table.draw()
             })
         });
