@@ -22,8 +22,7 @@
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Inchide</button>
-                        <button type="submit" id="save" class="btn btn-primary">Creaza</button>
-                        <button type="submit" id="update" style="display:none" class="btn btn-primary hidden">Modifica</button>
+                        <div id="submit"></div>
                     </div>
                 </form>
             </div>

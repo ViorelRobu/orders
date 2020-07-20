@@ -8,7 +8,7 @@
             <h1 class="m-0 text-dark">Specii</h1>
         </div>
         <div class="col-lg-6">
-            <a href="" class="btn btn-primary float-right" data-toggle="modal" data-target="#newSpecies">Specie noua</a>
+            <a href="" class="btn btn-primary float-right" id="addNew" data-toggle="modal" data-target="#newSpecies">Specie noua</a>
         </div>
     </div>
 @stop
@@ -39,6 +39,9 @@
 
 @section('js')
     <script>
+    const save = '<button type="submit" id="save" class="btn btn-primary">Creaza</button>';
+    const update = '<button type="submit" id="update" class="btn btn-primary">Modifica</button>';
+
     const fetch = id => {
         $.ajax({
             url: '/species/fetch',
@@ -48,16 +51,20 @@
             success: function(response){
                         $('#name').val(response.data.name);
                         $('.modal-title').html('Editeaza');
-                        $('#newCountryForm').attr('action', '/species/' + id + '/update');
+                        $('#newSpeciesForm').attr('action', '/species/' + id + '/update');
                         $("input[name='_method']").val('PATCH');
                         $('#id').val(id);
-                        $('#save').hide();
-                        $('#update').show();
+                        $('#save').remove();
+                        $('#submit').append(update);
             }
         });
     }
 
     $(document).ready(function() {
+        $('#addNew').click(function() {
+            $('#submit').append(save);
+            $('#update').remove();
+        })
 
         let table = $('#species').DataTable({
             processing: true,
@@ -71,7 +78,7 @@
             ]
         });
 
-        $('#save').click(function(event) {
+        $(document).on('click', '#save', function(event) {
             event.preventDefault();
             let name = $('#name').val();
             axios.post('/species/add', {
@@ -101,7 +108,7 @@
             });
         });
 
-        $('#update').click(function(event) {
+        $(document).on('click', '#update', function(event) {
             event.preventDefault();
             let id = $('#id').val();
             let uri = '/species/' + id + '/update';
@@ -139,10 +146,10 @@
         $('#newSpecies').on('hidden.bs.modal', function () {
             $('#name').val('');
             $('.modal-title').html('Specie noua');
-            $('#newCountryForm').attr('action', '/species/add');
+            $('#newSpeciesForm').attr('action', '/species/add');
             $("input[name='_method']").val('POST');
-            $('#save').show();
-            $('#update').hide();
+            $('#update').remove();
+            $('#save').remove();
         });
     })
 

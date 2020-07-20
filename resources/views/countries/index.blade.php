@@ -8,7 +8,7 @@
             <h1 class="m-0 text-dark">Tari</h1>
         </div>
         <div class="col-lg-6">
-            <a href="" class="btn btn-primary float-right" data-toggle="modal" data-target="#newCountry">Tara noua</a>
+            <a href="" class="btn btn-primary float-right" id="addNew" data-toggle="modal" data-target="#newCountry">Tara noua</a>
         </div>
     </div>
 @stop
@@ -39,6 +39,9 @@
 
 @section('js')
     <script>
+    const save = '<button type="submit" id="save" class="btn btn-primary">Creaza</button>';
+    const update = '<button type="submit" id="update" class="btn btn-primary">Modifica</button>';
+
     const fetch = id => {
         $.ajax({
             url: 'countries/fetch',
@@ -51,13 +54,17 @@
                         $('#newCountryForm').attr('action', '/countries/' + id + '/update');
                         $("input[name='_method']").val('PATCH');
                         $('#id').val(id);
-                        $('#save').hide();
-                        $('#update').show();
+                        $('#save').remove();
+                        $('#submit').append(update);
             }
         });
     }
 
     $(document).ready(function() {
+        $('#addNew').click(function() {
+            $('#submit').append(save);
+            $('#update').remove();
+        })
 
         let table = $('#countries').DataTable({
             processing: true,
@@ -71,7 +78,7 @@
             ]
         });
 
-        $('#save').click(function(event) {
+        $(document).on('click', '#save', function(event) {
             event.preventDefault();
             let country = $('#name').val();
             axios.post('/countries/add', {
@@ -101,7 +108,7 @@
             });
         });
 
-        $('#update').click(function(event) {
+        $(document).on('click', '#update', function(event) {
             event.preventDefault();
             let id = $('#id').val();
             let uri = '/countries/' + id + '/update';
@@ -142,7 +149,8 @@
             $('#newCountryForm').attr('action', '/countries/add');
             $("input[name='_method']").val('POST');
             $('#save').show();
-            $('#update').hide();
+            $('#update').remove();
+            $('#save').remove();
         });
     })
 

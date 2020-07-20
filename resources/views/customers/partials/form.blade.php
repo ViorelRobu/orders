@@ -31,9 +31,8 @@
                            @endforeach
                         </select>
                     </div>
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Inchide</button>
-                    <button type="submit" id="save" class="btn btn-primary">Salveaza</button>
-                    <button type="submit" id="update" style="display:none" class="btn btn-primary hidden">Modifica</button>
+                    <div id="submit" class="float-right"></div>
+                    <button type="button" class="btn btn-secondary float-right" data-dismiss="modal">Inchide</button>
                 </form>
             </div>
             <div class="modal-footer">

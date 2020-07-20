@@ -8,7 +8,7 @@
             <h1 class="m-0 text-dark">Clienti</h1>
         </div>
         <div class="col-lg-6">
-            <a href="" class="btn btn-primary float-right" data-toggle="modal" data-target="#newCustomer">Client nou</a>
+            <a href="" class="btn btn-primary float-right" id="addNew" data-toggle="modal" data-target="#newCustomer">Client nou</a>
         </div>
     </div>
 @stop
@@ -42,19 +42,22 @@
 
 @section('js')
     <script>
-        const getDestinations = id => {
-        $.ajax({
-            url: '/customers/' + id + '/destinations',
-            dataType: 'json',
-            data: {id: id},
-            type: 'GET',
-            success: function(response){
-                    $.each(response.data, function(key, value) {
-                        let destination = `<p>${key+1}. ${value.address}, ${value.country_id}</p>`
-                        $('#destinations').append(destination)
-                    })
-                }
-            });
+    const save = '<button type="submit" id="save" class="btn btn-primary">Creaza</button>';
+    const update = '<button type="submit" id="update" class="btn btn-primary">Modifica</button>';
+
+    const getDestinations = id => {
+    $.ajax({
+        url: '/customers/' + id + '/destinations',
+        dataType: 'json',
+        data: {id: id},
+        type: 'GET',
+        success: function(response){
+                $.each(response.data, function(key, value) {
+                    let destination = `<p>${key+1}. ${value.address}, ${value.country_id}</p>`
+                    $('#destinations').append(destination)
+                })
+            }
+        });
     }
 
     const fetch = id => {
@@ -73,13 +76,18 @@
                 $('#select2-country_id-container').html(response.data.country);
                 $('#select2-country_id-container').attr('title', response.data.country);
                 $('#id').val(id);
-                $('#save').hide();
-                $('#update').show();
+                $('#save').remove();
+                $('#submit').append(update);
             }
         });
     }
 
     $(document).ready(function() {
+        $('#addNew').click(function() {
+            $('#submit').append(save);
+            $('#update').remove();
+        })
+
         $('#country_id').select2({
             width: '100%'
         });
@@ -97,7 +105,7 @@
             ]
         });
 
-        $('#save').click(function(event) {
+        $(document).on('click', '#save', function(event) {
             event.preventDefault();
             let fibu = $('#fibu').val();
             let name = $('#name').val();
@@ -131,7 +139,7 @@
             });
         });
 
-        $('#update').click(function(event) {
+        $(document).on('click', '#update', function(event) {
             event.preventDefault();
             let fibu = $('#fibu').val();
             let name = $('#name').val();
@@ -178,8 +186,8 @@
             $("input[name='_method']").val('POST');
             $('#select2-country_id-container').html('');
             $('#select2-country_id-container').attr('title', '');
-            $('#save').show();
-            $('#update').hide();
+            $('#update').remove();
+            $('#save').remove();
         });
     });
     </script>
