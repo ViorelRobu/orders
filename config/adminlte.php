@@ -272,6 +272,11 @@ return [
                     'url' => 'quality',
                     'icon' => 'fas fa-fw fa-cog',
                 ],
+                [
+                    'text' => 'Finisaje',
+                    'url' => 'refinements',
+                    'icon' => 'fas fa-fw fa-cog',
+                ],
             ]
         ],
 //        ['header' => 'account_settings'],

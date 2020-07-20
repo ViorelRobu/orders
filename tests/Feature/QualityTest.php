@@ -67,7 +67,7 @@ class QualityTest extends TestCase
      *
      * @return void
      */
-    public function testLoggedInUserCanUpdateProduct()
+    public function testLoggedInUserCanUpdateQuality()
     {
         $user = factory(User::class)->create();
         $quality = factory(Quality::class)->create();

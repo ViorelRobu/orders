@@ -62,4 +62,12 @@ Route::middleware(['auth'])->group(function() {
         Route::post('/add', 'QualityController@store');
         Route::patch('/{quality}/update', 'QualityController@update');
     });
+
+    Route::prefix('/refinements')->group(function() {
+        Route::get('/', 'RefinementsController@index');
+        Route::get('/all', 'RefinementsController@fetchAll')->name('refinements.index');
+        Route::get('/fetch', 'RefinementsController@fetch')->name('refinements.fetch');
+        Route::post('/add', 'RefinementsController@store');
+        Route::patch('/{refinement}/update', 'RefinementsController@update');
+    });
 });

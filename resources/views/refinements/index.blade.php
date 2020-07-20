@@ -5,25 +5,26 @@
 @section('content_header')
     <div class="row">
         <div class="col-lg-6">
-            <h1 class="m-0 text-dark">Calitati</h1>
+            <h1 class="m-0 text-dark">Finisaje</h1>
         </div>
         <div class="col-lg-6">
-            <a href="" class="btn btn-primary float-right" id="addNew" data-toggle="modal" data-target="#newQuality">Calitate noua</a>
+            <a href="" class="btn btn-primary float-right" id="addNew" data-toggle="modal" data-target="#newRefinement">Finisaj nou</a>
         </div>
     </div>
 @stop
 
-@include('quality.partials.form')
+@include('refinements.partials.form')
 
 @section('content')
     <div class="row">
         <div class="col-lg-12">
             <div class="card">
                 <div class="card-body">
-                    <table id="quality" class="table table-bordered table-hover">
+                    <table id="refinements" class="table table-bordered table-hover">
                         <thead>
                         <td>Nr crt</td>
-                        <td>Calitate</td>
+                        <td>Finisaj</td>
+                        <td>Descriere</td>
                         <td>Actiuni</td>
                         </thead>
                     </table>
@@ -44,14 +45,15 @@
 
     const fetch = id => {
         $.ajax({
-            url: '/quality/fetch',
+            url: '/refinements/fetch',
             dataType: 'json',
             data: {id: id},
             type: 'GET',
             success: function(response){
                         $('#name').val(response.data.name);
+                        $('#description').val(response.data.description);
                         $('.modal-title').html('Editeaza');
-                        $('#newQualityForm').attr('action', '/quality/' + id + '/update');
+                        $('#newRefinementForm').attr('action', '/refinements/' + id + '/update');
                         $("input[name='_method']").val('PATCH');
                         $('#id').val(id);
                         $('#save').remove();
@@ -66,14 +68,15 @@
             $('#update').remove();
         })
 
-        let table = $('#quality').DataTable({
+        let table = $('#refinements').DataTable({
             processing: true,
             serverSide: true,
-            ajax: "{{ route('quality.index') }}",
+            ajax: "{{ route('refinements.index') }}",
             order: [[1, 'asc']],
             columns: [
                 {data: 'DT_RowIndex', name: 'DT_RowIndex'},
                 {data: 'name', name: 'name'},
+                {data: 'description', name: 'description'},
                 {data: 'actions', name: 'actions'},
             ]
         });
@@ -81,10 +84,12 @@
         $(document).on('click', '#save', function(event) {
             event.preventDefault();
             let name = $('#name').val();
-            axios.post('/quality/add', {
-                name: name
+            let description = $('#description').val();
+            axios.post('/refinements/add', {
+                name,
+                description
             }).then(function(response) {
-                $('#newQuality').modal('hide');
+                $('#newRefinement').modal('hide');
                 Swal.fire({
                     position: 'top-end',
                     type: response.data.type,
@@ -111,13 +116,14 @@
         $(document).on('click', '#update', function(event) {
             event.preventDefault();
             let id = $('#id').val();
-            let uri = '/quality/' + id + '/update';
+            let uri = '/refinements/' + id + '/update';
             let name = $('#name').val();
+            let description = $('#description').val();
             axios.post(uri, {
-                name: name,
+                name,
+                description,
                 _method: 'patch'
             }).then(function(response) {
-                $('#newQuality').modal('hide');
                 Swal.fire({
                     position: 'top-end',
                     type: response.data.type,
@@ -129,6 +135,7 @@
                 });
                 table.draw()
             }).catch(function(err) {
+                $('#newRefinement').modal('hide');
                 Swal.fire({
                     position: 'top-end',
                     type: 'error',
@@ -143,10 +150,11 @@
 
 
 
-        $('#newQuality').on('hidden.bs.modal', function () {
+        $('#newRefinement').on('hidden.bs.modal', function () {
             $('#name').val('');
-            $('.modal-title').html('Calitate noua');
-            $('#newQualityForm').attr('action', '/quality/add');
+            $('#description').val('');
+            $('.modal-title').html('Finisaj nou');
+            $('#newQualityForm').attr('action', '/refinements/add');
             $("input[name='_method']").val('POST');
             $('#update').remove();
             $('#save').remove();
