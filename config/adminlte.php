@@ -267,6 +267,11 @@ return [
                     'url' => 'products',
                     'icon' => 'fas fa-fw fa-cog',
                 ],
+                [
+                    'text' => 'Calitati',
+                    'url' => 'quality',
+                    'icon' => 'fas fa-fw fa-cog',
+                ],
             ]
         ],
 //        ['header' => 'account_settings'],

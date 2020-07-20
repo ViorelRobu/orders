@@ -54,4 +54,12 @@ Route::middleware(['auth'])->group(function() {
         Route::post('/add', 'ProductTypesController@store');
         Route::patch('/{product}/update', 'ProductTypesController@update');
     });
+
+    Route::prefix('/quality')->group(function() {
+        Route::get('/', 'QualityController@index');
+        Route::get('/all', 'QualityController@fetchAll')->name('quality.index');
+        Route::get('/fetch', 'QualityController@fetch')->name('quality.fetch');
+        Route::post('/add', 'QualityController@store');
+        Route::patch('/{quality}/update', 'QualityController@update');
+    });
 });
