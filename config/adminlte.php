@@ -257,6 +257,16 @@ return [
                     'url' => 'customers',
                     'icon' => 'fas fa-fw fa-cog',
                 ],
+                [
+                    'text' => 'Specii',
+                    'url' => 'species',
+                    'icon' => 'fas fa-fw fa-cog',
+                ],
+                [
+                    'text' => 'Tipuri produse',
+                    'url' => 'products',
+                    'icon' => 'fas fa-fw fa-cog',
+                ],
             ]
         ],
 //        ['header' => 'account_settings'],

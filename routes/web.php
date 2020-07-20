@@ -15,11 +15,11 @@ use Illuminate\Support\Facades\Route;
 
 Auth::routes();
 
-Route::middleware(['auth'])->group(function () {
+Route::middleware(['auth'])->group(function() {
     Route::get('/', function () {
         return view('home');
     });
-    Route::prefix('/countries')->group(function () {
+    Route::prefix('/countries')->group(function() {
         Route::get('/', 'CountriesController@index');
         Route::get('/all', 'CountriesController@fetchAll')->name('countries.index');
         Route::get('/fetch', 'CountriesController@fetch')->name('countries.fetch');
@@ -27,7 +27,7 @@ Route::middleware(['auth'])->group(function () {
         Route::patch('/{country}/update', 'CountriesController@update');
     });
 
-    Route::prefix('/customers')->group(function () {
+    Route::prefix('/customers')->group(function() {
         Route::get('/', 'CustomersController@index');
         Route::get('/all', 'CustomersController@fetchAll')->name('customers.index');
         Route::get('/fetch', 'CustomersController@fetch')->name('customers.fetch');
@@ -37,5 +37,21 @@ Route::middleware(['auth'])->group(function () {
             Route::get('/destinations', 'DestinationController@fetch')->name('destination.fetch');
             Route::post('/destinations/find', 'DestinationController@findOrNew')->name('destination.findOrNew');
         });
+    });
+
+    Route::prefix('/species')->group(function() {
+        Route::get('/', 'SpeciesController@index');
+        Route::get('/all', 'SpeciesController@fetchAll')->name('species.index');
+        Route::get('/fetch', 'SpeciesController@fetch')->name('species.fetch');
+        Route::post('/add', 'SpeciesController@store');
+        Route::patch('/{species}/update', 'SpeciesController@update');
+    });
+
+    Route::prefix('/products')->group(function() {
+        Route::get('/', 'ProductTypesController@index');
+        Route::get('/all', 'ProductTypesController@fetchAll')->name('products.index');
+        Route::get('/fetch', 'ProductTypesController@fetch')->name('products.fetch');
+        Route::post('/add', 'ProductTypesController@store');
+        Route::patch('/{product}/update', 'ProductTypesController@update');
     });
 });

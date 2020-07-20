@@ -2,64 +2,60 @@
 
 namespace App\Http\Controllers;
 
-use App\Country;
-use Exception;
-use Illuminate\Contracts\Foundation\Application;
-use Illuminate\Contracts\View\Factory;
+use App\Species;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
-use Illuminate\View\View;
 use Yajra\DataTables\DataTables;
 
-class CountriesController extends Controller
+class SpeciesController extends Controller
 {
     protected $rules = [
-        'name' => 'required|unique:countries,name',
+        'name' => 'required|unique:species,name',
     ];
 
     /**
-     * Display the countries page to the user
+     * Show the all species page
      *
      * @return Application|Factory|View
      */
     public function index()
     {
-        return view('countries.index');
+        return view('species.index');
     }
 
     /**
-     * Get all the countries in the database and create Datatables
+     * Get all the species in the database and create Datatables
      *
      * @return mixed
      * @throws Exception
      */
     public function fetchAll()
     {
-        $countries = Country::all();
+        $species = Species::all();
 
-        return DataTables::of($countries)
+        return DataTables::of($species)
             ->addIndexColumn()
-            ->addColumn('actions', function($countries) {
-                return view('countries.partials.actions', ['country' => $countries]);
+            ->addColumn('actions', function ($species) {
+                return view('species.partials.actions', ['species' => $species]);
             })
             ->make(true);
     }
 
     /**
-     * Create a new country from user input
+     * Create a new species from user input
      *
-     * @param Country $country
+     * @param Species $species
      * @param Request $request
      * @return JsonResponse
      */
-    public function store(Country $country, Request $request)
+    public function store(Species $species, Request $request)
     {
         $validator = Validator::make($request->all(), $this->rules);
 
         if ($validator->passes()) {
-            $country->name = $validator->valid()['name'];
-            $country->save();
+            $species->name = $validator->valid()['name'];
+            $species->save();
 
             return response()->json([
                 'created' => true,
@@ -70,25 +66,25 @@ class CountriesController extends Controller
 
         return response()->json([
             'created' => false,
-            'message' => 'A aparut o eroare. Verificati daca tara introdusa nu exista deja in baza de date!',
+            'message' => 'A aparut o eroare. Verificati daca specia introdusa nu exista deja in baza de date!',
             'type' => 'error'
         ]);
     }
 
     /**
-     * Update a country in the database
+     * Update a species in the database
      *
-     * @param Country $country
+     * @param Species $species
      * @param Request $request
      * @return JsonResponse
      */
-    public function update(Country $country, Request $request)
+    public function update(Species $species, Request $request)
     {
         $validator = Validator::make($request->all(), $this->rules);
 
         if ($validator->passes()) {
-            $country->name = $validator->valid()['name'];
-            $country->save();
+            $species->name = $validator->valid()['name'];
+            $species->save();
 
             return response()->json([
                 'updated' => true,
@@ -105,15 +101,14 @@ class CountriesController extends Controller
     }
 
     /**
-     * Fetch the data from a single country
+     * Fetch the data from a single species
      *
      * @param Request $request
      * @return JsonResponse
      */
     public function fetch(Request $request)
     {
-        $country = Country::find($request->id);
-
-        return (new JsonResponse(['message' => 'success', 'message_type' => 'success', 'data' => $country]));
+        $species = Species::find($request->id);
+        return (new JsonResponse(['message' => 'success', 'message_type' => 'success', 'data' => $species]));
     }
 }
