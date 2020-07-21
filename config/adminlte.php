@@ -282,6 +282,11 @@ return [
                     'url' => 'articles',
                     'icon' => 'fas fa-fw fa-cog',
                 ],
+                [
+                    'text' => 'Numere de comanda',
+                    'url' => 'numbers',
+                    'icon' => 'fas fa-fw fa-cog',
+                ],
             ]
         ],
 //        ['header' => 'account_settings'],
