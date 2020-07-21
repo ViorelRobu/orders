@@ -277,6 +277,11 @@ return [
                     'url' => 'refinements',
                     'icon' => 'fas fa-fw fa-cog',
                 ],
+                [
+                    'text' => 'Articole',
+                    'url' => 'articles',
+                    'icon' => 'fas fa-fw fa-cog',
+                ],
             ]
         ],
 //        ['header' => 'account_settings'],

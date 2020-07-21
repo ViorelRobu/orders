@@ -70,4 +70,12 @@ Route::middleware(['auth'])->group(function() {
         Route::post('/add', 'RefinementsController@store');
         Route::patch('/{refinement}/update', 'RefinementsController@update');
     });
+
+    Route::prefix('/articles')->group(function() {
+        Route::get('/', 'ArticlesController@index');
+        Route::get('/all', 'ArticlesController@fetchAll')->name('articles.index');
+        Route::get('/fetch', 'ArticlesController@fetch')->name('articles.fetch');
+        Route::post('/add', 'ArticlesController@store');
+        Route::patch('/{article}/update', 'ArticlesController@update');
+    });
 });
