@@ -78,4 +78,10 @@ Route::middleware(['auth'])->group(function() {
         Route::post('/add', 'ArticlesController@store');
         Route::patch('/{article}/update', 'ArticlesController@update');
     });
+
+    Route::prefix('/numbers')->group(function() {
+        Route::get('/', 'OrderNumbersController@index');
+        Route::get('/all', 'OrderNumbersController@fetchAll')->name('order_numbers.index');
+        Route::post('/add', 'OrderNumbersController@store');
+    });
 });
