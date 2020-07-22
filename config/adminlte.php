@@ -242,7 +242,12 @@ return [
             'search' => false,
             'topnav' => true,
         ],
-        'SETARI',
+        [
+            'text' => 'Comenzi active',
+            'url' => 'orders',
+            'icon' => 'fas fa-fw fa-list',
+        ],
+        ['header' => 'SETARI'],
         [
             'text' => 'Nomenclator',
             'icon' => 'fas fa-fw fa-cog',

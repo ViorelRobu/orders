@@ -16,9 +16,11 @@ use Illuminate\Support\Facades\Route;
 Auth::routes();
 
 Route::middleware(['auth'])->group(function() {
-    Route::get('/', function () {
-        return view('home');
-    });
+    /*
+     |---------------------------------------------------------------
+     |  Nomenclator routes
+     |---------------------------------------------------------------
+     */
     Route::prefix('/countries')->group(function() {
         Route::get('/', 'CountriesController@index');
         Route::get('/all', 'CountriesController@fetchAll')->name('countries.index');
@@ -84,4 +86,26 @@ Route::middleware(['auth'])->group(function() {
         Route::get('/all', 'OrderNumbersController@fetchAll')->name('order_numbers.index');
         Route::post('/add', 'OrderNumbersController@store');
     });
+
+    Route::prefix('/articles')->group(function () {
+        Route::get('/', 'ArticlesController@index');
+        Route::get('/all', 'ArticlesController@fetchAll')->name('articles.index');
+        Route::get('/fetch', 'ArticlesController@fetch')->name('articles.fetch');
+        Route::post('/add', 'ArticlesController@store');
+        Route::patch('/{article}/update', 'ArticlesController@update');
+    });
+
+    /*
+     |---------------------------------------------------------------
+     |  Orders routes
+     |---------------------------------------------------------------
+     */
+    Route::prefix('/orders')->group(function () {
+        Route::get('/', 'OrdersController@index');
+        Route::get('/all', 'OrdersController@fetchAll')->name('orders.index');
+        Route::get('/fetch', 'OrdersController@fetch')->name('orders.fetch');
+        Route::post('/add', 'OrdersController@store');
+        Route::patch('/{article}/update', 'OrdersController@update');
+    });
+
 });
