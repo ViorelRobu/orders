@@ -108,7 +108,9 @@ Route::middleware(['auth'])->group(function() {
         Route::get('/all', 'OrdersController@fetchAll')->name('orders.index');
         Route::get('/fetch', 'OrdersController@fetch')->name('orders.fetch');
         Route::post('/add', 'OrdersController@store');
-        Route::patch('/{article}/update', 'OrdersController@update');
+        Route::prefix('/{order}/')->group(function() {
+            Route::patch('/update', 'OrdersController@update');
+        });
     });
 
 });

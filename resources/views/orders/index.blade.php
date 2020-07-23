@@ -8,7 +8,7 @@
             <h1 class="m-0 text-dark">Comenzi active</h1>
         </div>
         <div class="col-lg-6">
-            <a href="" class="btn btn-primary float-right" id="addNew" data-toggle="modal" data-target="#enwOrder">Comanda noua</a>
+            <a href="" class="btn btn-primary float-right" id="addNew" data-toggle="modal" data-target="#newOrder">Comanda noua</a>
         </div>
     </div>
 @stop

@@ -1,5 +1,5 @@
 <!-- Modal -->
-<div class="modal fade" id="newCustomer" tabindex="-1" role="dialog" aria-labelledby="newCustomer" aria-hidden="true">
+<div class="modal fade" id="newOrder" tabindex="-1" role="dialog" aria-labelledby="newOrder" aria-hidden="true">
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
@@ -9,7 +9,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <form action="/customers/add" method="POST" id="newCustomerForm">
+                <form action="/orders/add" method="POST" id="newOrderForm">
                     @method('POST')
                     @csrf
                     <input type="hidden" name="id" id="id">

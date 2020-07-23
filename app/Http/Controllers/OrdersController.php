@@ -9,6 +9,7 @@ use App\Order;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
 
 class OrdersController extends Controller
@@ -84,4 +85,75 @@ class OrdersController extends Controller
         return (new JsonResponse(['message' => 'success', 'message_type' => 'success', 'data' => $order]));
     }
 
+    /**
+     * Persist the order in the database
+     *
+     * @param Order $order
+     * @param Request $request
+     * @return redirect
+     */
+    public function store(Order $order, Request $request)
+    {
+        $validator = Validator::make($request->all(), $this->rules);
+
+        if ($validator->passes()) {
+            $order->order = $validator->valid()['order'];
+            $order->customer_id = $validator->valid()['customer_id'];
+            $order->customer_order = $validator->valid()['customer_order'];
+            $order->auftrag = $validator->valid()['auftrag'];
+            $order->destination_id = $validator->valid()['destination_id'];
+            $order->customer_kw = $validator->valid()['customer_kw'];
+            $order->production_kw = $validator->valid()['production_kw'];
+            $order->delivery_kw = $validator->valid()['delivery_kw'];
+            $order->month = $validator->valid()['month'];
+            $order->loading_date = $validator->valid()['loading_date'];
+            $order->priority = $validator->valid()['priority'];
+            $order->observations = $validator->valid()['observations'];
+            $order->save();
+
+            return redirect('/orders/' . $order->id . '/show');
+        }
+
+        return back()->with(['error' => $validator->errors()]);
+    }
+
+    /**
+     * Update a certain order inside the database
+     *
+     * @param Order $order
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function update(Order $order, Request $request)
+    {
+        $validator = Validator::make($request->all(), $this->rules);
+
+        if ($validator->passes()) {
+            $order->order = $validator->valid()['order'];
+            $order->customer_id = $validator->valid()['customer_id'];
+            $order->customer_order = $validator->valid()['customer_order'];
+            $order->auftrag = $validator->valid()['auftrag'];
+            $order->destination_id = $validator->valid()['destination_id'];
+            $order->customer_kw = $validator->valid()['customer_kw'];
+            $order->production_kw = $validator->valid()['production_kw'];
+            $order->delivery_kw = $validator->valid()['delivery_kw'];
+            $order->month = $validator->valid()['month'];
+            $order->loading_date = $validator->valid()['loading_date'];
+            $order->priority = $validator->valid()['priority'];
+            $order->observations = $validator->valid()['observations'];
+            $order->save();
+
+            return response()->json([
+                'updated' => true,
+                'message' => 'Comanda adaugata in baza de date!',
+                'type' => 'success'
+            ]);
+        }
+
+        return response()->json([
+            'updated' => false,
+            'message' => 'A aparut o eroare. Verificati daca ati completat corect toate datele cerute.',
+            'type' => 'error'
+        ]);
+    }
 }
