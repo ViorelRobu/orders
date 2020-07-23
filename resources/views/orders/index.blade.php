@@ -90,8 +90,6 @@
         let table = $('#orders').DataTable({
             processing: true,
             serverSide: true,
-            responsive: true,
-            "autoWidth": false,
             ajax: "{{ route('orders.index') }}",
             columns: [
                 {data: 'order', name: 'order'},
