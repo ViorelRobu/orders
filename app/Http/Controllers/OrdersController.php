@@ -9,6 +9,7 @@ use App\Order;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\Facades\DataTables;
 
@@ -96,8 +97,26 @@ class OrdersController extends Controller
     {
         $validator = Validator::make($request->all(), $this->rules);
 
+        $latest_order = DB::table('orders')->latest()->first();
+        if ($latest_order) {
+            $lt_order = Carbon::parse($latest_order->created_at);
+        } else {
+            $lt_order = (Carbon::now())->subDay();
+        }
+        $latest_number = DB::table('order_numbers')->latest()->first();
+        if ($latest_number) {
+            $lt_number = Carbon::parse($latest_number->created_at);
+        } else {
+            return back()->with(['error' => 'Trebuie setat primul numar de comanda!']);
+        }
+
         if ($validator->passes()) {
-            $order->order = $validator->valid()['order'];
+            if ($lt_number > $lt_order) {
+                $order->order = $latest_number->start_number;
+            } else {
+                $order->order = $latest_order->order + 1;
+            }
+
             $order->customer_id = $validator->valid()['customer_id'];
             $order->customer_order = $validator->valid()['customer_order'];
             $order->auftrag = $validator->valid()['auftrag'];

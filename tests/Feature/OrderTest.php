@@ -6,6 +6,7 @@ use App\Country;
 use App\Customer;
 use App\Destination;
 use App\Order;
+use App\OrderNumber;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -59,9 +60,9 @@ class OrderTest extends TestCase
         $country = factory(Country::class)->create();
         $customer = factory(Customer::class)->create();
         $destination = factory(Destination::class)->create();
+        $no = factory(OrderNumber::class)->create();
 
         $response = $this->actingAs($user)->post('/orders/add', [
-            'order' => 2007001,
             'customer_id' => $customer->id,
             'customer_order' => '01_hna/11',
             'auftrag' => '204-00123',
@@ -78,7 +79,7 @@ class OrderTest extends TestCase
         $response->assertRedirect('/orders/1/show');
 
         $this->assertDatabaseHas('orders', [
-            'order' => 2007001,
+            'order' => $no->start_number,
             'customer_id' => $customer->id,
             'customer_order' => '01_hna/11',
             'auftrag' => '204-00123',
