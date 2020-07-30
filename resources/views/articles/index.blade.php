@@ -48,10 +48,6 @@
     const save = '<button type="submit" id="save" class="btn btn-primary">Creaza</button>';
     const update = '<button type="submit" id="update" class="btn btn-primary">Modifica</button>';
 
-    function selected(el) {
-        $(el).select2('data', {id: '2', text: 'sequi'})
-    }
-
     const fetch = id => {
         $.ajax({
             url: '/articles/fetch',

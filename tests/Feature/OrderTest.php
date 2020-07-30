@@ -71,8 +71,6 @@ class OrderTest extends TestCase
             'production_kw' => '2020-07-23',
             'delivery_kw' => '2020-08-03',
             'month' => 7,
-            'loading_date' => '2020-08-06',
-            'priority' => 1,
             'observations' => 'Aceasta este o observatie',
         ]);
 
@@ -88,8 +86,6 @@ class OrderTest extends TestCase
             'production_kw' => '2020-07-23',
             'delivery_kw' => '2020-08-03',
             'month' => 7,
-            'loading_date' => '2020-08-06',
-            'priority' => 1,
             'observations' => 'Aceasta este o observatie',
         ]);
     }

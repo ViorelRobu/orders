@@ -44,7 +44,7 @@
                           </select>
                         </div>
                         <div class="form-group col-lg-3">
-                          <label for="default_refinements">Tip produs</label>
+                          <label for="default_refinements">Finisaje</label>
                           <select class="form-control" name="default_refinements[]" id="default_refinements" multiple required>
                             @foreach ($refinements as $refinement)
                                 <option value="{{ $refinement->id }}">{{ $refinement->name }}</option>

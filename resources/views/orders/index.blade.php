@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', env('APP_NAME'))
+@section('title', 'Comenzi active')
 
 @section('content_header')
     <div class="row">
@@ -16,26 +16,36 @@
 @include('orders.partials.form')
 
 @section('content')
+    @if ($errors->any())
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                @foreach ($errors->all() as $error)
+                    <p>{{ $error }}</p>
+                @endforeach
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+    @endif
     <div class="row">
         <div class="col-lg-12">
             <div class="card">
                 <div class="card-body">
                     <table id="orders" class="table table-bordered table-hover">
                         <thead>
-                            <td>Comanda</td>
+                            <td>Cda</td>
                             <td>Prioritate</td>
                             <td>Client</td>
-                            <td>Comanda client</td>
+                            <td>Cda client</td>
                             <td>Auftrag</td>
-                            <td>KW Productie</td>
-                            <td>Data incarcare</td>
+                            <td>Productie</td>
                             <td>Destinatie</td>
                             <td>Luna</td>
-                            <td>KW Livrare</td>
+                            <td>Livrare</td>
+                            <td>ETA</td>
                             <td>KW Client</td>
                             <td>Total</td>
                             <td>Produs</td>
-                            <td>Rest de produs</td>
+                            <td>Rest</td>
                             <td>%</td>
                             <td></td>
                         </thead>
@@ -52,7 +62,7 @@
 
 @section('js')
     <script>
-    const save = '<button type="submit" id="save" class="btn btn-primary">Creaza</button>';
+    const save = '<input id="save" type="submit" class="btn btn-primary float-right" value="Adauga">';
     const update = '<button type="submit" id="update" class="btn btn-primary">Modifica</button>';
 
     const fetch = id => {
@@ -79,8 +89,8 @@
 
     $(document).ready(function() {
         $('#addNew').click(function() {
-            $('#submit').append(save);
             $('#update').remove();
+            $('#submit').append(save);
         })
 
         $('#country_id').select2({
@@ -98,10 +108,10 @@
                 {data: 'customer_order', name: 'customer_order'},
                 {data: 'auftrag', name: 'auftrag'},
                 {data: 'kw_production', name: 'kw_production'},
-                {data: 'date_loading', name: 'date_loading'},
                 {data: 'destination', name: 'destination'},
                 {data: 'month', name: 'month'},
                 {data: 'kw_delivery', name: 'kw_delivery'},
+                {data: 'eta', name: 'eta'},
                 {data: 'kw_customer', name: 'kw_customer'},
                 {data: 'total', name: 'total'},
                 {data: 'produced', name: 'produced'},
@@ -111,39 +121,6 @@
             ]
         });
 
-        $(document).on('click', '#save', function(event) {
-            event.preventDefault();
-            let fibu = $('#fibu').val();
-            let name = $('#name').val();
-            let country_id = $('#country_id').val();
-            axios.post('/customers/add', {
-                fibu: fibu,
-                name: name,
-                country_id: country_id
-            }).then(function(response) {
-                $('#newCustomer').modal('hide');
-                Swal.fire({
-                    position: 'top-end',
-                    type: response.data.type,
-                    title: 'Succes',
-                    titleText: response.data.message,
-                    showConfirmButton: false,
-                    timer: 5000,
-                    toast: true
-                });
-                table.draw()
-            }).catch(function(err) {
-                Swal.fire({
-                    position: 'top-end',
-                    type: 'error',
-                    title: 'Eroare',
-                    titleText: err,
-                    showConfirmButton: false,
-                    timer: 5000,
-                    toast: true
-                });
-            });
-        });
 
         $(document).on('click', '#update', function(event) {
             event.preventDefault();
@@ -183,12 +160,12 @@
             });
         });
 
-        $('#newCustomer').on('hidden.bs.modal', function () {
+        $('#newOrder').on('hidden.bs.modal', function () {
             $('#fibu').val('');
             $('#name').val('');
             $('#country_id').val('');
-            $('.modal-title').html('Creaza client nou');
-            $('#newCustomerForm').attr('action', '/customers/add');
+            $('.modal-title').html('Creaza comanda noua');
+            $('#newOrderForm').attr('action', '/orders/add');
             $("input[name='_method']").val('POST');
             $('#select2-country_id-container').html('');
             $('#select2-country_id-container').attr('title', '');

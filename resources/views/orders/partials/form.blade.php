@@ -1,6 +1,6 @@
 <!-- Modal -->
 <div class="modal fade" id="newOrder" tabindex="-1" role="dialog" aria-labelledby="newOrder" aria-hidden="true">
-    <div class="modal-dialog" role="document">
+    <div class="modal-dialog modal-lg" role="document">
         <div class="modal-content">
             <div class="modal-header">
                 <h5 class="modal-title">Creaza comanda noua</h5>
@@ -13,23 +13,62 @@
                     @method('POST')
                     @csrf
                     <input type="hidden" name="id" id="id">
-                    <div class="form-group">
-                        <label for="fibu">FIBU*</label>
-                        <input type="text"
-                               class="form-control" name="fibu" id="fibu" aria-describedby="fibu" placeholder="FIBU" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="name">Nume client*</label>
-                        <input type="text"
-                               class="form-control" name="name" id="name" aria-describedby="name" placeholder="Nume client" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="">Tara*</label>
-                        <select class="form-control" name="country_id" id="country_id" required>
-                           {{-- @foreach($countries as $country)
-                                <option value="{{ $country->id }}">{{ $country->name }}</option>
-                           @endforeach --}}
-                        </select>
+                    <div class="row">
+                        <div class="form-grou col-lg-6">
+                            <label for="customer_id">Client</label>
+                            <select class="form-control" name="customer_id" id="customer_id" required>
+                               @foreach($customers as $customer)
+                                    <option value="{{ $customer->id }}">{{ $customer->name }}</option>
+                               @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group col-lg-4">
+                            <label for="customer_order">Comanda client</label>
+                            <input type="text"
+                                class="form-control" name="customer_order" id="customer_order" placeholder="Comanda client">
+                        </div>
+                        <div class="form-group col-lg-2">
+                            <label for="auftrag">Auftrag</label>
+                            <input type="text"
+                                class="form-control" name="auftrag" id="auftrag" placeholder="Auftrag">
+                        </div>
+                        <div class="form-grou col-lg-3">
+                            <label for="country_id">Tara destinatie</label>
+                            <select class="form-control" name="country_id" id="country_id" required>
+                               @foreach($countries as $country)
+                                    <option value="{{ $country->id }}">{{ $country->name }}</option>
+                               @endforeach
+                            </select>
+                        </div>
+                        <div class="form-group col-lg-9">
+                            <label for="destination_id">Adresa livrare</label>
+                            <input type="text"
+                                class="form-control" name="destination_id" id="destination_id" placeholder="Adresa livrare">
+                        </div>
+                        <div class="form-group col-lg-3">
+                            <label for="customer_kw">Saptamana cf client</label>
+                            <input type="text"
+                                class="form-control" name="customer_kw" id="customer_kw" placeholder="Saptamana livrare ceruta de client">
+                        </div>
+                        <div class="form-group col-lg-3">
+                            <label for="production_kw">Saptamana productie</label>
+                            <input type="text"
+                                class="form-control" name="production_kw" id="production_kw" placeholder="Saptamana de productie">
+                        </div>
+                        <div class="form-group col-lg-3">
+                            <label for="delivery_kw">Saptamana livrare</label>
+                            <input type="text"
+                                class="form-control" name="delivery_kw" id="delivery_kw" placeholder="Saptamana de livrare">
+                        </div>
+                        <div class="form-group col-lg-3">
+                            <label for="eta">ETA</label>
+                            <input type="text"
+                                class="form-control" name="eta" id="eta" placeholder="ETA">
+                        </div>
+                        <div class="form-group col-lg-12">
+                            <label for="observations">Observatii</label>
+                            <textarea class="form-control" name="observations" id="observations" rows="3" placeholder="Observatii"></textarea>
+                        </div>
                     </div>
                     <div id="submit" class="float-right"></div>
                     <button type="button" class="btn btn-secondary float-right" data-dismiss="modal">Inchide</button>

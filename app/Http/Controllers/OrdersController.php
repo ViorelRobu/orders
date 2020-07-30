@@ -16,7 +16,16 @@ use Yajra\DataTables\Facades\DataTables;
 class OrdersController extends Controller
 {
     protected $rules = [
-        // 'name' => 'required',
+        'customer_id' => 'required',
+        'customer_order' => 'sometimes',
+        'auftrag' => 'sometimes',
+        'destination_id' => 'required',
+        'customer_kw' => 'sometimes',
+        'production_kw' => 'required',
+        'delivery_kw' => 'required',
+        'eta' => 'required',
+        'month' => 'required',
+        'observations' => 'sometimes',
     ];
 
     /**
@@ -26,7 +35,13 @@ class OrdersController extends Controller
      */
     public function index()
     {
-        return view('orders.index');
+        $customers = Customer::all();
+        $countries = Country::all();
+
+        return view('orders.index', [
+            'customers' => $customers,
+            'countries' => $countries,
+        ]);
     }
 
     /**
@@ -43,11 +58,13 @@ class OrdersController extends Controller
             $customer = Customer::find($item->customer_id);
             $destination = Destination::find($item->destination_id);
             $country = Country::find($destination->country_id);
+            $item->month = (Carbon::parse($item->delivery_kw))->monthName;
             $item->customer = $customer->name;
             $item->destination = $destination->address . ', ' . $country->name;
             $item->kw_customer = 'KW ' . (Carbon::parse($item->customer_kw))->weekOfYear;
             $item->kw_production = 'KW ' . (Carbon::parse($item->production_kw))->weekOfYear;
             $item->kw_delivery = 'KW ' . (Carbon::parse($item->delivery_kw))->weekOfYear;
+            $item->eta = 'KW ' . (Carbon::parse($item->eta))->weekOfYear;
             $item->date_loading = (Carbon::parse($item->loading_date))->format('d.m.Y');
             $item->date_loading = (Carbon::parse($item->loading_date))->format('d.m.Y');
             $item->total = 50;
@@ -107,7 +124,7 @@ class OrdersController extends Controller
         if ($latest_number) {
             $lt_number = Carbon::parse($latest_number->created_at);
         } else {
-            return back()->with(['error' => 'Trebuie setat primul numar de comanda!']);
+            return back()->with(['errors' => 'Trebuie setat primul numar de comanda!']);
         }
 
         if ($validator->passes()) {
@@ -124,16 +141,44 @@ class OrdersController extends Controller
             $order->customer_kw = $validator->valid()['customer_kw'];
             $order->production_kw = $validator->valid()['production_kw'];
             $order->delivery_kw = $validator->valid()['delivery_kw'];
+            $order->eta = $validator->valid()['eta'];
             $order->month = $validator->valid()['month'];
-            $order->loading_date = $validator->valid()['loading_date'];
-            $order->priority = $validator->valid()['priority'];
             $order->observations = $validator->valid()['observations'];
             $order->save();
 
             return redirect('/orders/' . $order->id . '/show');
         }
 
-        return back()->with(['error' => $validator->errors()]);
+        return back()->with(['errors' => $validator->errors()]);
+    }
+
+    public function show(Order $order)
+    {
+        $customer = Customer::find($order->customer_id);
+        $destination = Destination::find($order->destination_id);
+        $country = Country::find($destination->country_id);
+
+        $customer_kw = (Carbon::parse($order->customer_kw))->weekOfYear;
+        $production_kw = (Carbon::parse($order->production_kw))->weekOfYear;
+        $delivery_kw = (Carbon::parse($order->delivery_kw))->weekOfYear;
+        if ($order->eta == null) {
+            $eta = 'nespecificat';
+        } else {
+            $eta = (Carbon::parse($order->eta))->weekOfYear;
+        }
+        $loading_date = (Carbon::parse($order->loading_date))->format('d.m.Y');
+
+        return view('orders.show', [
+            'order' => $order,
+            'customer' => $customer,
+            'destination' => $destination,
+            'country' => $country,
+            'customer_kw' => $customer_kw,
+            'production_kw' => $production_kw,
+            'delivery_kw' => $delivery_kw,
+            'loading_date' => $loading_date,
+            'eta' => $eta,
+        ]);
     }
 
     /**
@@ -156,6 +201,7 @@ class OrdersController extends Controller
             $order->customer_kw = $validator->valid()['customer_kw'];
             $order->production_kw = $validator->valid()['production_kw'];
             $order->delivery_kw = $validator->valid()['delivery_kw'];
+            $order->eta = $validator->valid()['eta'];
             $order->month = $validator->valid()['month'];
             $order->loading_date = $validator->valid()['loading_date'];
             $order->priority = $validator->valid()['priority'];

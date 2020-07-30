@@ -110,6 +110,7 @@ Route::middleware(['auth'])->group(function() {
         Route::post('/add', 'OrdersController@store');
         Route::prefix('/{order}/')->group(function() {
             Route::patch('/update', 'OrdersController@update');
+            Route::get('/show', 'OrdersController@show');
         });
     });
 
