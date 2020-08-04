@@ -54,10 +54,11 @@ class OrdersController extends Controller
         $orders = Order::all();
 
         $orders->map(function ($item, $index) {
+            Carbon::setLocale('ro');
             $customer = Customer::find($item->customer_id);
             $destination = Destination::find($item->destination_id);
             $country = Country::find($destination->country_id);
-            $item->month = (Carbon::parse($item->delivery_kw))->monthName;
+            $item->month = strtoupper((Carbon::parse($item->delivery_kw))->monthName);
             $item->customer = $customer->name;
             $item->destination = $destination->address . ', ' . $country->name;
             $item->kw_customer = 'KW ' . (Carbon::parse($item->customer_kw))->weekOfYear;
