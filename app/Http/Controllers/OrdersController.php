@@ -24,7 +24,6 @@ class OrdersController extends Controller
         'production_kw' => 'required',
         'delivery_kw' => 'required',
         'eta' => 'required',
-        'month' => 'required',
         'observations' => 'sometimes',
     ];
 
@@ -142,7 +141,6 @@ class OrdersController extends Controller
             $order->production_kw = $validator->valid()['production_kw'];
             $order->delivery_kw = $validator->valid()['delivery_kw'];
             $order->eta = $validator->valid()['eta'];
-            $order->month = $validator->valid()['month'];
             $order->observations = $validator->valid()['observations'];
             $order->save();
 
@@ -202,7 +200,6 @@ class OrdersController extends Controller
             $order->production_kw = $validator->valid()['production_kw'];
             $order->delivery_kw = $validator->valid()['delivery_kw'];
             $order->eta = $validator->valid()['eta'];
-            $order->month = $validator->valid()['month'];
             $order->loading_date = $validator->valid()['loading_date'];
             $order->priority = $validator->valid()['priority'];
             $order->observations = $validator->valid()['observations'];

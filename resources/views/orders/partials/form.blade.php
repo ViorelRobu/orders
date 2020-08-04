@@ -40,30 +40,36 @@
                                @endforeach
                             </select>
                         </div>
-                        <div class="form-group col-lg-9">
-                            <label for="destination_id">Adresa livrare</label>
-                            <input type="text"
-                                class="form-control" name="destination_id" id="destination_id" placeholder="Adresa livrare">
+                        <input type="hidden" id="destination_id" name="destination_id">
+                        <div class="form-group col-lg-9 ui-widget">
+                            <label for="address">Adresa livrare</label>
+                                <input type="text"
+                                    class="form-control" name="address" id="address" placeholder="Adresa livrare" data-toggle="dropdown" autocomplete="off">
+                                <div class="dropdown-menu" id="autocomplete">
+                                    {{-- <a class="dropdown-item" onclick="console.log(this.innerHTML)" href="#">Action</a>
+                                    <a class="dropdown-item" onclick="console.log(this.innerHTML)" href="#">Another action</a>
+                                    <a class="dropdown-item" onclick="console.log(this.innerHTML)" href="#">Something else here</a> --}}
+                                </div>
                         </div>
                         <div class="form-group col-lg-3">
                             <label for="customer_kw">Saptamana cf client</label>
                             <input type="text"
-                                class="form-control" name="customer_kw" id="customer_kw" placeholder="Saptamana livrare ceruta de client">
+                                class="form-control" name="customer_kw" id="customer_kw" placeholder="Saptamana livrare ceruta de client" autocomplete="off">
                         </div>
                         <div class="form-group col-lg-3">
                             <label for="production_kw">Saptamana productie</label>
                             <input type="text"
-                                class="form-control" name="production_kw" id="production_kw" placeholder="Saptamana de productie">
+                                class="form-control" name="production_kw" id="production_kw" placeholder="Saptamana de productie" autocomplete="off">
                         </div>
                         <div class="form-group col-lg-3">
                             <label for="delivery_kw">Saptamana livrare</label>
                             <input type="text"
-                                class="form-control" name="delivery_kw" id="delivery_kw" placeholder="Saptamana de livrare">
+                                class="form-control" name="delivery_kw" id="delivery_kw" placeholder="Saptamana de livrare" autocomplete="off">
                         </div>
                         <div class="form-group col-lg-3">
                             <label for="eta">ETA</label>
                             <input type="text"
-                                class="form-control" name="eta" id="eta" placeholder="ETA">
+                                class="form-control" name="eta" id="eta" placeholder="ETA" autocomplete="off">
                         </div>
                         <div class="form-group col-lg-12">
                             <label for="observations">Observatii</label>

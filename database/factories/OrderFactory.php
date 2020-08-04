@@ -15,8 +15,8 @@ $factory->define(Order::class, function (Faker $faker) {
         'customer_kw' => $faker->date(),
         'production_kw' => $faker->date(),
         'delivery_kw' => $faker->date(),
-        'month' => $faker->biasedNumberBetween(1, 12, 'sqrt'),
         'loading_date' => $faker->date(),
+        'eta' => $faker->date(),
         'priority' => $faker->biasedNumberBetween(1, 10, 'sqrt'),
         'observations' => $faker->paragraph(),
     ];

@@ -62,30 +62,104 @@
 
 @section('js')
     <script>
+    // save and update buttons markup
     const save = '<input id="save" type="submit" class="btn btn-primary float-right" value="Adauga">';
     const update = '<button type="submit" id="update" class="btn btn-primary">Modifica</button>';
 
-    const fetch = id => {
+    // confirm existing destination or add a new one for the current customer
+    $('#address').blur(function() {
+        let customer_id = $('#customer_id').val();
+        let address = $('#address').val();
+        let country_id = $('#country_id').val();
         $.ajax({
-            url: '/customers/fetch',
+            url: `/customers/${customer_id}/destinations/find`,
             dataType: 'json',
-            data: {id: id},
-            type: 'GET',
-            success: function(response){
-                $('#fibu').val(response.data.fibu);
-                $('#name').val(response.data.name);
-                $('.modal-title').html('Editeaza');
-                $('#newCustomerForm').attr('action', '/customers/' + id + '/update');
-                $("input[name='_method']").val('PATCH');
-                $('#country_id').val(response.data.country_id);
-                $('#select2-country_id-container').html(response.data.country);
-                $('#select2-country_id-container').attr('title', response.data.country);
-                $('#id').val(id);
-                $('#save').remove();
-                $('#submit').append(update);
+            data: {
+                '_token': '{{ csrf_token() }}',
+                customer_id, address, country_id
+            },
+            type: 'POST',
+            success: function(response) {
+                $('#destination_id').val(response.data);
             }
         });
+    });
+
+    const select = (value) => {
+        $('#address').val(value);
+        document.getElementById('address').focus();
     }
+
+    // return all destinations for the selected customer and country
+    $('#address').focus(function() {
+        let customer_id = $('#customer_id').val();
+        let country_id = $('#country_id').val();
+        $.ajax({
+            url: `/customers/${customer_id}/destinations/search`,
+            dataType: 'json',
+            data: {
+                '_token': '{{ csrf_token() }}',
+                customer_id, country_id
+            },
+            type: 'POST',
+            success: function(response) {
+                $('#autocomplete').html('');
+                console.log(response.data);
+                response.data.forEach(element => {
+                    let string = `<a class="dropdown-item" onclick="select(this.innerHTML)" href="#">${element}</a>`
+                    $('#autocomplete').append(string);
+                });
+
+            }
+        });
+    });
+
+    // Datepickers
+    $('#customer_kw').datepicker({
+        showWeek: true,
+        firstDay: 1,
+        dateFormat: 'dd.mm.yy'
+    });
+
+    $('#production_kw').datepicker({
+        showWeek: true,
+        firstDay: 1,
+        dateFormat: 'dd.mm.yy'
+    });
+
+    $('#delivery_kw').datepicker({
+        showWeek: true,
+        firstDay: 1,
+        dateFormat: 'dd.mm.yy'
+    });
+
+    $('#eta').datepicker({
+        showWeek: true,
+        firstDay: 1,
+        dateFormat: 'dd.mm.yy'
+    });
+
+    // const fetch = id => {
+    //     $.ajax({
+    //         url: '/customers/fetch',
+    //         dataType: 'json',
+    //         data: {id: id},
+    //         type: 'GET',
+    //         success: function(response){
+    //             $('#fibu').val(response.data.fibu);
+    //             $('#name').val(response.data.name);
+    //             $('.modal-title').html('Editeaza');
+    //             $('#newCustomerForm').attr('action', '/customers/' + id + '/update');
+    //             $("input[name='_method']").val('PATCH');
+    //             $('#country_id').val(response.data.country_id);
+    //             $('#select2-country_id-container').html(response.data.country);
+    //             $('#select2-country_id-container').attr('title', response.data.country);
+    //             $('#id').val(id);
+    //             $('#save').remove();
+    //             $('#submit').append(update);
+    //         }
+    //     });
+    // }
 
     $(document).ready(function() {
         $('#addNew').click(function() {
@@ -122,53 +196,60 @@
         });
 
 
-        $(document).on('click', '#update', function(event) {
-            event.preventDefault();
-            let fibu = $('#fibu').val();
-            let name = $('#name').val();
-            let country_id = $('#country_id').val();
-            let id = $('#id').val();
-            let uri = '/customers/' + id + '/update';
-            axios.post(uri, {
-                fibu: fibu,
-                name: name,
-                country_id: country_id,
-                _method: 'patch'
-            }).then(function(response) {
-                $('#newCustomer').modal('hide');
-                Swal.fire({
-                    position: 'top-end',
-                    type: response.data.type,
-                    title: 'Succes',
-                    title: response.data.message,
-                    showConfirmButton: false,
-                    timer: 5000,
-                    toast: true
-                });
-                table.draw()
-            }).catch(function(err) {
-                console.log(err);
-                Swal.fire({
-                    position: 'top-end',
-                    type: 'error',
-                    title: 'Eroare',
-                    titleText: err,
-                    showConfirmButton: false,
-                    timer: 5000,
-                    toast: true
-                });
-            });
-        });
+        // $(document).on('click', '#update', function(event) {
+        //     event.preventDefault();
+        //     let fibu = $('#fibu').val();
+        //     let name = $('#name').val();
+        //     let country_id = $('#country_id').val();
+        //     let id = $('#id').val();
+        //     let uri = '/customers/' + id + '/update';
+        //     axios.post(uri, {
+        //         fibu: fibu,
+        //         name: name,
+        //         country_id: country_id,
+        //         _method: 'patch'
+        //     }).then(function(response) {
+        //         $('#newCustomer').modal('hide');
+        //         Swal.fire({
+        //             position: 'top-end',
+        //             type: response.data.type,
+        //             title: 'Succes',
+        //             title: response.data.message,
+        //             showConfirmButton: false,
+        //             timer: 5000,
+        //             toast: true
+        //         });
+        //         table.draw()
+        //     }).catch(function(err) {
+        //         console.log(err);
+        //         Swal.fire({
+        //             position: 'top-end',
+        //             type: 'error',
+        //             title: 'Eroare',
+        //             titleText: err,
+        //             showConfirmButton: false,
+        //             timer: 5000,
+        //             toast: true
+        //         });
+        //     });
+        // });
 
         $('#newOrder').on('hidden.bs.modal', function () {
-            $('#fibu').val('');
-            $('#name').val('');
+            $('#customer_id').val('');
+            $('#auftrag').val('');
             $('#country_id').val('');
+            $('#destination_id').val('');
+            $('#address').val('');
+            $('#customer_kw').val('');
+            $('#production_kw').val('');
+            $('#delivery_kw').val('');
+            $('#eta').val('');
+            $('#observations').val('');
             $('.modal-title').html('Creaza comanda noua');
             $('#newOrderForm').attr('action', '/orders/add');
             $("input[name='_method']").val('POST');
-            $('#select2-country_id-container').html('');
-            $('#select2-country_id-container').attr('title', '');
+            // $('#select2-country_id-container').html('');
+            // $('#select2-country_id-container').attr('title', '');
             $('#update').remove();
             $('#save').remove();
         });

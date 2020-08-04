@@ -69,4 +69,24 @@ class DestinationTest extends TestCase
 
         $this->assertDatabaseCount('destinations', 2);
     }
+
+    /**
+     * Users that are logged in can see different destinations
+     *
+     * @return void
+     */
+    public function testLoggedInUsersCanSearchThroughDestinations()
+    {
+        $user = factory(User::class)->create();
+        $country = factory(Country::class)->create();
+        $customer = factory(Customer::class)->create();
+        $destination = factory(Destination::class, 2)->create();
+        $response = $this->actingAs($user)->json('POST', '/customers/1/destinations/search', [
+            'customer_id'=> 1,
+            'country_id' => 1
+            ]);
+
+        $response->assertStatus(200)
+            ->assertJson(['result' => 'success']);
+    }
 }

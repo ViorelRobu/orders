@@ -41,6 +41,7 @@ Route::middleware(['auth'])->group(function() {
             Route::patch('/update', 'CustomersController@update');
             Route::get('/destinations', 'DestinationController@fetch')->name('destination.fetch');
             Route::post('/destinations/find', 'DestinationController@findOrNew')->name('destination.findOrNew');
+            Route::post('/destinations/search', 'DestinationController@search');
         });
     });
 

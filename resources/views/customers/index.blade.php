@@ -189,6 +189,10 @@
             $('#update').remove();
             $('#save').remove();
         });
+
+        $('#allDestinations').on('hidden.bs.modal', function () {
+            $('#destinations').html('');
+        });
     });
     </script>
 @stop

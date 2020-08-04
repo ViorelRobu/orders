@@ -7,7 +7,7 @@ use Faker\Generator as Faker;
 
 $factory->define(Refinement::class, function (Faker $faker) {
     return [
-        'name' => $faker->word,
+        'name' => $faker->unique()->word,
         'description' => $faker->sentence(6)
     ];
 });

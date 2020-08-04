@@ -38,6 +38,7 @@
 
     {{-- Custom Stylesheets (post AdminLTE) --}}
     @yield('adminlte_css')
+    <link rel="stylesheet" href="{{ asset('vendor/jquery_ui/jquery-ui.css') }}">
 
     {{-- Favicon --}}
     @if(config('adminlte.use_ico_only'))
@@ -74,6 +75,7 @@
         <script src="{{ asset('vendor/jquery/jquery.min.js') }}"></script>
         <script src="{{ asset('vendor/bootstrap/js/bootstrap.bundle.min.js') }}"></script>
         <script src="{{ asset('vendor/overlayScrollbars/js/jquery.overlayScrollbars.min.js') }}"></script>
+        <script src="{{ asset('vendor/jquery_ui/jquery-ui.js') }}"></script>
         <script src="{{ mix(config('adminlte.laravel_mix_js_path', 'js/app.js')) }}"></script>
 
         {{-- Configured Scripts --}}

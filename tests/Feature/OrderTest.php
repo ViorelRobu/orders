@@ -70,7 +70,7 @@ class OrderTest extends TestCase
             'customer_kw' => '2020-07-29',
             'production_kw' => '2020-07-23',
             'delivery_kw' => '2020-08-03',
-            'month' => 7,
+            'eta' => '2020-08-03',
             'observations' => 'Aceasta este o observatie',
         ]);
 
@@ -85,7 +85,7 @@ class OrderTest extends TestCase
             'customer_kw' => '2020-07-29',
             'production_kw' => '2020-07-23',
             'delivery_kw' => '2020-08-03',
-            'month' => 7,
+            'eta' => '2020-08-03',
             'observations' => 'Aceasta este o observatie',
         ]);
     }
@@ -112,8 +112,8 @@ class OrderTest extends TestCase
             'customer_kw' => '2020-07-29',
             'production_kw' => '2020-07-23',
             'delivery_kw' => '2020-08-03',
-            'month' => 7,
             'loading_date' => '2020-08-06',
+            'eta' => '2020-08-06',
             'priority' => 1,
             'observations' => 'Aceasta este o observatie',
         ]);
@@ -130,8 +130,8 @@ class OrderTest extends TestCase
             'customer_kw' => '2020-07-29',
             'production_kw' => '2020-07-23',
             'delivery_kw' => '2020-08-03',
-            'month' => 7,
             'loading_date' => '2020-08-06',
+            'eta' => '2020-08-06',
             'priority' => 1,
             'observations' => 'Aceasta este o observatie',
         ]);
@@ -145,8 +145,8 @@ class OrderTest extends TestCase
             'customer_kw' => $order->customer_kw,
             'production_kw' => $order->production_kw,
             'delivery_kw' => $order->delivery_kw,
-            'month' => $order->month,
             'loading_date' => $order->loading_date,
+            'eta' => $order->eta,
             'priority' => $order->priority,
             'observations' => $order->observations,
         ]);

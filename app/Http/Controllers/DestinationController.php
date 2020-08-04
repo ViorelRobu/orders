@@ -51,4 +51,21 @@ class DestinationController extends Controller
             'data' => $destination->id
         ], 201);
     }
+
+    /**
+     * Search throught the list of destinations for the customer
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function search(Request $request)
+    {
+        $destinations = Destination::where('customer_id', $request->customer_id)->where('country_id', $request->country_id)->pluck('address');
+
+        return response()->json([
+            'result' => 'success',
+            'count' => $destinations->count(),
+            'data' => $destinations
+        ]);
+    }
 }
