@@ -265,7 +265,7 @@
                     });
                 },
                 success: function(response) {
-                    $('#newCustomer').modal('hide');
+                    $('#newOrder').modal('hide');
                     Swal.fire({
                         position: 'top-end',
                         type: response.type,

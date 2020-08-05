@@ -139,4 +139,73 @@ class OrderTest extends TestCase
         ]);
 
     }
+
+    /**
+     * Logged in user can update the priority
+     *
+     * @return void
+     */
+    public function testLoggedInUsersCanUpdatePriority()
+    {
+        $user = factory(User::class)->create();
+        $country = factory(Country::class, 4)->create();
+        $customer = factory(Customer::class, 4)->create();
+        $destination = factory(Destination::class, 4)->create();
+        $order = factory(Order::class)->create();
+
+        $response = $this->actingAs($user)->json('PATCH', '/orders/1/update/priority', [
+            'priority' => 'abc',
+        ]);
+
+        $response->assertStatus(200)
+            ->assertJson(['status' => 'success']);
+
+        $this->assertDatabaseHas('orders', [
+            'priority' => 'abc',
+        ]);
+
+        $this->assertDatabaseMissing('orders', [
+            'priority' => $order->priority,
+        ]);
+
+    }
+
+    /**
+     * Logged in user can update the details
+     *
+     * @return void
+     */
+    public function testLoggedInUsersCanUpdateDetails()
+    {
+        $user = factory(User::class)->create();
+        $country = factory(Country::class, 4)->create();
+        $customer = factory(Customer::class, 4)->create();
+        $destination = factory(Destination::class, 4)->create();
+        $order = factory(Order::class)->create();
+
+        $response = $this->actingAs($user)->json('PATCH', '/orders/1/update/details', [
+            'customer_id' => 4,
+            'customer_order' => 'testing',
+            'auftrag' => '204-test',
+            'destination_id' => 4,
+        ]);
+
+        $response->assertStatus(200)
+            ->assertJson(['status' => 'success']);
+
+        $this->assertDatabaseHas('orders', [
+            'customer_id' => 4,
+            'customer_order' => 'testing',
+            'auftrag' => '204-test',
+            'destination_id' => 4,
+        ]);
+
+        $this->assertDatabaseMissing('orders', [
+            'customer_id' => $order->customer_id,
+            'customer_order' => $order->customer_order,
+            'auftrag' => $order->auftrag,
+            'destination_id' => $order->destination_id
+        ]);
+
+    }
 }

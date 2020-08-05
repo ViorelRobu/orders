@@ -111,6 +111,8 @@ Route::middleware(['auth'])->group(function() {
         Route::post('/add', 'OrdersController@store');
         Route::prefix('/{order}/')->group(function() {
             Route::patch('/update', 'OrdersController@update');
+            Route::patch('/update/priority', 'OrdersController@setPriority');
+            Route::patch('/update/details', 'OrdersController@setDetails');
             Route::get('/show', 'OrdersController@show');
         });
     });

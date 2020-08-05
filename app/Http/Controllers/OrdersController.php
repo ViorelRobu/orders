@@ -11,6 +11,7 @@ use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
+use Laravel\Ui\Presets\React;
 use Yajra\DataTables\Facades\DataTables;
 
 class OrdersController extends Controller
@@ -104,8 +105,50 @@ class OrdersController extends Controller
         $order->customer = $customer->name;
         $order->address = $destination->address;
         $order->country = $country->name;
+        $order->country_id = $country->id;
 
         return (new JsonResponse(['message' => 'success', 'message_type' => 'success', 'data' => $order]));
+    }
+
+    /**
+     * Update the priority of the order
+     *
+     * @param Order $order
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function setPriority(Order $order, Request $request)
+    {
+        $order->priority = $request->priority;
+        $order->save();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Prioritatea a fost setata cu success!',
+            'value' => $request->priority
+        ]);
+    }
+
+    /**
+     * Update the main order details
+     *
+     * @param Order $order
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function setDetails(Order $order, Request $request)
+    {
+        $order->customer_id = $request->customer_id;
+        $order->customer_order = $request->customer_order;
+        $order->auftrag = $request->auftrag;
+        $order->destination_id = $request->destination_id;
+        $order->save();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Detaliile comenzii au fost actualizate cu success!',
+            'value' => $request->all()
+        ]);
     }
 
     /**
@@ -170,6 +213,8 @@ class OrdersController extends Controller
             $eta = (Carbon::parse($order->eta))->weekOfYear;
         }
         $loading_date = (Carbon::parse($order->loading_date))->format('d.m.Y');
+        $customers = Customer::all();
+        $countries = Country::all();
 
         return view('orders.show', [
             'order' => $order,
@@ -181,6 +226,8 @@ class OrdersController extends Controller
             'delivery_kw' => $delivery_kw,
             'loading_date' => $loading_date,
             'eta' => $eta,
+            'customers' => $customers,
+            'countries' => $countries,
         ]);
     }
 
@@ -209,7 +256,8 @@ class OrdersController extends Controller
             return response()->json([
                 'updated' => true,
                 'message' => 'Intrare editata in baza de date!',
-                'type' => 'success'
+                'type' => 'success',
+                'data' => $request->all()
             ]);
         }
 

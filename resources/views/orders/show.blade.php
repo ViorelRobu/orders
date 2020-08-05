@@ -35,30 +35,70 @@
                     </div>
                 </div>
                 <div class="col-lg-1">
-                    <i id="edit_details_1" class="fas fa-edit float-right"></i>
+                    <i id="edit_details" class="fas fa-edit float-right"></i>
                 </div>
             </div>
         </div>
         <div class="card-body">
             <div class="row">
-                <div class="col-lg-1">
-                    <p><strong>Client</strong></p>
-                    <p><strong>Comanda client</strong></p>
-                    <p><strong>Auftrag</strong></p>
-                    <p><strong>Adresa de livrare</strong></p>
-                    <p><strong>Tara de livrare</strong></p>
+                <div class="col-lg-2">
+                    <div class="form-group"><strong>Client</strong></div>
+                    <div class="form-group"><strong>Comanda client</strong></div>
+                    <div class="form-group"><strong>Auftrag</strong></div>
+                    <div class="form-group"><strong>Tara de livrare</strong></div>
+                    <div class="form-group"><strong>Adresa de livrare</strong></div>
                 </div>
                 <div class="col-lg-3" id="order_text">
-                    <p>{{ $customer->name }}</p>
-                    <p>{{ $order->customer_order }}</p>
-                    <p>{{ $order->auftrag }}</p>
-                    <p>{{ $destination->address}}</p>
-                    <p>{{ $country->name }}</p>
+                    <div>
+                        <div id="customer" class="form-group">
+                            {{ $customer->name }}
+                        </div>
+                        <select class="form-control" name="customer_id" id="customer_id" style="display: none">
+                            @foreach ($customers as $customer)
+                                <option value="{{ $customer->id }}">{{ $customer->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <div id="customer_order_text" class="form-group">
+                            {{ $order->customer_order }}
+                        </div>
+                        <input type="text"
+                            class="form-control" name="customer_order" id="customer_order" placeholder="Comanda clientului" style="display: none">
+                    </div>
+                    <div>
+                        <div id="auftrag_text" class="form-group">
+                            {{ $order->auftrag }}
+                        </div>
+                        <input type="text"
+                            class="form-control" name="auftrag" id="auftrag" placeholder="Auftrag" style="display: none">
+                    </div>
+                    <div>
+                        <div id="country_text" class="form-group">
+                            {{ $country->name }}
+                        </div>
+                        <select class="form-control" name="country_id" id="country_id" style="display: none">
+                            @foreach ($countries as $country)
+                                <option value="{{ $country->id }}">{{ $country->name }}</option>
+                            @endforeach
+                        </select>
+                    </div>
+                    <div>
+                        <div id="address_text" class="form-group">
+                            {{ $destination->address}}
+                        </div>
+                        <input type="hidden" name="destination_id" id="destination_id">
+                        <input type="text"
+                            class="form-control" name="address" id="address" placeholder="Adresa de livrare" style="display: none" data-toggle="dropdown" autocomplete="off">
+                        <div class="dropdown-menu" id="autocomplete">
+                            <a class="dropdown-item" href="#">Se incarca...</a>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <button class="btn btn-primary float-right form-control" id="save_details" style="display: none">Salveaza</button>
+                    </div>
                 </div>
-                <div style="display: none" class="col-lg-5" id="order_data">
-                    {{-- TODO: input pentru editare --}}
-                </div>
-                <div class="col-lg-8">
+                <div class="col-lg-7">
                     <strong>Observatii</strong>
                     <p>
                         {{ $order->observations }}
@@ -144,7 +184,13 @@
 
 @section('js')
     <script>
+        const select = (value) => {
+            $('#address').val(value);
+            document.getElementById('address').focus();
+        }
+
         $(document).ready(function() {
+
             // allow editing of priority
             $('#priority').dblclick(function() {
                 $('#priority_value').show();
@@ -155,10 +201,159 @@
                 if(e.keyCode == 13) {
                     $('#priority_value').hide();
                     $('#priority_text').show();
-                }
+                    $.ajax({
+                        url: '/orders/{{ $order->id }}/update/priority',
+                        method: 'PATCH',
+                        dataType: 'json',
+                        data: {
+                            '_token': '{{ csrf_token() }}',
+                            priority: $('#priority_value').val()
+                        },
+                        error: function(err) {
+                            console.log(err);
+                            Swal.fire({
+                                position: 'top-end',
+                                type: 'error',
+                                title: 'Eroare',
+                                titleText: err.responseJSON.message,
+                                showConfirmButton: false,
+                                timer: 5000,
+                                toast: true
+                            });
+                        },
+                        success: function(response) {
+                            Swal.fire({
+                                position: 'top-end',
+                                type: response.status,
+                                title: 'Succes',
+                                title: response.message,
+                                showConfirmButton: false,
+                                timer: 5000,
+                                toast: true
+                            });
+                            $('#priority_text').html(response.value)
+                        }
+                    });
+                };
             });
 
-            //
+            // allow editing of the main details
+            $('#edit_details').click(function() {
+                $('#customer').hide();
+                $('#customer_id').show();
+                $('#customer_id').val('{{ $order->customer_id }}');
+                $('#customer_order_text').hide();
+                $('#customer_order').show();
+                $('#customer_order').val('{{ $order->customer_order }}');
+                $('#auftrag_text').hide();
+                $('#auftrag').show();
+                $('#auftrag').val('{{ $order->auftrag }}');
+                $('#country_text').hide();
+                $('#country_id').show();
+                $('#country_id').val('{{ $destination->country_id }}');
+                $('#address_text').hide();
+                $('#address').show();
+                $('#address').val('{{ $destination->address }}');
+                $('#save_details').show();
+            })
+
+            // confirm existing destination or add a new one for the current customer
+            $('#address').blur(function() {
+                let customer_id = $('#customer_id').val();
+                let address = $('#address').val();
+                let country_id = $('#country_id').val();
+                $.ajax({
+                    url: `/customers/${customer_id}/destinations/find`,
+                    dataType: 'json',
+                    data: {
+                        '_token': '{{ csrf_token() }}',
+                        customer_id, address, country_id
+                    },
+                    type: 'POST',
+                    success: function(response) {
+                        $('#destination_id').val(response.data);
+                    }
+                });
+            });
+
+            // return all destinations for the selected customer and country
+            $('#address').focus(function() {
+                let customer_id = $('#customer_id').val();
+                let country_id = $('#country_id').val();
+                $.ajax({
+                    url: `/customers/${customer_id}/destinations/search`,
+                    dataType: 'json',
+                    data: {
+                        '_token': '{{ csrf_token() }}',
+                        customer_id, country_id
+                    },
+                    type: 'POST',
+                    success: function(response) {
+                        $('#autocomplete').html('');
+                        if (response.count > 0) {
+                            response.data.forEach(element => {
+                                let string = `<a class="dropdown-item" onclick="select(this.innerHTML)" href="#">${element}</a>`
+                                $('#autocomplete').append(string);
+                            });
+                        } else {
+                                let string = `<a class="dropdown-item" href="#">Nu exista nici o adresa pentru clientul si tara selectata!</a>`
+                                $('#autocomplete').append(string);
+                        }
+
+                    }
+                });
+            });
+
+            // save the main details
+            $('#save_details').click(function() {
+                $.ajax({
+                    url: '/orders/{{ $order->id }}/update/details',
+                    method: 'PATCH',
+                    dataType: 'json',
+                    data: {
+                        '_token': '{{ csrf_token() }}',
+                        customer_id: $('#customer_id').val(),
+                        customer_order: $('#customer_order').val(),
+                        auftrag: $('#auftrag').val(),
+                        destination_id: $('#destination_id').val(),
+                    },
+                    error: function(err) {
+                        console.log(err);
+                        Swal.fire({
+                            position: 'top-end',
+                            type: 'error',
+                            title: 'Eroare',
+                            titleText: err.responseJSON.message,
+                            showConfirmButton: false,
+                            timer: 5000,
+                            toast: true
+                        });
+                    },
+                    success: function(response) {
+                        Swal.fire({
+                            position: 'top-end',
+                            type: response.status,
+                            title: 'Succes',
+                            title: response.message,
+                            showConfirmButton: false,
+                            timer: 5000,
+                            toast: true
+                        });
+                        $('#customer').show();
+                        $('#customer').html(response.value.customer_id);
+                        $('#customer_id').hide();
+                        $('#customer_order_text').show();
+                        $('#customer_order').hide();
+                        $('#auftrag_text').show();
+                        $('#auftrag').hide();
+                        $('#country_text').show();
+                        $('#country_id').hide();
+                        $('#address_text').show();
+                        $('#address').hide();
+                    }
+                });
+            });
+
         });
     </script>
 @stop
