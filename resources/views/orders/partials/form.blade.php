@@ -46,9 +46,7 @@
                                 <input type="text"
                                     class="form-control" name="address" id="address" placeholder="Adresa livrare" data-toggle="dropdown" autocomplete="off">
                                 <div class="dropdown-menu" id="autocomplete">
-                                    {{-- <a class="dropdown-item" onclick="console.log(this.innerHTML)" href="#">Action</a>
-                                    <a class="dropdown-item" onclick="console.log(this.innerHTML)" href="#">Another action</a>
-                                    <a class="dropdown-item" onclick="console.log(this.innerHTML)" href="#">Something else here</a> --}}
+                                    <a class="dropdown-item" href="#">Se incarca...</a>
                                 </div>
                         </div>
                         <div class="form-group col-lg-3">
@@ -71,17 +69,10 @@
                             <input type="text"
                                 class="form-control" name="eta" id="eta" placeholder="ETA" autocomplete="off">
                         </div>
-                        <div class="form-group col-lg-12">
-                            <label for="observations">Observatii</label>
-                            <textarea class="form-control" name="observations" id="observations" rows="3" placeholder="Observatii"></textarea>
-                        </div>
                     </div>
                     <div id="submit" class="float-right"></div>
                     <button type="button" class="btn btn-secondary float-right" data-dismiss="modal">Inchide</button>
                 </form>
-            </div>
-            <div class="modal-footer">
-
             </div>
         </div>
     </div>

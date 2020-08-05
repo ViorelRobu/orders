@@ -71,7 +71,6 @@ class OrderTest extends TestCase
             'production_kw' => '2020-07-23',
             'delivery_kw' => '2020-08-03',
             'eta' => '2020-08-03',
-            'observations' => 'Aceasta este o observatie',
         ]);
 
         $response->assertRedirect('/orders/1/show');
@@ -86,7 +85,6 @@ class OrderTest extends TestCase
             'production_kw' => '2020-07-23',
             'delivery_kw' => '2020-08-03',
             'eta' => '2020-08-03',
-            'observations' => 'Aceasta este o observatie',
         ]);
     }
 
@@ -104,7 +102,6 @@ class OrderTest extends TestCase
         $order = factory(Order::class)->create();
 
         $response = $this->actingAs($user)->json('PATCH', '/orders/1/update', [
-            'order' => 2007001,
             'customer_id' => $customer[3]->id,
             'customer_order' => '01_hna/11',
             'auftrag' => '204-00123',
@@ -112,17 +109,13 @@ class OrderTest extends TestCase
             'customer_kw' => '2020-07-29',
             'production_kw' => '2020-07-23',
             'delivery_kw' => '2020-08-03',
-            'loading_date' => '2020-08-06',
             'eta' => '2020-08-06',
-            'priority' => 1,
-            'observations' => 'Aceasta este o observatie',
         ]);
 
         $response->assertStatus(200)
             ->assertJson(['updated' => true]);
 
         $this->assertDatabaseHas('orders', [
-            'order' => 2007001,
             'customer_id' => $customer[3]->id,
             'customer_order' => '01_hna/11',
             'auftrag' => '204-00123',
@@ -130,10 +123,7 @@ class OrderTest extends TestCase
             'customer_kw' => '2020-07-29',
             'production_kw' => '2020-07-23',
             'delivery_kw' => '2020-08-03',
-            'loading_date' => '2020-08-06',
             'eta' => '2020-08-06',
-            'priority' => 1,
-            'observations' => 'Aceasta este o observatie',
         ]);
 
         $this->assertDatabaseMissing('orders', [
@@ -145,10 +135,7 @@ class OrderTest extends TestCase
             'customer_kw' => $order->customer_kw,
             'production_kw' => $order->production_kw,
             'delivery_kw' => $order->delivery_kw,
-            'loading_date' => $order->loading_date,
             'eta' => $order->eta,
-            'priority' => $order->priority,
-            'observations' => $order->observations,
         ]);
 
     }

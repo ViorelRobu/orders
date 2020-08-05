@@ -104,11 +104,15 @@
             type: 'POST',
             success: function(response) {
                 $('#autocomplete').html('');
-                console.log(response.data);
-                response.data.forEach(element => {
-                    let string = `<a class="dropdown-item" onclick="select(this.innerHTML)" href="#">${element}</a>`
-                    $('#autocomplete').append(string);
-                });
+                if (response.count > 0) {
+                    response.data.forEach(element => {
+                        let string = `<a class="dropdown-item" onclick="select(this.innerHTML)" href="#">${element}</a>`
+                        $('#autocomplete').append(string);
+                    });
+                } else {
+                        let string = `<a class="dropdown-item" href="#">Nu exista nici o adresa pentru clientul si tara selectata!</a>`
+                        $('#autocomplete').append(string);
+                }
 
             }
         });
@@ -139,38 +143,63 @@
         dateFormat: 'dd.mm.yy'
     });
 
-    // const fetch = id => {
-    //     $.ajax({
-    //         url: '/customers/fetch',
-    //         dataType: 'json',
-    //         data: {id: id},
-    //         type: 'GET',
-    //         success: function(response){
-    //             $('#fibu').val(response.data.fibu);
-    //             $('#name').val(response.data.name);
-    //             $('.modal-title').html('Editeaza');
-    //             $('#newCustomerForm').attr('action', '/customers/' + id + '/update');
-    //             $("input[name='_method']").val('PATCH');
-    //             $('#country_id').val(response.data.country_id);
-    //             $('#select2-country_id-container').html(response.data.country);
-    //             $('#select2-country_id-container').attr('title', response.data.country);
-    //             $('#id').val(id);
-    //             $('#save').remove();
-    //             $('#submit').append(update);
-    //         }
-    //     });
-    // }
+    // fetch the data for a certain order and update the modal
+    const fetch = id => {
+        $.ajax({
+            url: '/orders/fetch',
+            dataType: 'json',
+            data: {id: id},
+            type: 'GET',
+            success: function(response){
+                $('.modal-title').html('Editeaza');
+                $('#newOrderForm').attr('action', '/orders/' + id + '/update');
+                $('#id').val(id);
+                $('#customer_id').val(response.data.customer_id);
+                $('#select2-customer_id-container').html(response.data.customer);
+                $('#select2-customer_id-container').attr('title', response.data.customer);
+                $('#customer_order').val(response.data.customer_order);
+                $('#auftrag').val(response.data.auftrag);
+                $('#country_id').val(response.data.country_id);
+                $('#select2-country_id-container').html(response.data.country);
+                $('#select2-country_id-container').attr('title', response.data.country);
+                $('#address').val(response.data.address);
+                $('#destination_id').val(response.data.destination_id);
+                $('#customer_kw').val(response.data.customer_kw);
+                $('#production_kw').val(response.data.production_kw);
+                $('#delivery_kw').val(response.data.delivery_kw);
+                $('#eta').val(response.data.eta);
+                $('#save').remove();
+                $('#submit').append(update);
+            }
+        });
+    }
 
     $(document).ready(function() {
+        // configure button for a add new event
         $('#addNew').click(function() {
             $('#update').remove();
             $('#submit').append(save);
         })
 
+        // add select 2 to all selects
         $('#country_id').select2({
             width: '100%'
         });
 
+        $('#customer_id').select2({
+            width: '100%'
+        });
+
+        // percentage color for order completion percentage
+        function getColor(value){
+            //value from 0 to 1
+            var hue=((value)*120).toString(10);
+
+            return ["hsl(",hue,",100%,50%)"].join("");
+        }
+
+
+        // orders datatable
         let table = $('#orders').DataTable({
             processing: true,
             serverSide: true,
@@ -190,52 +219,71 @@
                 {data: 'total', name: 'total'},
                 {data: 'produced', name: 'produced'},
                 {data: 'to_produce', name: 'to_produce'},
-                {data: 'percentage', name: 'percentage'},
+                {data: 'percentageDisplay', name: 'percentageDisplay'},
                 {data: 'actions', name: 'actions'},
-            ]
+            ],
+            rowCallback: function(row, data, index) {
+                $('td:eq(14)', row).css('color', getColor(data.percentage));
+            },
         });
 
 
-        // $(document).on('click', '#update', function(event) {
-        //     event.preventDefault();
-        //     let fibu = $('#fibu').val();
-        //     let name = $('#name').val();
-        //     let country_id = $('#country_id').val();
-        //     let id = $('#id').val();
-        //     let uri = '/customers/' + id + '/update';
-        //     axios.post(uri, {
-        //         fibu: fibu,
-        //         name: name,
-        //         country_id: country_id,
-        //         _method: 'patch'
-        //     }).then(function(response) {
-        //         $('#newCustomer').modal('hide');
-        //         Swal.fire({
-        //             position: 'top-end',
-        //             type: response.data.type,
-        //             title: 'Succes',
-        //             title: response.data.message,
-        //             showConfirmButton: false,
-        //             timer: 5000,
-        //             toast: true
-        //         });
-        //         table.draw()
-        //     }).catch(function(err) {
-        //         console.log(err);
-        //         Swal.fire({
-        //             position: 'top-end',
-        //             type: 'error',
-        //             title: 'Eroare',
-        //             titleText: err,
-        //             showConfirmButton: false,
-        //             timer: 5000,
-        //             toast: true
-        //         });
-        //     });
-        // });
+        $(document).on('click', '#update', function(event) {
+            event.preventDefault();
+            let id = $('#id').val();
+            let customer_id = $('#customer_id').val();
+            let customer_order = $('#customer_order').val();
+            let auftrag = $('#auftrag').val();
+            let destination_id = $('#destination_id').val();
+            let customer_kw = $('#customer_kw').val();
+            let production_kw = $('#production_kw').val();
+            let delivery_kw = $('#delivery_kw').val();
+            let eta = $('#eta').val();
+            let url = '/orders/' + id + '/update';
+            $.ajax({
+                url: url,
+                method: 'PATCH',
+                dataType: 'json',
+                data: {
+                '_token': '{{ csrf_token() }}',
+                customer_id, customer_order, auftrag, destination_id,
+                customer_kw: customer_kw.split('.').reverse().join('-'),
+                production_kw: production_kw.split('.').reverse().join('-'),
+                delivery_kw: delivery_kw.split('.').reverse().join('-'),
+                eta: eta.split('.').reverse().join('-'),
+                },
+                error: function(err) {
+                    console.log(err);
+                    Swal.fire({
+                        position: 'top-end',
+                        type: 'error',
+                        title: 'Eroare',
+                        titleText: err.responseJSON.message,
+                        showConfirmButton: false,
+                        timer: 5000,
+                        toast: true
+                    });
+                },
+                success: function(response) {
+                    $('#newCustomer').modal('hide');
+                    Swal.fire({
+                        position: 'top-end',
+                        type: response.type,
+                        title: 'Succes',
+                        title: response.message,
+                        showConfirmButton: false,
+                        timer: 5000,
+                        toast: true
+                    });
+                    table.draw()
+                }
+            });
+        });
 
+        // reset the modal on closing it
         $('#newOrder').on('hidden.bs.modal', function () {
             $('#customer_id').val('');
+            $('#customer_order').val('');
             $('#auftrag').val('');
             $('#country_id').val('');
             $('#destination_id').val('');
@@ -244,12 +292,15 @@
             $('#production_kw').val('');
             $('#delivery_kw').val('');
             $('#eta').val('');
-            $('#observations').val('');
             $('.modal-title').html('Creaza comanda noua');
             $('#newOrderForm').attr('action', '/orders/add');
             $("input[name='_method']").val('POST');
-            // $('#select2-country_id-container').html('');
-            // $('#select2-country_id-container').attr('title', '');
+            $("country_id").val('');
+            $('#select2-country_id-container').html('');
+            $('#select2-country_id-container').attr('title', '');
+            $("customer_id").val('');
+            $('#select2-customer_id-container').html('');
+            $('#select2-customer_id-container').attr('title', '');
             $('#update').remove();
             $('#save').remove();
         });

@@ -73,7 +73,8 @@ class OrdersController extends Controller
             $item->delivered = 50;
             $item->to_deliver = 0;
             $item->ready_to_deliver = 0;
-            $item->percentage = '100%';
+            $item->percentage = 0.954822;
+            $item->percentageDisplay = round(($item->percentage * 100),2) . '%';
 
         });
 
@@ -96,8 +97,12 @@ class OrdersController extends Controller
         $customer = Customer::find($order->customer_id);
         $destination = Destination::find($order->destination_id);
         $country = Country::find($destination->country_id);
+        $order->customer_kw = (Carbon::parse($order->customer_kw))->format('d.m.Y');
+        $order->production_kw = (Carbon::parse($order->production_kw))->format('d.m.Y');
+        $order->delivery_kw = (Carbon::parse($order->delivery_kw))->format('d.m.Y');
+        $order->eta = (Carbon::parse($order->eta))->format('d.m.Y');
         $order->customer = $customer->name;
-        $order->destination = $destination->address;
+        $order->address = $destination->address;
         $order->country = $country->name;
 
         return (new JsonResponse(['message' => 'success', 'message_type' => 'success', 'data' => $order]));
@@ -142,7 +147,6 @@ class OrdersController extends Controller
             $order->production_kw = $validator->valid()['production_kw'];
             $order->delivery_kw = $validator->valid()['delivery_kw'];
             $order->eta = $validator->valid()['eta'];
-            $order->observations = $validator->valid()['observations'];
             $order->save();
 
             return redirect('/orders/' . $order->id . '/show');
@@ -192,7 +196,6 @@ class OrdersController extends Controller
         $validator = Validator::make($request->all(), $this->rules);
 
         if ($validator->passes()) {
-            $order->order = $validator->valid()['order'];
             $order->customer_id = $validator->valid()['customer_id'];
             $order->customer_order = $validator->valid()['customer_order'];
             $order->auftrag = $validator->valid()['auftrag'];
@@ -201,14 +204,11 @@ class OrdersController extends Controller
             $order->production_kw = $validator->valid()['production_kw'];
             $order->delivery_kw = $validator->valid()['delivery_kw'];
             $order->eta = $validator->valid()['eta'];
-            $order->loading_date = $validator->valid()['loading_date'];
-            $order->priority = $validator->valid()['priority'];
-            $order->observations = $validator->valid()['observations'];
             $order->save();
 
             return response()->json([
                 'updated' => true,
-                'message' => 'Comanda adaugata in baza de date!',
+                'message' => 'Intrare editata in baza de date!',
                 'type' => 'success'
             ]);
         }
