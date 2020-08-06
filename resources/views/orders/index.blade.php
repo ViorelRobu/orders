@@ -33,7 +33,7 @@
                     <table id="orders" class="table table-bordered table-hover">
                         <thead>
                             <td>Cda</td>
-                            <td>Prioritate</td>
+                            <td><i class="fas fa-chevron-up"></i></td>
                             <td>Client</td>
                             <td>Cda client</td>
                             <td>Auftrag</td>

@@ -33,9 +33,12 @@
                             @endif
                         </h5>
                     </div>
+                    @if ($order->archived == 0)
+                        <i class="fas fa-truck-loading" style="margin-left:10px" data-toggle="modal" data-target="#loadingDate"></i>
+                    @endif
                 </div>
                 <div class="col-lg-1">
-                    <i id="edit_details" class="fas fa-edit float-right"></i>
+                    <i id="edit_details" class="fas fa-edit float-right" style="margin-left:10px"></i>
                 </div>
             </div>
         </div>
@@ -48,11 +51,12 @@
                     <div class="form-group"><strong>Tara de livrare</strong></div>
                     <div class="form-group"><strong>Adresa de livrare</strong></div>
                 </div>
-                <div class="col-lg-3" id="order_text">
+                <div class="col-lg-2" id="order_text">
                     <div>
                         <div id="customer" class="form-group">
                             {{ $customer->name }}
                         </div>
+                        <input type="hidden" name="customer__id" id="customer__id" value="{{ $order->customer_id }}">
                         <select class="form-control" name="customer_id" id="customer_id" style="display: none">
                             @foreach ($customers as $customer)
                                 <option value="{{ $customer->id }}">{{ $customer->name }}</option>
@@ -77,6 +81,7 @@
                         <div id="country_text" class="form-group">
                             {{ $country->name }}
                         </div>
+                        <input type="hidden" name="country__id" id="country__id" value="{{ $destination->country_id }}">
                         <select class="form-control" name="country_id" id="country_id" style="display: none">
                             @foreach ($countries as $country)
                                 <option value="{{ $country->id }}">{{ $country->name }}</option>
@@ -87,22 +92,31 @@
                         <div id="address_text" class="form-group">
                             {{ $destination->address}}
                         </div>
-                        <input type="hidden" name="destination_id" id="destination_id">
+                        <input type="hidden" name="destination_id" id="destination_id" value="{{ $order->destination_id }}">
                         <input type="text"
                             class="form-control" name="address" id="address" placeholder="Adresa de livrare" style="display: none" data-toggle="dropdown" autocomplete="off">
                         <div class="dropdown-menu" id="autocomplete">
                             <a class="dropdown-item" href="#">Se incarca...</a>
                         </div>
                     </div>
-                    <div class="form-group">
+                    <div class="input-group">
+                        <button class="btn btn-secondary float-right form-control" id="cancel_details" style="display: none">Anuleaza</button>
                         <button class="btn btn-primary float-right form-control" id="save_details" style="display: none">Salveaza</button>
                     </div>
                 </div>
-                <div class="col-lg-7">
-                    <strong>Observatii</strong>
-                    <p>
-                        {{ $order->observations }}
-                    </p>
+                <div class="col-lg-8">
+                    <div id="observations_title">
+                        <strong>Observatii</strong>
+                        <i id="edit_observations" class="fas fa-edit"></i>
+                    </div>
+                    <div id="observations_text">
+                        {!! $order->observations !!}
+                    </div>
+                    <textarea name="observations" id="observations" cols="20" rows="4" style="display: none"></textarea>
+                    <div class="input-group">
+                        <button class="btn btn-secondary float-right form-control" id="cancel_observations" style="display: none">Anuleaza</button>
+                        <button class="btn btn-primary float-right form-control" id="save_observations" style="display: none">Salveaza</button>
+                    </div>
                 </div>
             </div>
         </div>
@@ -176,6 +190,35 @@
             </div>
         </div>
     </div>
+
+    <!-- Modal -->
+    <div class="modal fade" id="loadingDate" tabindex="-1" role="dialog" aria-labelledby="loadingDate" aria-hidden="true">
+        <div class="modal-dialog" role="document">
+            <div class="modal-content modal-sm">
+                <div class="modal-header">
+                    <h5 class="modal-title">Data de incarcare</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                </div>
+                <div class="modal-body">
+                    <form action="/orders/{{ $order->id }}/ship" method="POST">
+                        <div class="form-group">
+                            @method('PATCH')
+                            @csrf
+                            <label for="">Data de incarcare</label>
+                            <input type="text"
+                                class="form-control" name="loading_date" id="loading_date" placeholder="Data incarcare" autocomplete="off">
+                            <div class="modal-footer">
+                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Anuleaza</button>
+                                <button type="submit" class="btn btn-primary" id="load_truck">Salveaza</button>
+                            </div>
+                        </div>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
 @stop
 
 @section('footer')
@@ -184,13 +227,25 @@
 
 @section('js')
     <script>
+        // initialize the TinyMCE editor
+        tinymce.init({
+            selector: '#observations'
+        });
+
+        // select function for address autocomplete
         const select = (value) => {
             $('#address').val(value);
             document.getElementById('address').focus();
         }
 
-        $(document).ready(function() {
+        // datepickers
+        $('#loading_date').datepicker({
+            showWeek: true,
+            firstDay: 1,
+            dateFormat: 'dd.mm.yy'
+        });
 
+        $(document).ready(function() {
             // allow editing of priority
             $('#priority').dblclick(function() {
                 $('#priority_value').show();
@@ -241,21 +296,94 @@
             $('#edit_details').click(function() {
                 $('#customer').hide();
                 $('#customer_id').show();
-                $('#customer_id').val('{{ $order->customer_id }}');
+                $('#customer_id').val($('#customer__id').val());
                 $('#customer_order_text').hide();
                 $('#customer_order').show();
-                $('#customer_order').val('{{ $order->customer_order }}');
+                $('#customer_order').val($('#customer_order_text').html().trim());
                 $('#auftrag_text').hide();
                 $('#auftrag').show();
-                $('#auftrag').val('{{ $order->auftrag }}');
+                $('#auftrag').val($('#auftrag_text').html().trim());
                 $('#country_text').hide();
                 $('#country_id').show();
-                $('#country_id').val('{{ $destination->country_id }}');
+                $('#country_id').val($('#country__id').val());
                 $('#address_text').hide();
                 $('#address').show();
-                $('#address').val('{{ $destination->address }}');
+                $('#address').val($('#address_text').html().trim());
                 $('#save_details').show();
+                $('#cancel_details').show();
+                $('#edit_details').hide();
             })
+
+            // cancel the editing of the main details
+            $('#cancel_details').click(function() {
+                $('#customer').show();
+                $('#customer_id').hide();
+                $('#customer_order_text').show();
+                $('#customer_order').hide();
+                $('#auftrag_text').show();
+                $('#auftrag').hide();
+                $('#country_text').show();
+                $('#country_id').hide();
+                $('#address_text').show();
+                $('#address').hide();
+                $('#save_details').hide();
+                $('#cancel_details').hide();
+                $('#edit_details').show();
+            })
+
+            // save the main details
+            $('#save_details').click(function() {
+                $.ajax({
+                    url: '/orders/{{ $order->id }}/update/details',
+                    method: 'PATCH',
+                    dataType: 'json',
+                    data: {
+                        '_token': '{{ csrf_token() }}',
+                        customer_id: $('#customer_id').val(),
+                        customer_order: $('#customer_order').val(),
+                        auftrag: $('#auftrag').val(),
+                        destination_id: $('#destination_id').val(),
+                    },
+                    error: function(err) {
+                        console.log(err);
+                        Swal.fire({
+                            position: 'top-end',
+                            type: 'error',
+                            title: 'Eroare',
+                            titleText: err.responseJSON.message,
+                            showConfirmButton: false,
+                            timer: 5000,
+                            toast: true
+                        });
+                    },
+                    success: function(response) {
+                        Swal.fire({
+                            position: 'top-end',
+                            type: response.status,
+                            title: 'Succes',
+                            title: response.message,
+                            showConfirmButton: false,
+                            timer: 5000,
+                            toast: true
+                        });
+                        $('#customer__id').val(response.order.customer_id);
+                        $('#customer').show().html(response.customer.name);
+                        $('#customer_id').hide();
+                        $('#customer_order_text').show().html(response.order.customer_order);
+                        $('#customer_order').hide();
+                        $('#auftrag_text').show().html(response.order.auftrag);
+                        $('#auftrag').hide();
+                        $('#country__id').val(response.country.id);
+                        $('#country_text').show().html(response.country.name);
+                        $('#country_id').hide();
+                        $('#destination_id').val(response.order.destination_id);
+                        $('#address_text').show().html(response.destination.address);
+                        $('#address').hide();
+                        $('#save_details').hide();
+                        $('#edit_details').show();
+                    }
+                });
+            });
 
             // confirm existing destination or add a new one for the current customer
             $('#address').blur(function() {
@@ -304,18 +432,34 @@
                 });
             });
 
+            // allow editing of the observations
+            $('#edit_observations').click(function() {
+                $('#observations').val($('#observations_text').html().trim());
+                tinymce.get('observations').show();
+                $('#save_observations').show();
+                $('#cancel_observations').show();
+                $('#observations_text').hide();
+                $('#edit_observations').hide();
+            });
+
+            // cancel editing of the observations
+            $('#cancel_observations').click(function() {
+                tinymce.get('observations').hide();
+                $('#save_observations').hide();
+                $('#cancel_observations').hide();
+                $('#observations_text').show();
+                $('#edit_observations').show();
+            });
+
             // save the main details
-            $('#save_details').click(function() {
+            $('#save_observations').click(function() {
                 $.ajax({
-                    url: '/orders/{{ $order->id }}/update/details',
+                    url: '/orders/{{ $order->id }}/update/observations',
                     method: 'PATCH',
                     dataType: 'json',
                     data: {
                         '_token': '{{ csrf_token() }}',
-                        customer_id: $('#customer_id').val(),
-                        customer_order: $('#customer_order').val(),
-                        auftrag: $('#auftrag').val(),
-                        destination_id: $('#destination_id').val(),
+                        observations: tinymce.activeEditor.getContent(),
                     },
                     error: function(err) {
                         console.log(err);
@@ -339,17 +483,13 @@
                             timer: 5000,
                             toast: true
                         });
-                        $('#customer').show();
-                        $('#customer').html(response.value.customer_id);
-                        $('#customer_id').hide();
-                        $('#customer_order_text').show();
-                        $('#customer_order').hide();
-                        $('#auftrag_text').show();
-                        $('#auftrag').hide();
-                        $('#country_text').show();
-                        $('#country_id').hide();
-                        $('#address_text').show();
-                        $('#address').hide();
+                        $('.tox-tinymce').hide();
+                        tinymce.get('observations').hide();
+                        $('#observations_text').html(response.order.observations);
+                        $('#save_observations').hide();
+                        $('#cancel_observations').hide();
+                        $('#observations_text').show();
+                        $('#edit_observations').show();
                     }
                 });
             });

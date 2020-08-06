@@ -144,11 +144,55 @@ class OrdersController extends Controller
         $order->destination_id = $request->destination_id;
         $order->save();
 
+        $customer = Customer::find($order->customer_id);
+        $destination = Destination::find($order->destination_id);
+        $country = Country::find($destination->country_id);
+
         return response()->json([
             'status' => 'success',
             'message' => 'Detaliile comenzii au fost actualizate cu success!',
-            'value' => $request->all()
+            'order' => $order,
+            'customer' => $customer,
+            'country' => $country,
+            'destination' => $destination
         ]);
+    }
+
+    /**
+     * Update the order observations
+     *
+     * @param Order $order
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function setObservations(Order $order, Request $request)
+    {
+        $order->observations = $request->observations;
+        $order->save();
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Observatiile au fost actualizate cu success!',
+            'order' => $order,
+        ]);
+    }
+
+    /**
+     * Set the loading date and archive the order
+     *
+     * @param Order $order
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function ship(Order $order, Request $request)
+    {
+        $order->loading_date = (Carbon::parse($request->loading_date))->toDateString();
+        $order->archived = 1;
+        $order->save();
+
+        $date = (Carbon::parse($request->loading_date))->format('d.m.y');
+
+        return back();
     }
 
     /**
@@ -186,10 +230,10 @@ class OrdersController extends Controller
             $order->customer_order = $validator->valid()['customer_order'];
             $order->auftrag = $validator->valid()['auftrag'];
             $order->destination_id = $validator->valid()['destination_id'];
-            $order->customer_kw = $validator->valid()['customer_kw'];
-            $order->production_kw = $validator->valid()['production_kw'];
-            $order->delivery_kw = $validator->valid()['delivery_kw'];
-            $order->eta = $validator->valid()['eta'];
+            $order->customer_kw = (Carbon::parse($validator->valid()['customer_kw']))->toDateString();
+            $order->production_kw = (Carbon::parse($validator->valid()['production_kw']))->toDateString();
+            $order->delivery_kw = (Carbon::parse($validator->valid()['delivery_kw']))->toDateString();
+            $order->eta = (Carbon::parse($validator->valid()['eta']))->toDateString();
             $order->save();
 
             return redirect('/orders/' . $order->id . '/show');

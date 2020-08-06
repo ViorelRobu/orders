@@ -18,5 +18,7 @@
         "sass": "^1.15.2",
         "sass-loader": "^8.0.0"
     },
-    "dependencies": {}
+    "dependencies": {
+        "tinymce": "^5.4.1"
+    }
 }

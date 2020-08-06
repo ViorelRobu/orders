@@ -113,6 +113,8 @@ Route::middleware(['auth'])->group(function() {
             Route::patch('/update', 'OrdersController@update');
             Route::patch('/update/priority', 'OrdersController@setPriority');
             Route::patch('/update/details', 'OrdersController@setDetails');
+            Route::patch('/update/observations', 'OrdersController@setObservations');
+            Route::patch('/ship', 'OrdersController@ship');
             Route::get('/show', 'OrdersController@show');
         });
     });
