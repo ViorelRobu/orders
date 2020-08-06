@@ -196,6 +196,33 @@ class OrdersController extends Controller
     }
 
     /**
+     * Update the planning dates
+     *
+     * @param Order $order
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function setDates(Order $order, Request $request)
+    {
+        $order->customer_kw = $request->customer_kw;
+        $order->production_kw = $request->production_kw;
+        $order->delivery_kw = $request->delivery_kw;
+        $order->eta = $request->eta;
+        $order->save();
+
+        $order->customer_kw_text = (Carbon::parse($order->customer_kw))->weekOfYear;
+        $order->production_kw_text = (Carbon::parse($order->production_kw))->weekOfYear;
+        $order->delivery_kw_text = (Carbon::parse($order->delivery_kw))->weekOfYear;
+        $order->eta_text = (Carbon::parse($order->eta))->weekOfYear;
+
+        return response()->json([
+            'status' => 'success',
+            'message' => 'Datele au fost modificate cu success!',
+            'order' => $order
+        ]);
+    }
+
+    /**
      * Persist the order in the database
      *
      * @param Order $order
@@ -244,9 +271,11 @@ class OrdersController extends Controller
 
     public function show(Order $order)
     {
+        Carbon::setLocale('ro');
         $customer = Customer::find($order->customer_id);
         $destination = Destination::find($order->destination_id);
         $country = Country::find($destination->country_id);
+        $order->month = strtoupper((Carbon::parse($order->delivery_kw))->monthName);
 
         $customer_kw = (Carbon::parse($order->customer_kw))->weekOfYear;
         $production_kw = (Carbon::parse($order->production_kw))->weekOfYear;

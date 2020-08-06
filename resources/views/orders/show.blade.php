@@ -2,17 +2,6 @@
 
 @section('title', 'Comanda ' . $order->order)
 
-@section('content_header')
-    <div class="row">
-        <div class="col-lg-6">
-
-        </div>
-        <div class="col-lg-6">
-            {{-- <a href="" class="btn btn-primary float-right" id="addNew" data-toggle="modal" data-target="#newOrder">Comanda noua</a> --}}
-        </div>
-    </div>
-@stop
-
 @section('content')
     <div class="card">
         <div class="card-header bg-dark">
@@ -38,7 +27,7 @@
                     @endif
                 </div>
                 <div class="col-lg-1">
-                    <i id="edit_details" class="fas fa-edit float-right" style="margin-left:10px"></i>
+                    <i id="edit_details" class="fas fa-edit float-right fa-2x" style="margin-left:10px"></i>
                 </div>
             </div>
         </div>
@@ -109,6 +98,7 @@
                         <strong>Observatii</strong>
                         <i id="edit_observations" class="fas fa-edit"></i>
                     </div>
+                    <hr>
                     <div id="observations_text">
                         {!! $order->observations !!}
                     </div>
@@ -133,7 +123,9 @@
                     </div>
                 </div>
                 <div class="col-lg-1">
-                    <i id="edit_details_2" class="fas fa-edit float-right"></i>
+                    <i id="save_dates" class="fas fa-save float-right fa-2x" style="margin-left: 10px; color: rgb(35, 231, 35); display: none"></i>
+                    <i id="cancel_dates" class="fas fa-window-close float-right fa-2x" style="margin-left: 10px; color: rgb(243, 14, 14); display: none"></i>
+                    <i id="edit_dates" class="fas fa-edit float-right fa-2x" style="margin-left: 10px"></i>
                 </div>
             </div>
         </div>
@@ -141,23 +133,43 @@
             <div class="row">
                 <div class="col-lg-1">
                     <p class="text-center"><strong>KW client</strong></p>
-                    <p class="text-center">{{ $customer_kw }}</p>
+                    <p id="customer_kw_text" class="text-center">{{ $customer_kw }}</p>
+                    <div>
+                        <input type="hidden" name="customer__kw" id="customer__kw" value="{{ $order->customer_kw }}">
+                        <input type="text"
+                            class="form-control" name="customer_kw" id="customer_kw" style="display: none" placeholder="KW client" autocomplete="off">
+                    </div>
                 </div>
                 <div class="col-lg-1">
                     <p class="text-center"><strong>KW productie</strong></p>
-                    <p class="text-center">{{ $production_kw }}</p>
+                    <p id="production_kw_text" class="text-center">{{ $production_kw }}</p>
+                    <div>
+                        <input type="hidden" name="production__kw" id="production__kw" value="{{ $order->production_kw }}">
+                        <input type="text"
+                            class="form-control" name="production_kw" id="production_kw" style="display: none" placeholder="KW productie" autocomplete="off">
+                    </div>
                 </div>
                 <div class="col-lg-1">
                     <p class="text-center"><strong>KW livrare</strong></p>
-                    <p class="text-center">{{ $delivery_kw }}</p>
-                </div>
-                <div class="col-lg-1">
-                    <p class="text-center"><strong>ETA</strong></p>
-                    <p class="text-center">{{ $eta }}</p>
+                    <p id="delivery_kw_text" class="text-center">{{ $delivery_kw }}</p>
+                    <div>
+                        <input type="hidden" name="delivery__kw" id="delivery__kw" value="{{ $order->delivery_kw }}">
+                        <input type="text"
+                            class="form-control" name="delivery_kw" id="delivery_kw" style="display: none" placeholder="KW livrare" autocomplete="off">
+                    </div>
                 </div>
                 <div class="col-lg-1">
                     <p class="text-center"><strong>Luna</strong></p>
                     <p class="text-center">{{ $order->month }}</p>
+                </div>
+                <div class="col-lg-1">
+                    <p class="text-center"><strong>ETA</strong></p>
+                    <p id="eta_text" class="text-center">{{ $eta }}</p>
+                    <div>
+                        <input type="hidden" name="eta__" id="eta__" value="{{ $order->eta }}">
+                        <input type="text"
+                            class="form-control" name="eta" id="eta" style="display: none" placeholder="ETA" autocomplete="off">
+                    </div>
                 </div>
                 <div class="col-lg-1">
                     <p class="text-center"><strong>Total comanda</strong></p>
@@ -245,17 +257,41 @@
             dateFormat: 'dd.mm.yy'
         });
 
+        $('#customer_kw').datepicker({
+            showWeek: true,
+            firstDay: 1,
+            dateFormat: 'dd.mm.yy'
+        });
+
+        $('#production_kw').datepicker({
+            showWeek: true,
+            firstDay: 1,
+            dateFormat: 'dd.mm.yy'
+        });
+
+        $('#delivery_kw').datepicker({
+            showWeek: true,
+            firstDay: 1,
+            dateFormat: 'dd.mm.yy'
+        });
+
+        $('#eta').datepicker({
+            showWeek: true,
+            firstDay: 1,
+            dateFormat: 'dd.mm.yy'
+        });
+
         $(document).ready(function() {
             // allow editing of priority
             $('#priority').dblclick(function() {
-                $('#priority_value').show();
-                $('#priority_text').hide();
+                $('#priority_value').show(100);
+                $('#priority_text').hide(100);
             })
             // save the priority and display the value
             $('#priority_value').keyup(function(e) {
                 if(e.keyCode == 13) {
-                    $('#priority_value').hide();
-                    $('#priority_text').show();
+                    $('#priority_value').hide(100);
+                    $('#priority_text').show(100);
                     $.ajax({
                         url: '/orders/{{ $order->id }}/update/priority',
                         method: 'PATCH',
@@ -294,41 +330,41 @@
 
             // allow editing of the main details
             $('#edit_details').click(function() {
-                $('#customer').hide();
-                $('#customer_id').show();
+                $('#customer').hide(100);
+                $('#customer_id').show(100);
                 $('#customer_id').val($('#customer__id').val());
-                $('#customer_order_text').hide();
-                $('#customer_order').show();
+                $('#customer_order_text').hide(100);
+                $('#customer_order').show(100);
                 $('#customer_order').val($('#customer_order_text').html().trim());
-                $('#auftrag_text').hide();
-                $('#auftrag').show();
+                $('#auftrag_text').hide(100);
+                $('#auftrag').show(100);
                 $('#auftrag').val($('#auftrag_text').html().trim());
-                $('#country_text').hide();
-                $('#country_id').show();
+                $('#country_text').hide(100);
+                $('#country_id').show(100);
                 $('#country_id').val($('#country__id').val());
-                $('#address_text').hide();
-                $('#address').show();
+                $('#address_text').hide(100);
+                $('#address').show(100);
                 $('#address').val($('#address_text').html().trim());
-                $('#save_details').show();
-                $('#cancel_details').show();
-                $('#edit_details').hide();
+                $('#save_details').show(100);
+                $('#cancel_details').show(100);
+                $('#edit_details').hide(100);
             })
 
             // cancel the editing of the main details
             $('#cancel_details').click(function() {
-                $('#customer').show();
-                $('#customer_id').hide();
-                $('#customer_order_text').show();
-                $('#customer_order').hide();
-                $('#auftrag_text').show();
-                $('#auftrag').hide();
-                $('#country_text').show();
-                $('#country_id').hide();
-                $('#address_text').show();
-                $('#address').hide();
-                $('#save_details').hide();
-                $('#cancel_details').hide();
-                $('#edit_details').show();
+                $('#customer').show(100);
+                $('#customer_id').hide(100);
+                $('#customer_order_text').show(100);
+                $('#customer_order').hide(100);
+                $('#auftrag_text').show(100);
+                $('#auftrag').hide(100);
+                $('#country_text').show(100);
+                $('#country_id').hide(100);
+                $('#address_text').show(100);
+                $('#address').hide(100);
+                $('#save_details').hide(100);
+                $('#cancel_details').hide(100);
+                $('#edit_details').show(100);
             })
 
             // save the main details
@@ -367,20 +403,21 @@
                             toast: true
                         });
                         $('#customer__id').val(response.order.customer_id);
-                        $('#customer').show().html(response.customer.name);
-                        $('#customer_id').hide();
-                        $('#customer_order_text').show().html(response.order.customer_order);
-                        $('#customer_order').hide();
-                        $('#auftrag_text').show().html(response.order.auftrag);
-                        $('#auftrag').hide();
+                        $('#customer').show(100).html(response.customer.name);
+                        $('#customer_id').hide(100);
+                        $('#customer_order_text').show(100).html(response.order.customer_order);
+                        $('#customer_order').hide(100);
+                        $('#auftrag_text').show(100).html(response.order.auftrag);
+                        $('#auftrag').hide(100);
                         $('#country__id').val(response.country.id);
-                        $('#country_text').show().html(response.country.name);
-                        $('#country_id').hide();
+                        $('#country_text').show(100).html(response.country.name);
+                        $('#country_id').hide(100);
                         $('#destination_id').val(response.order.destination_id);
-                        $('#address_text').show().html(response.destination.address);
-                        $('#address').hide();
-                        $('#save_details').hide();
-                        $('#edit_details').show();
+                        $('#address_text').show(100).html(response.destination.address);
+                        $('#address').hide(100);
+                        $('#save_details').hide(100);
+                        $('#cancel_details').hide(100);
+                        $('#edit_details').show(100);
                     }
                 });
             });
@@ -435,20 +472,20 @@
             // allow editing of the observations
             $('#edit_observations').click(function() {
                 $('#observations').val($('#observations_text').html().trim());
-                tinymce.get('observations').show();
-                $('#save_observations').show();
-                $('#cancel_observations').show();
-                $('#observations_text').hide();
-                $('#edit_observations').hide();
+                tinymce.get('observations').show(100);
+                $('#save_observations').show(100);
+                $('#cancel_observations').show(100);
+                $('#observations_text').hide(100);
+                $('#edit_observations').hide(100);
             });
 
             // cancel editing of the observations
             $('#cancel_observations').click(function() {
-                tinymce.get('observations').hide();
-                $('#save_observations').hide();
-                $('#cancel_observations').hide();
-                $('#observations_text').show();
-                $('#edit_observations').show();
+                tinymce.get('observations').hide(100);
+                $('#save_observations').hide(100);
+                $('#cancel_observations').hide(100);
+                $('#observations_text').show(100);
+                $('#edit_observations').show(100);
             });
 
             // save the main details
@@ -483,16 +520,108 @@
                             timer: 5000,
                             toast: true
                         });
-                        $('.tox-tinymce').hide();
-                        tinymce.get('observations').hide();
+                        $('.tox-tinymce').hide(100);
+                        tinymce.get('observations').hide(100);
                         $('#observations_text').html(response.order.observations);
-                        $('#save_observations').hide();
-                        $('#cancel_observations').hide();
-                        $('#observations_text').show();
-                        $('#edit_observations').show();
+                        $('#save_observations').hide(100);
+                        $('#cancel_observations').hide(100);
+                        $('#observations_text').show(100);
+                        $('#edit_observations').show(100);
                     }
                 });
             });
+
+            // allow editing of kw for customer, production, delivery and eta
+            $('#edit_dates').click(function() {
+                $('#customer_kw_text').hide(100);
+                $('#customer_kw').show(100).val($('#customer__kw').val().split('-').reverse().join('.'));
+                $('#production_kw_text').hide(100);
+                $('#production_kw').show(100).val($('#production__kw').val().split('-').reverse().join('.'));
+                $('#delivery_kw_text').hide(100);
+                $('#delivery_kw').show(100).val($('#delivery__kw').val().split('-').reverse().join('.'));
+                $('#eta_text').hide(100);
+                $('#eta').show(100).val($('#eta__').val().split('-').reverse().join('.'));
+                $('#edit_dates').hide(100);
+                $('#save_dates').show(100);
+                $('#cancel_dates').show(100);
+            });
+
+            // cancel the edition of kw for customer, production, delivery and eta
+            $('#cancel_dates').click(function() {
+                $('#customer_kw_text').show(100);
+                $('#customer_kw').hide(100);
+                $('#production_kw_text').show(100);
+                $('#production_kw').hide(100);
+                $('#delivery_kw_text').show(100);
+                $('#delivery_kw').hide(100);
+                $('#eta_text').show(100);
+                $('#eta').hide(100);
+                $('#edit_dates').show(100);
+                $('#save_dates').hide(100);
+                $('#cancel_dates').hide(100);
+            })
+
+            // save the kw for customer, production, delivery and eta
+             $('#save_dates').click(function() {
+                 let customer_kw = $('#customer_kw').val();
+                 let production_kw = $('#production_kw').val();
+                 let delivery_kw = $('#delivery_kw').val();
+                 let eta = $('#eta').val();
+                $.ajax({
+                    url: '/orders/{{ $order->id }}/update/dates',
+                    method: 'PATCH',
+                    dataType: 'json',
+                    data: {
+                        '_token': '{{ csrf_token() }}',
+                        customer_kw: customer_kw.split('.').reverse().join('-'),
+                        production_kw: production_kw.split('.').reverse().join('-'),
+                        delivery_kw: delivery_kw.split('.').reverse().join('-'),
+                        eta: eta.split('.').reverse().join('-')
+                    },
+                    error: function(err) {
+                        console.log(err);
+                        Swal.fire({
+                            position: 'top-end',
+                            type: 'error',
+                            title: 'Eroare',
+                            titleText: err.responseJSON.message,
+                            showConfirmButton: false,
+                            timer: 5000,
+                            toast: true
+                        });
+                    },
+                    success: function(response) {
+                        Swal.fire({
+                            position: 'top-end',
+                            type: response.status,
+                            title: 'Succes',
+                            title: response.message,
+                            showConfirmButton: false,
+                            timer: 5000,
+                            toast: true
+                        });
+                        $('#customer_kw_text').html(response.order.customer_kw_text);
+                        $('#customer_kw_text').show(100);
+                        $('#customer_kw').hide(100);
+                        $('#customer__kw').val(response.order.customer_kw);
+                        $('#production_kw_text').html(response.order.production_kw_text);
+                        $('#production_kw_text').show(100);
+                        $('#production_kw').hide(100);
+                        $('#production__kw').val(response.order.production_kw);
+                        $('#delivery_kw_text').html(response.order.delivery_kw_text);
+                        $('#delivery_kw_text').show(100);
+                        $('#delivery_kw').hide(100);
+                        $('#delivery__kw').val(response.order.delivery_kw);
+                        $('#eta_text').html(response.order.eta_text);
+                        $('#eta_text').show(100);
+                        $('#eta').hide(100);
+                        $('#eta__').val(response.order.eta);
+                        $('#edit_dates').show(100);
+                        $('#save_dates').hide(100);
+                        $('#cancel_dates').hide(100);
+                    }
+                });
+            })
 
         });
     </script>

@@ -268,4 +268,43 @@ class OrderTest extends TestCase
         ]);
 
     }
+
+    /**
+     * Logged in user can change planning dates (customer kw, production kw, delivery kw and eta)
+     *
+     * @return void
+     */
+    public function testLoggedInUsersCanChangePlanningDates()
+    {
+        $user = factory(User::class)->create();
+        $country = factory(Country::class, 4)->create();
+        $customer = factory(Customer::class, 4)->create();
+        $destination = factory(Destination::class, 4)->create();
+        $order = factory(Order::class)->create();
+
+        $response = $this->actingAs($user)->json('PATCH', '/orders/1/update/dates', [
+            'customer_kw' => '9999-12-31',
+            'production_kw' => '9999-12-31',
+            'delivery_kw' => '9999-12-31',
+            'eta' => '9999-12-31',
+        ]);
+
+        $response->assertStatus(200)
+            ->assertJson(['status' => 'success']);
+
+        $this->assertDatabaseHas('orders', [
+            'customer_kw' => '9999-12-31',
+            'production_kw' => '9999-12-31',
+            'delivery_kw' => '9999-12-31',
+            'eta' => '9999-12-31',
+        ]);
+
+        $this->assertDatabaseMissing('orders', [
+            'customer_kw' => $order->customer_kw,
+            'production_kw' => $order->production_kw,
+            'delivery_kw' => $order->delivery_kw,
+            'eta' => $order->eta,
+        ]);
+
+    }
 }

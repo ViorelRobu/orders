@@ -114,6 +114,7 @@ Route::middleware(['auth'])->group(function() {
             Route::patch('/update/priority', 'OrdersController@setPriority');
             Route::patch('/update/details', 'OrdersController@setDetails');
             Route::patch('/update/observations', 'OrdersController@setObservations');
+            Route::patch('/update/dates', 'OrdersController@setDates');
             Route::patch('/ship', 'OrdersController@ship');
             Route::get('/show', 'OrdersController@show');
         });
