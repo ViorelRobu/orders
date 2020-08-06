@@ -241,6 +241,7 @@ class OrdersController extends Controller
      */
     public function setDates(Order $order, Request $request)
     {
+        Carbon::setLocale('ro');
         $order->customer_kw = $request->customer_kw;
         $order->production_kw = $request->production_kw;
         $order->delivery_kw = $request->delivery_kw;
@@ -250,7 +251,12 @@ class OrdersController extends Controller
         $order->customer_kw_text = (Carbon::parse($order->customer_kw))->weekOfYear;
         $order->production_kw_text = (Carbon::parse($order->production_kw))->weekOfYear;
         $order->delivery_kw_text = (Carbon::parse($order->delivery_kw))->weekOfYear;
-        $order->eta_text = (Carbon::parse($order->eta))->weekOfYear;
+        if ($order->eta != null) {
+            $order->eta_text = (Carbon::parse($order->eta))->weekOfYear;
+        } else {
+            $order->eta_text = 'nespecificat';
+        }
+        $order->month = strtoupper((Carbon::parse($order->delivery_kw))->monthName);
 
         return response()->json([
             'status' => 'success',

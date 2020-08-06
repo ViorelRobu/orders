@@ -160,7 +160,7 @@
                 </div>
                 <div class="col-lg-1">
                     <p class="text-center"><strong>Luna</strong></p>
-                    <p class="text-center">{{ $order->month }}</p>
+                    <p id="month" class="text-center">{{ $order->month }}</p>
                 </div>
                 <div class="col-lg-1">
                     <p class="text-center"><strong>ETA</strong></p>
@@ -608,6 +608,7 @@
                         $('#production_kw_text').show(100);
                         $('#production_kw').hide(100);
                         $('#production__kw').val(response.order.production_kw);
+                        $('#month').html(response.order.month);
                         $('#delivery_kw_text').html(response.order.delivery_kw_text);
                         $('#delivery_kw_text').show(100);
                         $('#delivery_kw').hide(100);
