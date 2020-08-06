@@ -45,6 +45,16 @@ class OrdersController extends Controller
     }
 
     /**
+     * Show the order archive page
+     *
+     * @return Application|Factory|View
+     */
+    public function archive()
+    {
+        return view('orders.archive');
+    }
+
+    /**
      * Fetch all the active orders from the database
      *
      * @return mixed
@@ -52,7 +62,7 @@ class OrdersController extends Controller
      */
     public function fetchAll()
     {
-        $orders = Order::all();
+        $orders = Order::where('archived', '=', 0)->get();
 
         $orders->map(function ($item, $index) {
             Carbon::setLocale('ro');
@@ -82,6 +92,33 @@ class OrdersController extends Controller
         return DataTables::of($orders)
             ->addColumn('actions', function ($orders) {
                 return view('orders.partials.actions', ['order' => $orders]);
+            })
+            ->make(true);
+    }
+
+    /**
+     * Fetch all the archived orders from the database
+     *
+     * @return mixed
+     * @throws Exception
+     */
+    public function fetchAllArchive()
+    {
+        $orders = Order::where('archived', '=', 1)->get();
+
+        $orders->map(function ($item, $index) {
+            $customer = Customer::find($item->customer_id);
+            $destination = Destination::find($item->destination_id);
+            $country = Country::find($destination->country_id);
+            $item->customer = $customer->name;
+            $item->destination = $destination->address . ', ' . $country->name;
+            $item->loading_date = (Carbon::parse($item->loading_date))->format('d.m.Y');
+            $item->total = 50;
+        });
+
+        return DataTables::of($orders)
+            ->addColumn('actions', function ($orders) {
+                return view('orders.partials.archive', ['order' => $orders]);
             })
             ->make(true);
     }

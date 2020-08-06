@@ -120,4 +120,14 @@ Route::middleware(['auth'])->group(function() {
         });
     });
 
+    /*
+     |---------------------------------------------------------------
+     |  Orders archive routes
+     |---------------------------------------------------------------
+     */
+    Route::prefix('/archive')->group(function() {
+        Route::get('/', 'OrdersController@archive');
+        Route::get('/all', 'OrdersController@fetchAllArchive')->name('archive.index');
+    });
+
 });

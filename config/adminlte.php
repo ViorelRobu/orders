@@ -247,6 +247,11 @@ return [
             'url' => 'orders',
             'icon' => 'fas fa-fw fa-list',
         ],
+        [
+            'text' => 'Arhiva comenzi',
+            'url' => 'archive',
+            'icon' => 'fas fa-fw fa-list',
+        ],
         ['header' => 'SETARI'],
         [
             'text' => 'Nomenclator',

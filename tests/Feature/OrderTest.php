@@ -50,6 +50,24 @@ class OrderTest extends TestCase
     }
 
     /**
+     * Logged in users can access the archive orders API endpoints
+     *
+     * @return void
+     */
+    public function testLoggedInUsersCanViewArchive()
+    {
+        // seed the data
+        $country = factory(Country::class, 3)->create();
+        $customers = factory(Customer::class, 4)->create();
+        $destinations = factory(Destination::class, 4)->create();
+        $orders = factory(Order::class)->create(['archived' => 1]);
+
+        // run asserts
+        $this->allowAccess('/archive');
+        $this->allowAccess('/archive/all');
+    }
+
+    /**
      * Logged in users can add a new order
      *
      * @return void
