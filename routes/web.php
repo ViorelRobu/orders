@@ -110,13 +110,14 @@ Route::middleware(['auth'])->group(function() {
         Route::get('/fetch', 'OrdersController@fetch')->name('orders.fetch');
         Route::post('/add', 'OrdersController@store');
         Route::prefix('/{order}/')->group(function() {
+            Route::get('/show', 'OrdersController@show');
+            Route::get('/details', 'OrderDetailsController@fetch')->name('order.details');
             Route::patch('/update', 'OrdersController@update');
             Route::patch('/update/priority', 'OrdersController@setPriority');
             Route::patch('/update/details', 'OrdersController@setDetails');
             Route::patch('/update/observations', 'OrdersController@setObservations');
             Route::patch('/update/dates', 'OrdersController@setDates');
             Route::patch('/ship', 'OrdersController@ship');
-            Route::get('/show', 'OrdersController@show');
         });
     });
 

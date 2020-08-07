@@ -203,34 +203,47 @@
         </div>
     </div>
 
-    <!-- Modal -->
-    <div class="modal fade" id="loadingDate" tabindex="-1" role="dialog" aria-labelledby="loadingDate" aria-hidden="true">
-        <div class="modal-dialog" role="document">
-            <div class="modal-content modal-sm">
-                <div class="modal-header">
-                    <h5 class="modal-title">Data de incarcare</h5>
-                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
-                </div>
-                <div class="modal-body">
-                    <form action="/orders/{{ $order->id }}/ship" method="POST">
-                        <div class="form-group">
-                            @method('PATCH')
-                            @csrf
-                            <label for="">Data de incarcare</label>
-                            <input type="text"
-                                class="form-control" name="loading_date" id="loading_date" placeholder="Data incarcare" autocomplete="off">
-                            <div class="modal-footer">
-                                <button type="button" class="btn btn-secondary" data-dismiss="modal">Anuleaza</button>
-                                <button type="submit" class="btn btn-primary" id="load_truck">Salveaza</button>
-                            </div>
+    <!-- Order details -->
+        <div class="card">
+            <div class="card-header bg-dark">
+                <div class="row">
+                    <div class="col-lg-11">
+                        <div class="card-title">
+                            <h5>
+                                Detalii comanda
+                            </h5>
                         </div>
-                    </form>
+                    </div>
+                    <div class="col-lg-1">
+                        <i class="fas fa-plus float-right fa-2x" data-toggle="modal" data-target="#addDetails"></i>
+                    </div>
                 </div>
             </div>
+            <div class="card-body">
+                <table id="order_details" class="table table-bordered table-hover">
+                    <thead>
+                        <td><i class="fas fa-chevron-up"></i></td>
+                        <td>Articol</td>
+                        <td>Finisaje</td>
+                        <td>Gr</td>
+                        <td>Lat</td>
+                        <td>Lung</td>
+                        <td>Buc</td>
+                        <td>Vol</td>
+                        <td>Ticom</td>
+                        <td>Lot</td>
+                        <td>Prod</td>
+                        <td>Incarcare</td>
+                        <td>Detalii</td>
+                        <td></td>
+                    </thead>
+                </table>
+            </div>
         </div>
-    </div>
+
+    @include('orders.partials.ship')
+    @include('orders.partials.details')
+
 @stop
 
 @section('footer')
@@ -282,6 +295,29 @@
         });
 
         $(document).ready(function() {
+            // order details datatable
+            let table = $('#order_details').DataTable({
+                processing: true,
+                serverSide: true,
+                ajax: "/orders/{{ $order->id }}/details",
+                columns: [
+                    {data: 'DT_RowIndex', name: 'DT_RowIndex'},
+                    {data: 'article', name: 'article'},
+                    {data: 'refinements_list', name: 'refinements_list'},
+                    {data: 'thickness', name: 'thickness'},
+                    {data: 'width', name: 'width'},
+                    {data: 'length', name: 'length'},
+                    {data: 'pcs', name: 'pcs'},
+                    {data: 'volume', name: 'volume'},
+                    {data: 'produced_ticom', name: 'produced_ticom'},
+                    {data: 'batch', name: 'batch'},
+                    {data: 'produced_batch', name: 'produced_batch'},
+                    {data: 'loading_date', name: 'loading_date'},
+                    {data: 'details_json', name: 'details_json'},
+                    {data: 'actions', name: 'actions'},
+                ]
+            });
+
             // allow editing of priority
             $('#priority').dblclick(function() {
                 $('#priority_value').show(100);
@@ -622,7 +658,8 @@
                         $('#cancel_dates').hide(100);
                     }
                 });
-            })
+            });
+
 
         });
     </script>
