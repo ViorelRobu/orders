@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Comanda ' . $order->order)
+@section('title', 'Comanda ' . $order->order . $order->archived_text)
 
 @section('content')
     <div class="card">
@@ -215,7 +215,7 @@
                         </div>
                     </div>
                     <div class="col-lg-1">
-                        <i class="fas fa-plus float-right fa-2x" data-toggle="modal" data-target="#addDetails"></i>
+                        <i id="addNewDetail" class="fas fa-plus float-right fa-2x" data-toggle="modal" data-target="#addDetails"></i>
                     </div>
                 </div>
             </div>
@@ -252,6 +252,10 @@
 
 @section('js')
     <script>
+        // save and update buttons markup
+        const save = '<input id="save" type="submit" class="btn btn-primary float-right" value="Adauga">';
+        const update = '<button type="submit" id="update" class="btn btn-primary">Modifica</button>';
+
         // initialize the TinyMCE editor
         tinymce.init({
             selector: '#observations'
@@ -294,7 +298,33 @@
             dateFormat: 'dd.mm.yy'
         });
 
+        // add select 2 to all selects
+        $('#country_id').select2({
+            width: '100%'
+        });
+
+        $('#customer_id').select2({
+            width: '100%'
+        });
+
+        // hide all select2 after rendering
+        $('.select2').hide();
+
+        // select2 for adding details
+        $('#article_id').select2({
+            width: '100%'
+        });
+        $('#refinements_list').select2({
+            width: '100%'
+        });
+
         $(document).ready(function() {
+            // configure button for a add new event
+            $('#addNewDetail').click(function() {
+                $('#update').remove();
+                $('#submit').append(save);
+            });
+
             // order details datatable
             let table = $('#order_details').DataTable({
                 processing: true,
@@ -317,6 +347,50 @@
                     {data: 'actions', name: 'actions'},
                 ]
             });
+
+        // add the details to the DB
+        $(document).on('click', '#save', function(event) {
+            event.preventDefault();
+            let article_id = $('#article_id').val();
+            let refinements_list = $('#refinements_list').val();
+            let length = $('#length').val();
+            let pcs = $('#pcs').val();
+            let pal = $('#pal').val();
+            $.ajax({
+                url: '/orders/{{ $order->id }}/details/add',
+                method: 'POST',
+                dataType: 'json',
+                data: {
+                '_token': '{{ csrf_token() }}',
+                article_id, refinements_list, length, pcs, pal
+                },
+                error: function(err) {
+                    console.log(err);
+                    Swal.fire({
+                        position: 'top-end',
+                        type: 'error',
+                        title: 'Eroare',
+                        titleText: err.responseJSON.message,
+                        showConfirmButton: false,
+                        timer: 5000,
+                        toast: true
+                    });
+                },
+                success: function(response) {
+                    $('#addDetails').modal('hide');
+                    Swal.fire({
+                        position: 'top-end',
+                        type: response.type,
+                        title: 'Succes',
+                        title: response.message,
+                        showConfirmButton: false,
+                        timer: 5000,
+                        toast: true
+                    });
+                    table.draw()
+                }
+            });
+        });
 
             // allow editing of priority
             $('#priority').dblclick(function() {
@@ -384,6 +458,11 @@
                 $('#save_details').show(100);
                 $('#cancel_details').show(100);
                 $('#edit_details').hide(100);
+                $('.select2').show();
+                $('#select2-country_id-container').html($('#country_text').html());
+                $('#select2-country_id-container').attr('title', $('#country_text').html());
+                $('#select2-customer_id-container').html($('#customer').html());
+                $('#select2-customer_id-container').attr('title', $('#customer').html());
             })
 
             // cancel the editing of the main details
@@ -401,6 +480,7 @@
                 $('#save_details').hide(100);
                 $('#cancel_details').hide(100);
                 $('#edit_details').show(100);
+                $('.select2').hide();
             })
 
             // save the main details
@@ -454,6 +534,7 @@
                         $('#save_details').hide(100);
                         $('#cancel_details').hide(100);
                         $('#edit_details').show(100);
+                        $('.select2').hide();
                     }
                 });
             });

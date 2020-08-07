@@ -2,10 +2,12 @@
 
 namespace App\Http\Controllers;
 
+use App\Article;
 use App\Country;
 use App\Customer;
 use App\Destination;
 use App\Order;
+use App\Refinement;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -319,6 +321,7 @@ class OrdersController extends Controller
         $destination = Destination::find($order->destination_id);
         $country = Country::find($destination->country_id);
         $order->month = strtoupper((Carbon::parse($order->delivery_kw))->monthName);
+        $order->archived_text = $order->archived === 1 ? ' - Arhivata' : '';
 
         $customer_kw = (Carbon::parse($order->customer_kw))->weekOfYear;
         $production_kw = (Carbon::parse($order->production_kw))->weekOfYear;
@@ -331,6 +334,8 @@ class OrdersController extends Controller
         $loading_date = (Carbon::parse($order->loading_date))->format('d.m.Y');
         $customers = Customer::all();
         $countries = Country::all();
+        $articles = Article::all();
+        $refinements = Refinement::all();
 
         return view('orders.show', [
             'order' => $order,
@@ -344,6 +349,8 @@ class OrdersController extends Controller
             'eta' => $eta,
             'customers' => $customers,
             'countries' => $countries,
+            'articles' => $articles,
+            'refinements' => $refinements,
         ]);
     }
 

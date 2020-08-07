@@ -111,7 +111,8 @@ Route::middleware(['auth'])->group(function() {
         Route::post('/add', 'OrdersController@store');
         Route::prefix('/{order}/')->group(function() {
             Route::get('/show', 'OrdersController@show');
-            Route::get('/details', 'OrderDetailsController@fetch')->name('order.details');
+            Route::get('/details', 'OrderDetailsController@fetch');
+            Route::post('/details/add', 'OrderDetailsController@store');
             Route::patch('/update', 'OrdersController@update');
             Route::patch('/update/priority', 'OrdersController@setPriority');
             Route::patch('/update/details', 'OrdersController@setDetails');

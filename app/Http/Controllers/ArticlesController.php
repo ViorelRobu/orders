@@ -7,6 +7,7 @@ use App\ProductType;
 use App\Quality;
 use App\Refinement;
 use App\Species;
+use App\Traits\RefinementsTranslator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -14,6 +15,8 @@ use Yajra\DataTables\Facades\DataTables;
 
 class ArticlesController extends Controller
 {
+    use RefinementsTranslator;
+
     protected $rules = [
         'name' => 'required',
         'species_id' => 'required',
@@ -67,13 +70,7 @@ class ArticlesController extends Controller
         return DataTables::of($articles)
             ->addIndexColumn()
             ->editColumn('default_refinements', function($articles) {
-                $refinements = [];
-                $default_refinements = explode(',', $articles->default_refinements);
-                foreach($default_refinements as $ref) {
-                    $refinement = Refinement::find($ref);
-                    $refinements[] = $refinement->name;
-                }
-                return $refinements;
+                return $this->translateForHumans($articles->default_refinements);
             })
             ->addColumn('actions', function ($articles) {
                 return view('articles.partials.actions', ['article' => $articles]);
