@@ -14,6 +14,8 @@ class OrderDetailsController extends Controller
 {
     use RefinementsTranslator;
 
+    protected $pi = 3.142;
+
     /**
      * Fetch the order details of a certain order
      *
@@ -52,7 +54,13 @@ class OrderDetailsController extends Controller
             $detail->width = $article->width;
             $detail->length = $request->length;
             $detail->pcs = $request->pcs;
-            $detail->volume = ($article->thickness * $article->width * $request->length * $request->pcs) / 1000000000;
+            if ($request->length != null) {
+                $detail->volume = ($article->thickness * $article->width * $request->length * $request->pcs) / 1000000000;
+            } else {
+                $r = $article->width / 2;
+                $h = $article->thickness;
+                $detail->volume = round(($this->pi * ($r**2) * $h* $request->pcs / 1000000000), 3, PHP_ROUND_HALF_UP);
+            }
             $detail->details_json = 'test';
             $detail->save();
         }
