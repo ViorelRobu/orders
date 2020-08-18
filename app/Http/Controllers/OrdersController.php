@@ -7,6 +7,7 @@ use App\Country;
 use App\Customer;
 use App\Destination;
 use App\Order;
+use App\OrderDetail;
 use App\Refinement;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
@@ -342,6 +343,7 @@ class OrdersController extends Controller
         $countries = Country::all();
         $articles = Article::all();
         $refinements = Refinement::all();
+        $fields = explode('|', $order->details_fields);
 
         return view('orders.show', [
             'order' => $order,
@@ -357,6 +359,7 @@ class OrdersController extends Controller
             'countries' => $countries,
             'articles' => $articles,
             'refinements' => $refinements,
+            'fields' => $fields
         ]);
     }
 
@@ -412,6 +415,23 @@ class OrdersController extends Controller
         } else {
             $order->details_fields = rtrim($order->details_fields, '|') . '|' . rtrim($request->details_fields, '|');
             $order->save();
+
+            $fields_arr = explode('|', $order->details_fields);
+            $details = OrderDetail::where('order_id',$order->id)->get();
+            foreach ($fields_arr as $field) {
+                foreach ($details as $detail) {
+                    $data = json_decode($detail->details_json);
+                    foreach ($data as $new_detail) {
+                        if (!isset($new_detail->$field)) {
+                            $data->$field = '';
+                        }
+                    }
+                    $new_json_details = OrderDetail::find($detail->id);
+                    $new_json_details->details_json = json_encode($data);
+                    $new_json_details->save();
+                }
+            }
+
         }
 
         return response()->json([

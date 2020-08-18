@@ -224,7 +224,9 @@
                         </div>
                     </div>
                     <div class="col-lg-1">
-                        <i id="addNewDetail" class="fas fa-plus float-right fa-2x" data-toggle="modal" data-target="#addDetails"></i>
+                        @if ($order->details_fields != null)
+                            <i id="addNewDetail" class="fas fa-plus float-right fa-2x" data-toggle="modal" data-target="#addDetails"></i>
+                        @endif
                     </div>
                 </div>
             </div>
@@ -243,7 +245,9 @@
                         <td>Lot</td>
                         <td>Prod</td>
                         <td>Incarcare</td>
-                        <td>Detalii</td>
+                        @foreach ($fields as $field)
+                            <td>{{ $field }}</td>
+                        @endforeach
                         <td></td>
                     </thead>
                 </table>
@@ -329,10 +333,26 @@
         });
 
         $(document).ready(function() {
+
             // configure button for a add new event
             $('#addNewDetail').click(function() {
                 $('#update').remove();
                 $('#submit').append(save);
+                $('#details_fields_data').empty();
+                let fields = $('#details_fields_text').html().trim();
+                let fields_arr = fields.split('|');
+                fields_arr.forEach( element => {
+                    let el = element.trim();
+                    let name = element.split('_').join(' ');
+                    let label = name.charAt(0).toUpperCase() + name.slice(1);
+                    let html =  `<div class="col-lg-3">
+                                    <label for="${el}">${label}</label>
+                                    <input type="text"
+                                        class="form-control" name="${el}" id="${el}" placeholder="${label}">
+                            </div>`;
+                        $('#details_fields_data').append(html);
+
+                });
             });
 
             // order details datatable
@@ -353,7 +373,9 @@
                     {data: 'batch', name: 'batch'},
                     {data: 'produced_batch', name: 'produced_batch'},
                     {data: 'loading_date', name: 'loading_date'},
-                    {data: 'details_json', name: 'details_json'},
+                    @foreach ($fields as $field)
+                        {data: '{{ $field }}', name: '{{ $field }}'},
+                    @endforeach
                     {data: 'actions', name: 'actions'},
                 ]
             });
@@ -366,13 +388,22 @@
             let length = $('#length').val();
             let pcs = $('#pcs').val();
             let pal = $('#pal').val();
+            let json_data = {};
+            $('#details_fields_data').children().each(function() {
+                $(this).children().each(function() {
+                    json_data[$(this).attr('id')] = $(this).val();
+                    delete json_data.undefined;
+                })
+            });
+
             $.ajax({
                 url: '/orders/{{ $order->id }}/details/add',
                 method: 'POST',
                 dataType: 'json',
                 data: {
                 '_token': '{{ csrf_token() }}',
-                article_id, refinements_list, length, pcs, pal
+                article_id, refinements_list, length, pcs, pal,
+                details_json: JSON.stringify(json_data)
                 },
                 error: function(err) {
                     console.log(err);
@@ -400,6 +431,13 @@
                     table.draw()
                 }
             });
+        });
+
+        // reset the add details form on closing the modal
+        $('#addDetails').on('hidden.bs.modal', function () {
+            $('#update').remove();
+            $('#save').remove();
+            $('#details_fields_data').empty();
         });
 
         // add details fields
@@ -438,6 +476,7 @@
                         toast: true
                     });
                     $('#addFields').modal('hide');
+                    location.reload();
                     $('#details_fields_text').html(response.data);
                     table.draw()
                 }

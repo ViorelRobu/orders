@@ -54,6 +54,10 @@
                                 </div>
                             </div>
                         </div>
+                        <hr>
+                        <div id="details_fields_data" class="row">
+
+                        </div>
                     </div>
                 </form>
             </div>

@@ -28,6 +28,10 @@ class OrderDetailsController extends Controller
         $details->map(function($item, $index) {
             $article = Article::find($item->article_id);
             $item->article = $article->name;
+            $details_json = json_decode($item->details_json);
+            foreach ($details_json as $key => $value) {
+                $item->$key = $value;
+            }
         });
 
         return DataTables::of($details)
@@ -68,7 +72,7 @@ class OrderDetailsController extends Controller
                 $h = $article->thickness;
                 $detail->volume = round(($this->pi * ($r**2) * $h * $request->pcs / 1000000000), 3, PHP_ROUND_HALF_UP);
             }
-            $detail->details_json = 'test';
+            $detail->details_json = $request->details_json;
             $detail->save();
         }
 

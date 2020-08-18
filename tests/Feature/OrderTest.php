@@ -2,11 +2,16 @@
 
 namespace Tests\Feature;
 
+use App\Article;
 use App\Country;
 use App\Customer;
 use App\Destination;
 use App\Order;
+use App\OrderDetail;
 use App\OrderNumber;
+use App\ProductType;
+use App\Quality;
+use App\Species;
 use App\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
@@ -363,6 +368,11 @@ class OrderTest extends TestCase
         $customer = factory(Customer::class, 4)->create();
         $destination = factory(Destination::class, 4)->create();
         $order = factory(Order::class)->create();
+        $species = factory(Species::class, 4)->create();
+        $quality = factory(Quality::class, 4)->create();
+        $product_types = factory(ProductType::class, 4)->create();
+        $articles = factory(Article::class, 4)->create();
+        $details = factory(OrderDetail::class)->create(['order_id' => 1]);
 
         $response = $this->actingAs($user)->json('POST', '/orders/1/fields', [
             'details_fields' => 'sticker|cod_ean',
@@ -374,6 +384,10 @@ class OrderTest extends TestCase
 
         $this->assertDatabaseHas('orders', [
             'details_fields' => 'sticker|cod_ean|camp_nou',
+        ]);
+
+        $this->assertDatabaseHas('order_details', [
+            'details_json' => '{"sticker":"test","cod_ean":"EAN","camp_nou":""}'
         ]);
     }
 }
