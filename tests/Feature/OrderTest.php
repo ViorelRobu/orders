@@ -325,4 +325,55 @@ class OrderTest extends TestCase
         ]);
 
     }
+
+    /**
+     * Users can add details fields
+     *
+     * @return void
+     */
+    public function testUsersCanAddDetailsFields()
+    {
+        $user = factory(User::class)->create();
+        $country = factory(Country::class, 4)->create();
+        $customer = factory(Customer::class, 4)->create();
+        $destination = factory(Destination::class, 4)->create();
+        $order = factory(Order::class)->create();
+
+        $response = $this->actingAs($user)->json('POST', '/orders/1/fields', [
+            'details_fields' => 'sticker|cod_ean',
+        ]);
+
+        $response->assertStatus(200)
+            ->assertJson(['success' => true]);
+
+        $this->assertDatabaseHas('orders', [
+            'details_fields' => 'sticker|cod_ean',
+        ]);
+    }
+
+    /**
+     * Users cand add new fields to the order
+     *
+     * @return void
+     */
+    public function testUsersCanUpdateDetailsFieldsAndAddNewFields()
+    {
+        $user = factory(User::class)->create();
+        $country = factory(Country::class, 4)->create();
+        $customer = factory(Customer::class, 4)->create();
+        $destination = factory(Destination::class, 4)->create();
+        $order = factory(Order::class)->create();
+
+        $response = $this->actingAs($user)->json('POST', '/orders/1/fields', [
+            'details_fields' => 'sticker|cod_ean',
+        ]);
+
+        $new = $this->actingAs($user)->json('POST', '/orders/1/fields', [
+            'details_fields' => 'camp_nou',
+        ]);
+
+        $this->assertDatabaseHas('orders', [
+            'details_fields' => 'sticker|cod_ean|camp_nou',
+        ]);
+    }
 }

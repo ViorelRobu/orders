@@ -314,6 +314,12 @@ class OrdersController extends Controller
         return back()->with(['errors' => $validator->errors()]);
     }
 
+    /**
+     * Display to the user the order page
+     *
+     * @param Order $order
+     * @return view
+     */
     public function show(Order $order)
     {
         Carbon::setLocale('ro');
@@ -388,6 +394,31 @@ class OrdersController extends Controller
             'updated' => false,
             'message' => 'A aparut o eroare. Verificati daca ati completat corect toate datele cerute.',
             'type' => 'error'
+        ]);
+    }
+
+    /**
+     * Adds or updates the details fields
+     *
+     * @param Order $order
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function fields(Order $order, Request $request)
+    {
+        if ($order->details_fields == null) {
+            $order->details_fields = $request->details_fields;
+            $order->save();
+        } else {
+            $order->details_fields = rtrim($order->details_fields, '|') . '|' . rtrim($request->details_fields, '|');
+            $order->save();
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Campuri adaugate/modificate cu succes!',
+            'type' => 'success',
+            'data' => $order->details_fields
         ]);
     }
 }

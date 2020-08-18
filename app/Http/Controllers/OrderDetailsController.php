@@ -41,6 +41,13 @@ class OrderDetailsController extends Controller
             ->make(true);
     }
 
+    /**
+     * Store the order details into the database
+     *
+     * @param Order $order
+     * @param Request $request
+     * @return JsonResponse
+     */
     public function store(Order $order, Request $request)
     {
 
@@ -59,7 +66,7 @@ class OrderDetailsController extends Controller
             } else {
                 $r = $article->width / 2;
                 $h = $article->thickness;
-                $detail->volume = round(($this->pi * ($r**2) * $h* $request->pcs / 1000000000), 3, PHP_ROUND_HALF_UP);
+                $detail->volume = round(($this->pi * ($r**2) * $h * $request->pcs / 1000000000), 3, PHP_ROUND_HALF_UP);
             }
             $detail->details_json = 'test';
             $detail->save();

@@ -107,6 +107,15 @@
                         <button class="btn btn-secondary float-right form-control" id="cancel_observations" style="display: none">Anuleaza</button>
                         <button class="btn btn-primary float-right form-control" id="save_observations" style="display: none">Salveaza</button>
                     </div>
+                    <br>
+                    <div>
+                        <strong>Campuri</strong>
+                        <i class="fas fa-edit" data-toggle="modal" data-target="#addFields"></i>
+                    </div>
+                    <hr>
+                    <div id="details_fields_text">
+                        {{ $order->details_fields }}
+                    </div>
                 </div>
             </div>
         </div>
@@ -243,6 +252,7 @@
 
     @include('orders.partials.ship')
     @include('orders.partials.details')
+    @include('orders.partials.fields')
 
 @stop
 
@@ -392,109 +402,65 @@
             });
         });
 
-            // allow editing of priority
-            $('#priority').dblclick(function() {
-                $('#priority_value').show(100);
-                $('#priority_text').hide(100);
-            })
-            // save the priority and display the value
-            $('#priority_value').keyup(function(e) {
-                if(e.keyCode == 13) {
-                    $('#priority_value').hide(100);
-                    $('#priority_text').show(100);
-                    $.ajax({
-                        url: '/orders/{{ $order->id }}/update/priority',
-                        method: 'PATCH',
-                        dataType: 'json',
-                        data: {
-                            '_token': '{{ csrf_token() }}',
-                            priority: $('#priority_value').val()
-                        },
-                        error: function(err) {
-                            console.log(err);
-                            Swal.fire({
-                                position: 'top-end',
-                                type: 'error',
-                                title: 'Eroare',
-                                titleText: err.responseJSON.message,
-                                showConfirmButton: false,
-                                timer: 5000,
-                                toast: true
-                            });
-                        },
-                        success: function(response) {
-                            Swal.fire({
-                                position: 'top-end',
-                                type: response.status,
-                                title: 'Succes',
-                                title: response.message,
-                                showConfirmButton: false,
-                                timer: 5000,
-                                toast: true
-                            });
-                            $('#priority_text').html(response.value)
-                        }
+        // add details fields
+        $(document).on('click', '#save_fields_details', function(e) {
+            e.preventDefault();
+            let details_fields = $('#details_fields').val().trim();
+            $.ajax({
+                url: '/orders/{{ $order->id }}/fields',
+                method: 'POST',
+                dataType: 'json',
+                data: {
+                '_token': '{{ csrf_token() }}',
+                details_fields
+                },
+                error: function(err) {
+                    console.log(err);
+                    Swal.fire({
+                        position: 'top-end',
+                        type: 'error',
+                        title: 'Eroare',
+                        titleText: err.responseJSON.message,
+                        showConfirmButton: false,
+                        timer: 5000,
+                        toast: true
                     });
-                };
+                },
+                success: function(response) {
+                    $('#addDetails').modal('hide');
+                    Swal.fire({
+                        position: 'top-end',
+                        type: response.type,
+                        title: 'Succes',
+                        title: response.message,
+                        showConfirmButton: false,
+                        timer: 5000,
+                        toast: true
+                    });
+                    $('#addFields').modal('hide');
+                    $('#details_fields_text').html(response.data);
+                    table.draw()
+                }
             });
+        })
 
-            // allow editing of the main details
-            $('#edit_details').click(function() {
-                $('#customer').hide(100);
-                $('#customer_id').show(100);
-                $('#customer_id').val($('#customer__id').val());
-                $('#customer_order_text').hide(100);
-                $('#customer_order').show(100);
-                $('#customer_order').val($('#customer_order_text').html().trim());
-                $('#auftrag_text').hide(100);
-                $('#auftrag').show(100);
-                $('#auftrag').val($('#auftrag_text').html().trim());
-                $('#country_text').hide(100);
-                $('#country_id').show(100);
-                $('#country_id').val($('#country__id').val());
-                $('#address_text').hide(100);
-                $('#address').show(100);
-                $('#address').val($('#address_text').html().trim());
-                $('#save_details').show(100);
-                $('#cancel_details').show(100);
-                $('#edit_details').hide(100);
-                $('.select2').show();
-                $('#select2-country_id-container').html($('#country_text').html());
-                $('#select2-country_id-container').attr('title', $('#country_text').html());
-                $('#select2-customer_id-container').html($('#customer').html());
-                $('#select2-customer_id-container').attr('title', $('#customer').html());
-            })
-
-            // cancel the editing of the main details
-            $('#cancel_details').click(function() {
-                $('#customer').show(100);
-                $('#customer_id').hide(100);
-                $('#customer_order_text').show(100);
-                $('#customer_order').hide(100);
-                $('#auftrag_text').show(100);
-                $('#auftrag').hide(100);
-                $('#country_text').show(100);
-                $('#country_id').hide(100);
-                $('#address_text').show(100);
-                $('#address').hide(100);
-                $('#save_details').hide(100);
-                $('#cancel_details').hide(100);
-                $('#edit_details').show(100);
-                $('.select2').hide();
-            })
-
-            // save the main details
-            $('#save_details').click(function() {
+        // allow editing of priority
+        $('#priority').dblclick(function() {
+            $('#priority_value').show(100);
+            $('#priority_text').hide(100);
+        })
+        // save the priority and display the value
+        $('#priority_value').keyup(function(e) {
+            if(e.keyCode == 13) {
+                $('#priority_value').hide(100);
+                $('#priority_text').show(100);
                 $.ajax({
-                    url: '/orders/{{ $order->id }}/update/details',
+                    url: '/orders/{{ $order->id }}/update/priority',
                     method: 'PATCH',
                     dataType: 'json',
                     data: {
                         '_token': '{{ csrf_token() }}',
-                        customer_id: $('#customer_id').val(),
-                        customer_order: $('#customer_order').val(),
-                        auftrag: $('#auftrag').val(),
-                        destination_id: $('#destination_id').val(),
+                        priority: $('#priority_value').val()
                     },
                     error: function(err) {
                         console.log(err);
@@ -518,231 +484,317 @@
                             timer: 5000,
                             toast: true
                         });
-                        $('#customer__id').val(response.order.customer_id);
-                        $('#customer').show(100).html(response.customer.name);
-                        $('#customer_id').hide(100);
-                        $('#customer_order_text').show(100).html(response.order.customer_order);
-                        $('#customer_order').hide(100);
-                        $('#auftrag_text').show(100).html(response.order.auftrag);
-                        $('#auftrag').hide(100);
-                        $('#country__id').val(response.country.id);
-                        $('#country_text').show(100).html(response.country.name);
-                        $('#country_id').hide(100);
-                        $('#destination_id').val(response.order.destination_id);
-                        $('#address_text').show(100).html(response.destination.address);
-                        $('#address').hide(100);
-                        $('#save_details').hide(100);
-                        $('#cancel_details').hide(100);
-                        $('#edit_details').show(100);
-                        $('.select2').hide();
+                        $('#priority_text').html(response.value)
                     }
                 });
-            });
-
-            // confirm existing destination or add a new one for the current customer
-            $('#address').blur(function() {
-                let customer_id = $('#customer_id').val();
-                let address = $('#address').val();
-                let country_id = $('#country_id').val();
-                $.ajax({
-                    url: `/customers/${customer_id}/destinations/find`,
-                    dataType: 'json',
-                    data: {
-                        '_token': '{{ csrf_token() }}',
-                        customer_id, address, country_id
-                    },
-                    type: 'POST',
-                    success: function(response) {
-                        $('#destination_id').val(response.data);
-                    }
-                });
-            });
-
-            // return all destinations for the selected customer and country
-            $('#address').focus(function() {
-                let customer_id = $('#customer_id').val();
-                let country_id = $('#country_id').val();
-                $.ajax({
-                    url: `/customers/${customer_id}/destinations/search`,
-                    dataType: 'json',
-                    data: {
-                        '_token': '{{ csrf_token() }}',
-                        customer_id, country_id
-                    },
-                    type: 'POST',
-                    success: function(response) {
-                        $('#autocomplete').html('');
-                        if (response.count > 0) {
-                            response.data.forEach(element => {
-                                let string = `<a class="dropdown-item" onclick="select(this.innerHTML)" href="#">${element}</a>`
-                                $('#autocomplete').append(string);
-                            });
-                        } else {
-                                let string = `<a class="dropdown-item" href="#">Nu exista nici o adresa pentru clientul si tara selectata!</a>`
-                                $('#autocomplete').append(string);
-                        }
-
-                    }
-                });
-            });
-
-            // allow editing of the observations
-            $('#edit_observations').click(function() {
-                $('#observations').val($('#observations_text').html().trim());
-                tinymce.get('observations').show(100);
-                $('#save_observations').show(100);
-                $('#cancel_observations').show(100);
-                $('#observations_text').hide(100);
-                $('#edit_observations').hide(100);
-            });
-
-            // cancel editing of the observations
-            $('#cancel_observations').click(function() {
-                tinymce.get('observations').hide(100);
-                $('#save_observations').hide(100);
-                $('#cancel_observations').hide(100);
-                $('#observations_text').show(100);
-                $('#edit_observations').show(100);
-            });
-
-            // save the main details
-            $('#save_observations').click(function() {
-                $.ajax({
-                    url: '/orders/{{ $order->id }}/update/observations',
-                    method: 'PATCH',
-                    dataType: 'json',
-                    data: {
-                        '_token': '{{ csrf_token() }}',
-                        observations: tinymce.activeEditor.getContent(),
-                    },
-                    error: function(err) {
-                        console.log(err);
-                        Swal.fire({
-                            position: 'top-end',
-                            type: 'error',
-                            title: 'Eroare',
-                            titleText: err.responseJSON.message,
-                            showConfirmButton: false,
-                            timer: 5000,
-                            toast: true
-                        });
-                    },
-                    success: function(response) {
-                        Swal.fire({
-                            position: 'top-end',
-                            type: response.status,
-                            title: 'Succes',
-                            title: response.message,
-                            showConfirmButton: false,
-                            timer: 5000,
-                            toast: true
-                        });
-                        $('.tox-tinymce').hide(100);
-                        tinymce.get('observations').hide(100);
-                        $('#observations_text').html(response.order.observations);
-                        $('#save_observations').hide(100);
-                        $('#cancel_observations').hide(100);
-                        $('#observations_text').show(100);
-                        $('#edit_observations').show(100);
-                    }
-                });
-            });
-
-            // allow editing of kw for customer, production, delivery and eta
-            $('#edit_dates').click(function() {
-                $('#customer_kw_text').hide(100);
-                $('#customer_kw').show(100).val($('#customer__kw').val().split('-').reverse().join('.'));
-                $('#production_kw_text').hide(100);
-                $('#production_kw').show(100).val($('#production__kw').val().split('-').reverse().join('.'));
-                $('#delivery_kw_text').hide(100);
-                $('#delivery_kw').show(100).val($('#delivery__kw').val().split('-').reverse().join('.'));
-                $('#eta_text').hide(100);
-                $('#eta').show(100).val($('#eta__').val().split('-').reverse().join('.'));
-                $('#edit_dates').hide(100);
-                $('#save_dates').show(100);
-                $('#cancel_dates').show(100);
-            });
-
-            // cancel the edition of kw for customer, production, delivery and eta
-            $('#cancel_dates').click(function() {
-                $('#customer_kw_text').show(100);
-                $('#customer_kw').hide(100);
-                $('#production_kw_text').show(100);
-                $('#production_kw').hide(100);
-                $('#delivery_kw_text').show(100);
-                $('#delivery_kw').hide(100);
-                $('#eta_text').show(100);
-                $('#eta').hide(100);
-                $('#edit_dates').show(100);
-                $('#save_dates').hide(100);
-                $('#cancel_dates').hide(100);
-            })
-
-            // save the kw for customer, production, delivery and eta
-             $('#save_dates').click(function() {
-                 let customer_kw = $('#customer_kw').val();
-                 let production_kw = $('#production_kw').val();
-                 let delivery_kw = $('#delivery_kw').val();
-                 let eta = $('#eta').val();
-                $.ajax({
-                    url: '/orders/{{ $order->id }}/update/dates',
-                    method: 'PATCH',
-                    dataType: 'json',
-                    data: {
-                        '_token': '{{ csrf_token() }}',
-                        customer_kw: customer_kw.split('.').reverse().join('-'),
-                        production_kw: production_kw.split('.').reverse().join('-'),
-                        delivery_kw: delivery_kw.split('.').reverse().join('-'),
-                        eta: eta.split('.').reverse().join('-')
-                    },
-                    error: function(err) {
-                        console.log(err);
-                        Swal.fire({
-                            position: 'top-end',
-                            type: 'error',
-                            title: 'Eroare',
-                            titleText: err.responseJSON.message,
-                            showConfirmButton: false,
-                            timer: 5000,
-                            toast: true
-                        });
-                    },
-                    success: function(response) {
-                        Swal.fire({
-                            position: 'top-end',
-                            type: response.status,
-                            title: 'Succes',
-                            title: response.message,
-                            showConfirmButton: false,
-                            timer: 5000,
-                            toast: true
-                        });
-                        $('#customer_kw_text').html(response.order.customer_kw_text);
-                        $('#customer_kw_text').show(100);
-                        $('#customer_kw').hide(100);
-                        $('#customer__kw').val(response.order.customer_kw);
-                        $('#production_kw_text').html(response.order.production_kw_text);
-                        $('#production_kw_text').show(100);
-                        $('#production_kw').hide(100);
-                        $('#production__kw').val(response.order.production_kw);
-                        $('#month').html(response.order.month);
-                        $('#delivery_kw_text').html(response.order.delivery_kw_text);
-                        $('#delivery_kw_text').show(100);
-                        $('#delivery_kw').hide(100);
-                        $('#delivery__kw').val(response.order.delivery_kw);
-                        $('#eta_text').html(response.order.eta_text);
-                        $('#eta_text').show(100);
-                        $('#eta').hide(100);
-                        $('#eta__').val(response.order.eta);
-                        $('#edit_dates').show(100);
-                        $('#save_dates').hide(100);
-                        $('#cancel_dates').hide(100);
-                    }
-                });
-            });
-
-
+            };
         });
+
+        // allow editing of the main details
+        $('#edit_details').click(function() {
+            $('#customer').hide(100);
+            $('#customer_id').show(100);
+            $('#customer_id').val($('#customer__id').val());
+            $('#customer_order_text').hide(100);
+            $('#customer_order').show(100);
+            $('#customer_order').val($('#customer_order_text').html().trim());
+            $('#auftrag_text').hide(100);
+            $('#auftrag').show(100);
+            $('#auftrag').val($('#auftrag_text').html().trim());
+            $('#country_text').hide(100);
+            $('#country_id').show(100);
+            $('#country_id').val($('#country__id').val());
+            $('#address_text').hide(100);
+            $('#address').show(100);
+            $('#address').val($('#address_text').html().trim());
+            $('#save_details').show(100);
+            $('#cancel_details').show(100);
+            $('#edit_details').hide(100);
+            $('.select2').show();
+            $('#select2-country_id-container').html($('#country_text').html());
+            $('#select2-country_id-container').attr('title', $('#country_text').html());
+            $('#select2-customer_id-container').html($('#customer').html());
+            $('#select2-customer_id-container').attr('title', $('#customer').html());
+        })
+
+        // cancel the editing of the main details
+        $('#cancel_details').click(function() {
+            $('#customer').show(100);
+            $('#customer_id').hide(100);
+            $('#customer_order_text').show(100);
+            $('#customer_order').hide(100);
+            $('#auftrag_text').show(100);
+            $('#auftrag').hide(100);
+            $('#country_text').show(100);
+            $('#country_id').hide(100);
+            $('#address_text').show(100);
+            $('#address').hide(100);
+            $('#save_details').hide(100);
+            $('#cancel_details').hide(100);
+            $('#edit_details').show(100);
+            $('.select2').hide();
+        })
+
+        // save the main details
+        $('#save_details').click(function() {
+            $.ajax({
+                url: '/orders/{{ $order->id }}/update/details',
+                method: 'PATCH',
+                dataType: 'json',
+                data: {
+                    '_token': '{{ csrf_token() }}',
+                    customer_id: $('#customer_id').val(),
+                    customer_order: $('#customer_order').val(),
+                    auftrag: $('#auftrag').val(),
+                    destination_id: $('#destination_id').val(),
+                },
+                error: function(err) {
+                    console.log(err);
+                    Swal.fire({
+                        position: 'top-end',
+                        type: 'error',
+                        title: 'Eroare',
+                        titleText: err.responseJSON.message,
+                        showConfirmButton: false,
+                        timer: 5000,
+                        toast: true
+                    });
+                },
+                success: function(response) {
+                    Swal.fire({
+                        position: 'top-end',
+                        type: response.status,
+                        title: 'Succes',
+                        title: response.message,
+                        showConfirmButton: false,
+                        timer: 5000,
+                        toast: true
+                    });
+                    $('#customer__id').val(response.order.customer_id);
+                    $('#customer').show(100).html(response.customer.name);
+                    $('#customer_id').hide(100);
+                    $('#customer_order_text').show(100).html(response.order.customer_order);
+                    $('#customer_order').hide(100);
+                    $('#auftrag_text').show(100).html(response.order.auftrag);
+                    $('#auftrag').hide(100);
+                    $('#country__id').val(response.country.id);
+                    $('#country_text').show(100).html(response.country.name);
+                    $('#country_id').hide(100);
+                    $('#destination_id').val(response.order.destination_id);
+                    $('#address_text').show(100).html(response.destination.address);
+                    $('#address').hide(100);
+                    $('#save_details').hide(100);
+                    $('#cancel_details').hide(100);
+                    $('#edit_details').show(100);
+                    $('.select2').hide();
+                }
+            });
+        });
+
+        // confirm existing destination or add a new one for the current customer
+        $('#address').blur(function() {
+            let customer_id = $('#customer_id').val();
+            let address = $('#address').val();
+            let country_id = $('#country_id').val();
+            $.ajax({
+                url: `/customers/${customer_id}/destinations/find`,
+                dataType: 'json',
+                data: {
+                    '_token': '{{ csrf_token() }}',
+                    customer_id, address, country_id
+                },
+                type: 'POST',
+                success: function(response) {
+                    $('#destination_id').val(response.data);
+                }
+            });
+        });
+
+        // return all destinations for the selected customer and country
+        $('#address').focus(function() {
+            let customer_id = $('#customer_id').val();
+            let country_id = $('#country_id').val();
+            $.ajax({
+                url: `/customers/${customer_id}/destinations/search`,
+                dataType: 'json',
+                data: {
+                    '_token': '{{ csrf_token() }}',
+                    customer_id, country_id
+                },
+                type: 'POST',
+                success: function(response) {
+                    $('#autocomplete').html('');
+                    if (response.count > 0) {
+                        response.data.forEach(element => {
+                            let string = `<a class="dropdown-item" onclick="select(this.innerHTML)" href="#">${element}</a>`
+                            $('#autocomplete').append(string);
+                        });
+                    } else {
+                            let string = `<a class="dropdown-item" href="#">Nu exista nici o adresa pentru clientul si tara selectata!</a>`
+                            $('#autocomplete').append(string);
+                    }
+
+                }
+            });
+        });
+
+        // allow editing of the observations
+        $('#edit_observations').click(function() {
+            $('#observations').val($('#observations_text').html().trim());
+            tinymce.get('observations').show(100);
+            $('#save_observations').show(100);
+            $('#cancel_observations').show(100);
+            $('#observations_text').hide(100);
+            $('#edit_observations').hide(100);
+        });
+
+        // cancel editing of the observations
+        $('#cancel_observations').click(function() {
+            tinymce.get('observations').hide(100);
+            $('#save_observations').hide(100);
+            $('#cancel_observations').hide(100);
+            $('#observations_text').show(100);
+            $('#edit_observations').show(100);
+        });
+
+        // save the main details
+        $('#save_observations').click(function() {
+            $.ajax({
+                url: '/orders/{{ $order->id }}/update/observations',
+                method: 'PATCH',
+                dataType: 'json',
+                data: {
+                    '_token': '{{ csrf_token() }}',
+                    observations: tinymce.activeEditor.getContent(),
+                },
+                error: function(err) {
+                    console.log(err);
+                    Swal.fire({
+                        position: 'top-end',
+                        type: 'error',
+                        title: 'Eroare',
+                        titleText: err.responseJSON.message,
+                        showConfirmButton: false,
+                        timer: 5000,
+                        toast: true
+                    });
+                },
+                success: function(response) {
+                    Swal.fire({
+                        position: 'top-end',
+                        type: response.status,
+                        title: 'Succes',
+                        title: response.message,
+                        showConfirmButton: false,
+                        timer: 5000,
+                        toast: true
+                    });
+                    $('.tox-tinymce').hide(100);
+                    tinymce.get('observations').hide(100);
+                    $('#observations_text').html(response.order.observations);
+                    $('#save_observations').hide(100);
+                    $('#cancel_observations').hide(100);
+                    $('#observations_text').show(100);
+                    $('#edit_observations').show(100);
+                }
+            });
+        });
+
+        // allow editing of kw for customer, production, delivery and eta
+        $('#edit_dates').click(function() {
+            $('#customer_kw_text').hide(100);
+            $('#customer_kw').show(100).val($('#customer__kw').val().split('-').reverse().join('.'));
+            $('#production_kw_text').hide(100);
+            $('#production_kw').show(100).val($('#production__kw').val().split('-').reverse().join('.'));
+            $('#delivery_kw_text').hide(100);
+            $('#delivery_kw').show(100).val($('#delivery__kw').val().split('-').reverse().join('.'));
+            $('#eta_text').hide(100);
+            $('#eta').show(100).val($('#eta__').val().split('-').reverse().join('.'));
+            $('#edit_dates').hide(100);
+            $('#save_dates').show(100);
+            $('#cancel_dates').show(100);
+        });
+
+        // cancel the edition of kw for customer, production, delivery and eta
+        $('#cancel_dates').click(function() {
+            $('#customer_kw_text').show(100);
+            $('#customer_kw').hide(100);
+            $('#production_kw_text').show(100);
+            $('#production_kw').hide(100);
+            $('#delivery_kw_text').show(100);
+            $('#delivery_kw').hide(100);
+            $('#eta_text').show(100);
+            $('#eta').hide(100);
+            $('#edit_dates').show(100);
+            $('#save_dates').hide(100);
+            $('#cancel_dates').hide(100);
+        })
+
+        // save the kw for customer, production, delivery and eta
+            $('#save_dates').click(function() {
+                let customer_kw = $('#customer_kw').val();
+                let production_kw = $('#production_kw').val();
+                let delivery_kw = $('#delivery_kw').val();
+                let eta = $('#eta').val();
+            $.ajax({
+                url: '/orders/{{ $order->id }}/update/dates',
+                method: 'PATCH',
+                dataType: 'json',
+                data: {
+                    '_token': '{{ csrf_token() }}',
+                    customer_kw: customer_kw.split('.').reverse().join('-'),
+                    production_kw: production_kw.split('.').reverse().join('-'),
+                    delivery_kw: delivery_kw.split('.').reverse().join('-'),
+                    eta: eta.split('.').reverse().join('-')
+                },
+                error: function(err) {
+                    console.log(err);
+                    Swal.fire({
+                        position: 'top-end',
+                        type: 'error',
+                        title: 'Eroare',
+                        titleText: err.responseJSON.message,
+                        showConfirmButton: false,
+                        timer: 5000,
+                        toast: true
+                    });
+                },
+                success: function(response) {
+                    Swal.fire({
+                        position: 'top-end',
+                        type: response.status,
+                        title: 'Succes',
+                        title: response.message,
+                        showConfirmButton: false,
+                        timer: 5000,
+                        toast: true
+                    });
+                    $('#customer_kw_text').html(response.order.customer_kw_text);
+                    $('#customer_kw_text').show(100);
+                    $('#customer_kw').hide(100);
+                    $('#customer__kw').val(response.order.customer_kw);
+                    $('#production_kw_text').html(response.order.production_kw_text);
+                    $('#production_kw_text').show(100);
+                    $('#production_kw').hide(100);
+                    $('#production__kw').val(response.order.production_kw);
+                    $('#month').html(response.order.month);
+                    $('#delivery_kw_text').html(response.order.delivery_kw_text);
+                    $('#delivery_kw_text').show(100);
+                    $('#delivery_kw').hide(100);
+                    $('#delivery__kw').val(response.order.delivery_kw);
+                    $('#eta_text').html(response.order.eta_text);
+                    $('#eta_text').show(100);
+                    $('#eta').hide(100);
+                    $('#eta__').val(response.order.eta);
+                    $('#edit_dates').show(100);
+                    $('#save_dates').hide(100);
+                    $('#cancel_dates').hide(100);
+                }
+            });
+        });
+
+
+    });
     </script>
 @stop
 
