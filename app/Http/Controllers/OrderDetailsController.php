@@ -9,6 +9,7 @@ use App\Traits\RefinementsTranslator;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use App\Refinement;
+use Illuminate\Support\Facades\DB;
 
 class OrderDetailsController extends Controller
 {
@@ -39,8 +40,8 @@ class OrderDetailsController extends Controller
             ->editColumn('refinements_list', function($details) {
                 return $this->translateForHumans($details->refinements_list);
             })
-            ->addColumn('actions', function ($customers) {
-                // return view('customers.partials.actions', ['customer' => $customers]);
+            ->addColumn('actions', function ($details) {
+                return view('orders.partials.actions_sub', ['detail' => $details]);
             })
             ->make(true);
     }
@@ -54,6 +55,12 @@ class OrderDetailsController extends Controller
      */
     public function store(Order $order, Request $request)
     {
+        $det = OrderDetail::where('order_id', $order->id)->latest()->first();
+        if ($det == null) {
+            $position = 1;
+        } else {
+            $position = $det->position + 1;
+        }
 
         for ($i=0; $i < $request->pal; $i++) {
             $article = Article::find($request->article_id);
@@ -72,6 +79,7 @@ class OrderDetailsController extends Controller
                 $h = $article->thickness;
                 $detail->volume = round(($this->pi * ($r**2) * $h * $request->pcs / 1000000000), 3, PHP_ROUND_HALF_UP);
             }
+            $detail->position = $position;
             $detail->details_json = $request->details_json;
             $detail->save();
         }
@@ -81,5 +89,177 @@ class OrderDetailsController extends Controller
             'message' => 'Pozitia a fost adaugata in baza de date!',
             'type' => 'success'
         ], 201);
+    }
+
+    /**
+     * Get all the details of a certain position
+     *
+     * @param Order $order
+     * @param int $position
+     * @return JsonResponse
+     */
+    public function getPosition(Order $order, $position)
+    {
+        $pos = DB::table('order_details')
+            ->select('article_id', 'refinements_list', 'length', 'pcs', 'details_json', DB::raw('count(*) as pallets'))
+            ->where('order_id', $order->id)
+            ->where('position', $position)
+            ->groupBy(['article_id', 'refinements_list', 'length', 'pcs', 'details_json'])
+            ->get();
+
+        $pos->map(function($item, $index) {
+            $article = Article::find($item->article_id);
+            $item->details = json_decode($item->details_json);
+            $item->article = $article->name;
+            $item->refinements_list = explode(',', $item->refinements_list);
+        });
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $pos
+        ]);
+    }
+
+    /**
+     * Update all the packages from the position of a certain order
+     *
+     * @param Order $order
+     * @param int $position
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function update(Order $order, $position, Request $request)
+    {
+        try {
+            $positions = OrderDetail::where('order_id', $order->id)->where('position', $position)->get();
+            $article = Article::find($request->edit_article_id);
+            foreach ($positions as $item) {
+                $position = OrderDetail::find($item->id);
+                $position->article_id = $article->id;
+                $position->refinements_list = implode(',', $request->edit_refinements_list);
+                $position->thickness = $article->thickness;
+                $position->width = $article->width;
+                $position->length = $request->edit_length;
+                $position->pcs = $request->edit_pcs;
+                if ($request->edit_length != null) {
+                    $position->volume = ($article->thickness * $article->width * $request->edit_length * $request->edit_pcs) / 1000000000;
+                } else {
+                    $r = $article->width / 2;
+                    $h = $article->thickness;
+                    $position->volume = round(($this->pi * ($r ** 2) * $h * $request->edit_pcs / 1000000000), 3, PHP_ROUND_HALF_UP);
+                }
+                $position->details_json = $request->edit_details_json;
+                $position->save();
+            }
+            return response()->json([
+                'updated' => true,
+                'message' => 'Pozitiile au fost modificate cu succes!',
+                'type' => 'success'
+            ]);
+        } catch(\Throwable $th) {
+            return response()->json([
+                'updated' => false,
+                'message' => 'A aparut o eroare. Va rugam reincercati!',
+                'type' => 'error',
+                'error' => $th
+            ]);
+        }
+    }
+
+    /**
+     * Copy a package n times
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function copy(Request $request)
+    {
+        try {
+            $original = OrderDetail::find($request->id);
+
+            for ($i=0; $i < $request->copies; $i++) {
+                $copy = new OrderDetail();
+                $copy->order_id = $original->order_id;
+                $copy->article_id = $original->article_id;
+                $copy->refinements_list = $original->refinements_list;
+                $copy->thickness = $original->thickness;
+                $copy->width = $original->width;
+                $copy->length = $original->length;
+                $copy->pcs = $original->pcs;
+                $copy->volume = $original->volume;
+                $copy->position = $original->position;
+                $copy->details_json = $original->details_json;
+                $copy->save();
+            }
+            return response()->json([
+                'copied' => true,
+                'message' => 'Pozitia a fost copiata de ' . $request->copies . ' ori!',
+                'type' => 'success'
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'copied' => false,
+                'message' => 'A aparut o eroare. Va rugam reincercati!',
+                'type' => 'error',
+                'error' => $th
+            ]);
+        }
+    }
+
+    /**
+     * Deletes all the packages on one position from the database
+     *
+     * @param Order $order
+     * @param int $position
+     * @return JsonResponse
+     */
+    public function destroyPosition(Order $order, $position)
+    {
+        try {
+            $positions = OrderDetail::where('order_id', $order->id)->where('position', $position)->get();
+            foreach ($positions as $position) {
+                $position->delete();
+            }
+
+            return response()->json([
+                'deleted' => true,
+                'message' => 'Toate pachete de pe aceasta pozitie au fost sterse.',
+                'type' => 'success'
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'deleted' => false,
+                'message' => 'A aparut o eroare. Va rugam reincercati!',
+                'type' => 'error',
+                'error' => $th
+            ]);
+        }
+    }
+
+    /**
+     * Delete one package from the database
+     *
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function destroyPackage(Request $request)
+    {
+        try {
+            $package = OrderDetail::find($request->id);
+            $package->delete();
+
+            return response()->json([
+                'deleted' => true,
+                'message' => 'Pachet sters!',
+                'type' => 'success'
+            ]);
+        } catch (\Throwable $th) {
+            return response()->json([
+                'deleted' => false,
+                'message' => 'A aparut o eroare. Va rugam reincercati!',
+                'type' => 'error',
+                'error' => $th
+            ]);
+        }
     }
 }

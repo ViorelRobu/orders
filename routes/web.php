@@ -112,6 +112,13 @@ Route::middleware(['auth'])->group(function() {
         Route::prefix('/{order}/')->group(function() {
             Route::get('/show', 'OrdersController@show');
             Route::get('/details', 'OrderDetailsController@fetch');
+            Route::post('/details/copy', 'OrderDetailsController@copy');
+            Route::delete('/details/package/delete', 'OrderDetailsController@destroyPackage');
+            Route::prefix('/details/{position}')->group(function() {
+                Route::get('/fetch', 'OrderDetailsController@getPosition');
+                Route::patch('/update', 'OrderDetailsController@update');
+                Route::delete('/delete', 'OrderDetailsController@destroyPosition');
+            });
             Route::post('/details/add', 'OrderDetailsController@store');
             Route::post('/fields', 'OrdersController@fields');
             Route::patch('/update', 'OrdersController@update');

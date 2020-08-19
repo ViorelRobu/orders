@@ -21,6 +21,7 @@ $factory->define(OrderDetail::class, function (Faker $faker) {
         'pcs' => $pcs,
         'volume' => ($thickness * $width * $length * $pcs) / 1000000000,
         'produced_ticom' => 1,
+        'position' => 1,
         'batch' => $faker->biasedNumberBetween(1, 50, 'sqrt'),
         'produced_batch' => 1,
         'loading_date' => $faker->date(),

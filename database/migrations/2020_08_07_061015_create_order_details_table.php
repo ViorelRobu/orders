@@ -27,7 +27,7 @@ class CreateOrderDetailsTable extends Migration
             $table->string('batch')->nullable();
             $table->boolean('produced_batch')->default(0);
             $table->date('loading_date')->nullable();
-            $table->text('details_json');
+            $table->text('details_json')->nullable();
             $table->timestamps();
 
             $table->foreign('order_id')->references('id')->on('orders')->onDelete('restrict');

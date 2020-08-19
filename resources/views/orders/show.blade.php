@@ -234,6 +234,7 @@
                 <table id="order_details" class="table table-bordered table-hover">
                     <thead>
                         <td><i class="fas fa-chevron-up"></i></td>
+                        <td>Poz</td>
                         <td>Articol</td>
                         <td>Finisaje</td>
                         <td>Gr</td>
@@ -256,7 +257,11 @@
 
     @include('orders.partials.ship')
     @include('orders.partials.details')
+    @include('orders.partials.edit_details')
     @include('orders.partials.fields')
+    @include('orders.partials.delete_pos')
+    @include('orders.partials.delete_pak')
+    @include('orders.partials.copy')
 
 @stop
 
@@ -332,6 +337,175 @@
             width: '100%'
         });
 
+        // select2 for editing details
+        $('#edit_article_id').select2({
+            width: '100%'
+        });
+        $('#edit_refinements_list').select2({
+            width: '100%'
+        });
+
+        // fetch position details
+        const fetchPosition = id => {
+            $.ajax({
+                url: `/orders/{{ $order->id }}/details/${id}/fetch`,
+                dataType: 'json',
+                type: 'GET',
+                success: function(response){
+                    $('#position').val(id);
+                    $('#edit_article_id').val(response.data[0].article_id);
+                    $('#select2-edit_article_id-container').html(response.data[0].article);
+                    $('#select2-edit_article_id-container').attr('title', response.data[0].article);
+                    $('#edit_refinements_list').val(response.data[0].refinements_list).trigger('change');
+                    $('#edit_length').val(response.data[0].length)
+                    $('#edit_pcs').val(response.data[0].pcs)
+                    $('#edit_pal').val(response.data[0].pallets)
+                    // add the inputs for the custom position details
+                    const details = response.data[0].details;
+                    for (let detail in details) {
+                        let name = detail.split('_').join(' ');
+                        let label = name.charAt(0).toUpperCase() + name.slice(1);
+                        let html = `<div class="col-lg-3">
+                                        <label for="${detail}">${label}</label>
+                                        <input type="text"
+                                            class="form-control" name="${detail}" id="${detail}" placeholder="${label}" value="${details[detail]}">
+                                    </div>`;
+                        $('#edit_details_fields_data').append(html);
+                    }
+                }
+            });
+        }
+
+        // set the id of the package to be copied
+        const setCopyId = id => {
+            $('#copy_position').attr('onclick', `copy(${id})`);
+        }
+
+        // copy the package
+        const copy = id => {
+            let copies = $('#copies').val();
+            $.ajax({
+                url: `/orders/{{ $order->id }}/details/copy`,
+                dataType: 'json',
+                type: 'POST',
+                data: {
+                    id, copies,
+                    '_token': '{{ csrf_token() }}',
+                },
+                success: function(response){
+                    $('#copyDetail').modal('hide');
+                    Swal.fire({
+                        position: 'top-end',
+                        type: response.type,
+                        title: 'Succes',
+                        title: response.message,
+                        showConfirmButton: false,
+                        timer: 5000,
+                        toast: true
+                    });
+                    table.draw();
+                }
+            });
+        }
+
+        // reset the copy details form on closing the modal
+        $('#copyDetail').on('hidden.bs.modal', function () {
+            $('#copies').val('');
+        });
+
+        // set the id of the package to be deleted
+        const setIdPak = id => {
+            $('#deletePackage').attr('onclick', `deletePackage(${id})`);
+        }
+
+        // set the position for the delete modal
+        const setIdPos = id => {
+            $('#deletePosition').attr('onclick', `deletePosition(${id})`);
+        }
+
+        // delete all the positions
+        const deletePosition = id => {
+            $.ajax({
+                url: `/orders/{{ $order->id }}/details/${id}/delete`,
+                dataType: 'json',
+                type: 'DELETE',
+                data: {
+                    '_token': '{{ csrf_token() }}',
+                },
+                success: function(response){
+                    $('#deletePos').modal('hide');
+                    Swal.fire({
+                        position: 'top-end',
+                        type: response.type,
+                        title: 'Succes',
+                        title: response.message,
+                        showConfirmButton: false,
+                        timer: 5000,
+                        toast: true
+                    });
+                    table.draw();
+                }
+            });
+        }
+
+        // delete all the positions
+        const deletePackage = id => {
+            $.ajax({
+                url: `/orders/{{ $order->id }}/details/package/delete`,
+                dataType: 'json',
+                type: 'DELETE',
+                data: {
+                    id,
+                    '_token': '{{ csrf_token() }}',
+                },
+                success: function(response){
+                    $('#deletePak').modal('hide');
+                    Swal.fire({
+                        position: 'top-end',
+                        type: response.type,
+                        title: 'Succes',
+                        title: response.message,
+                        showConfirmButton: false,
+                        timer: 5000,
+                        toast: true
+                    });
+                    table.draw();
+                }
+            });
+        }
+
+        // reset the edit details form on closing the modal
+        $('#editDetails').on('hidden.bs.modal', function () {
+            $('#edit_details_fields_data').empty();
+        });
+
+        // order details datatable
+        let table = $('#order_details').DataTable({
+            processing: true,
+            serverSide: true,
+            pageLength: 25,
+            ajax: "/orders/{{ $order->id }}/details",
+            columns: [
+                {data: 'DT_RowIndex', name: 'DT_RowIndex'},
+                {data: 'position', name: 'position'},
+                {data: 'article', name: 'article'},
+                {data: 'refinements_list', name: 'refinements_list'},
+                {data: 'thickness', name: 'thickness'},
+                {data: 'width', name: 'width'},
+                {data: 'length', name: 'length'},
+                {data: 'pcs', name: 'pcs'},
+                {data: 'volume', name: 'volume'},
+                {data: 'produced_ticom', name: 'produced_ticom'},
+                {data: 'batch', name: 'batch'},
+                {data: 'produced_batch', name: 'produced_batch'},
+                {data: 'loading_date', name: 'loading_date'},
+            @foreach ($fields as $field)
+                {data: '{{ $field }}', name: '{{ $field }}'},
+            @endforeach
+                {data: 'actions', name: 'actions'},
+            ]
+        });
+
         $(document).ready(function() {
 
             // configure button for a add new event
@@ -353,31 +527,6 @@
                         $('#details_fields_data').append(html);
 
                 });
-            });
-
-            // order details datatable
-            let table = $('#order_details').DataTable({
-                processing: true,
-                serverSide: true,
-                ajax: "/orders/{{ $order->id }}/details",
-                columns: [
-                    {data: 'DT_RowIndex', name: 'DT_RowIndex'},
-                    {data: 'article', name: 'article'},
-                    {data: 'refinements_list', name: 'refinements_list'},
-                    {data: 'thickness', name: 'thickness'},
-                    {data: 'width', name: 'width'},
-                    {data: 'length', name: 'length'},
-                    {data: 'pcs', name: 'pcs'},
-                    {data: 'volume', name: 'volume'},
-                    {data: 'produced_ticom', name: 'produced_ticom'},
-                    {data: 'batch', name: 'batch'},
-                    {data: 'produced_batch', name: 'produced_batch'},
-                    {data: 'loading_date', name: 'loading_date'},
-                    @foreach ($fields as $field)
-                        {data: '{{ $field }}', name: '{{ $field }}'},
-                    @endforeach
-                    {data: 'actions', name: 'actions'},
-                ]
             });
 
         // add the details to the DB
@@ -433,6 +582,61 @@
             });
         });
 
+        // edit the details in the DB for the selected position
+        $(document).on('click', '#save_edit_details', function(event) {
+            event.preventDefault();
+            let position = $('#position').val();
+            let edit_article_id = $('#edit_article_id').val();
+            let edit_refinements_list = $('#edit_refinements_list').val();
+            let edit_length = $('#edit_length').val();
+            let edit_pcs = $('#edit_pcs').val();
+            let json_data = {};
+            $('#edit_details_fields_data').children().each(function() {
+                $(this).children().each(function() {
+                    json_data[$(this).attr('id')] = $(this).val();
+                    delete json_data.undefined;
+                })
+            });
+
+            $.ajax({
+                url: `/orders/{{ $order->id }}/details/${position}/update`,
+                method: 'PATCH',
+                dataType: 'json',
+                data: {
+                '_token': '{{ csrf_token() }}',
+                edit_article_id, edit_refinements_list, edit_length, edit_pcs,
+                edit_details_json: JSON.stringify(json_data)
+                },
+                error: function(err) {
+                    console.log(err);
+                    Swal.fire({
+                        position: 'top-end',
+                        type: 'error',
+                        title: 'Eroare',
+                        titleText: err.responseJSON.message,
+                        showConfirmButton: false,
+                        timer: 5000,
+                        toast: true
+                    });
+                },
+                success: function(response) {
+                    console.log(response.error);
+                    $('#addDetails').modal('hide');
+                    Swal.fire({
+                        position: 'top-end',
+                        type: response.type,
+                        title: 'Succes',
+                        title: response.message,
+                        showConfirmButton: false,
+                        timer: 5000,
+                        toast: true
+                    });
+                    $('#editDetails').modal('hide');
+                    table.draw()
+                }
+            });
+        });
+
         // reset the add details form on closing the modal
         $('#addDetails').on('hidden.bs.modal', function () {
             $('#update').remove();
@@ -444,6 +648,7 @@
         $(document).on('click', '#save_fields_details', function(e) {
             e.preventDefault();
             let details_fields = $('#details_fields').val().trim();
+            let fields_text = $('#details_fields_text').html().trim();
             $.ajax({
                 url: '/orders/{{ $order->id }}/fields',
                 method: 'POST',
@@ -476,7 +681,9 @@
                         toast: true
                     });
                     $('#addFields').modal('hide');
-                    location.reload();
+                    if (fields_text === '') {
+                        location.reload();
+                    }
                     $('#details_fields_text').html(response.data);
                     table.draw()
                 }
