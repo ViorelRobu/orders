@@ -344,6 +344,20 @@ class OrdersController extends Controller
         $articles = Article::all();
         $refinements = Refinement::all();
         $fields = explode('|', $order->details_fields);
+        $order_total = OrderDetail::where('order_id', $order->id)->sum('volume');
+        $rest_to_produce = OrderDetail::where('order_id', $order->id)->where('produced_ticom', 0)->sum('volume');
+        $delivered = OrderDetail::where('order_id', $order->id)->whereNotNull('loading_date')->sum('volume');
+        $ready_for_delivery = OrderDetail::where('order_id', $order->id)->where('produced_ticom', 1)->whereNull('loading_date')->sum('volume');
+        if ($order_total == $rest_to_produce) {
+            $finished = 0;
+        } else {
+            $finished = round(((($order_total - $rest_to_produce) / $order_total) * 100), 2, PHP_ROUND_HALF_UP);
+        }
+        if ($delivered > 0) {
+            $percentage_delivered = round(($delivered / $order_total) * 100, 2, PHP_ROUND_HALF_UP);
+        } else {
+            $percentage_delivered = 0;
+        }
 
         return view('orders.show', [
             'order' => $order,
@@ -359,7 +373,13 @@ class OrdersController extends Controller
             'countries' => $countries,
             'articles' => $articles,
             'refinements' => $refinements,
-            'fields' => $fields
+            'fields' => $fields,
+            'order_total' => $order_total,
+            'rest_to_produce' => $rest_to_produce,
+            'delivered' => $delivered,
+            'ready_for_delivery' => $ready_for_delivery,
+            'finished' => $finished,
+            'percentage_delivered' => $percentage_delivered,
         ]);
     }
 

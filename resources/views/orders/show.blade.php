@@ -182,31 +182,31 @@
                 </div>
                 <div class="col-lg-1">
                     <p class="text-center"><strong>Total comanda</strong></p>
-                    <p class="text-center">50 mc</p>
+                    <p class="text-center">{{ $order_total }} mc</p>
                 </div>
                 <div class="col-lg-1">
                     <p class="text-center"><strong>Rest de produs</strong></p>
-                    <p class="text-center">10 mc</p>
+                    <p class="text-center">{{ $rest_to_produce }} mc</p>
                 </div>
                 <div class="col-lg-1">
                     <p class="text-center"><strong>Livrat</strong></p>
-                    <p class="text-center">40 mc</p>
+                    <p class="text-center">{{ $delivered }} mc</p>
                 </div>
                 <div class="col-lg-1">
                     <p class="text-center"><strong>Rest de livrat</strong></p>
-                    <p class="text-center">10 mc</p>
+                    <p class="text-center">{{ $order_total - $delivered }} mc</p>
                 </div>
                 <div class="col-lg-1">
                     <p class="text-center"><strong>Gata livrare</strong></p>
-                    <p class="text-center">10 mc</p>
+                    <p class="text-center">{{ $ready_for_delivery }} mc</p>
                 </div>
                 <div class="col-lg-1">
                     <p class="text-center"><strong>Finalizat</strong></p>
-                    <p class="text-center">100%</p>
+                    <p class="text-center">{{ $finished }}%</p>
                 </div>
                 <div class="col-lg-1">
                     <p class="text-center"><strong>Livrat</strong></p>
-                    <p class="text-center">80%</p>
+                    <p class="text-center">{{ $percentage_delivered }}%</p>
                 </div>
             </div>
         </div>
