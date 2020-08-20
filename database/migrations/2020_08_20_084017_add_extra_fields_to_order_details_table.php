@@ -17,7 +17,7 @@ class AddExtraFieldsToOrderDetailsTable extends Migration
             $table->addColumn('text', 'pcs_height')->after('loading_date')->nullable();
             $table->addColumn('text', 'rows')->after('pcs_height')->nullable();
             $table->addColumn('text', 'label')->after('rows')->nullable();
-            $table->addColumn('boolean', 'foil')->after('label')->default(0);
+            $table->addColumn('text', 'foil')->after('label')->nullable();
             $table->addColumn('text', 'pal')->after('foil')->nullable();
             $table->addColumn('text', 'comment')->after('pal')->nullable();
         });

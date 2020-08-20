@@ -140,4 +140,14 @@ Route::middleware(['auth'])->group(function() {
         Route::get('/all', 'OrdersController@fetchAllArchive')->name('archive.index');
     });
 
+
+    /*
+     |---------------------------------------------------------------
+     |  Reports routes
+     |---------------------------------------------------------------
+     */
+     Route::prefix('/reports')->group(function() {
+        Route::get('/', 'ReportsController@index');
+     });
+
 });

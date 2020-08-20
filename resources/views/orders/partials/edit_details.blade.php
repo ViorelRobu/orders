@@ -72,8 +72,8 @@
                                 <div class="form-group">
                                   <label for="edit_foil">Folie</label>
                                   <select class="form-control" name="edit_foil" id="edit_foil">
-                                    <option value="1">Infoliat</option>
-                                    <option value="0">Neinfoliat</option>
+                                    <option value="infoliat">Infoliat</option>
+                                    <option value="neinfoliat">Neinfoliat</option>
                                   </select>
                                 </div>
                             </div>
