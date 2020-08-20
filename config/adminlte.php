@@ -252,6 +252,11 @@ return [
             'url' => 'archive',
             'icon' => 'fas fa-fw fa-list',
         ],
+        [
+            'text' => 'Rapoarte',
+            'url' => 'reports',
+            'icon' => 'fas fa-fw fa-file-excel',
+        ],
         ['header' => 'SETARI'],
         [
             'text' => 'Nomenclator',

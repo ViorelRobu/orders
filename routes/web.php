@@ -148,6 +148,7 @@ Route::middleware(['auth'])->group(function() {
      */
      Route::prefix('/reports')->group(function() {
         Route::get('/', 'ReportsController@index');
+        Route::get('/active', 'ReportsController@exportActiveOrders');
      });
 
 });
