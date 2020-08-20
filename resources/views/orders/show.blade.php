@@ -230,7 +230,7 @@
                     </div>
                 </div>
             </div>
-            <div class="card-body">
+            <div class="card-body" style="overflow-x: auto; white-space: nowrap;">
                 <table id="order_details" class="table table-bordered table-hover">
                     <thead>
                         <td><i class="fas fa-chevron-up"></i></td>
@@ -245,6 +245,11 @@
                         <td>Ticom</td>
                         <td>Lot</td>
                         <td>Prod</td>
+                        <td>Buc/H</td>
+                        <td>Rand</td>
+                        <td>Etich</td>
+                        <td>Fol</td>
+                        <td>Pal</td>
                         <td>Incarcare</td>
                         @foreach ($fields as $field)
                             <td>{{ $field }}</td>
@@ -359,7 +364,12 @@
                     $('#edit_refinements_list').val(response.data[0].refinements_list).trigger('change');
                     $('#edit_length').val(response.data[0].length)
                     $('#edit_pcs').val(response.data[0].pcs)
-                    $('#edit_pal').val(response.data[0].pallets)
+                    $('#edit_pcs_height').val(response.data[0].pcs_height)
+                    $('#edit_rows').val(response.data[0].rows)
+                    $('#edit_label').val(response.data[0].label)
+                    $('#edit_foil').val(response.data[0].foil)
+                    $('#edit_pal').val(response.data[0].pal)
+                    $('#edit_pal_pcs').val(response.data[0].pallets)
                     // add the inputs for the custom position details
                     const details = response.data[0].details;
                     for (let detail in details) {
@@ -483,7 +493,7 @@
         let table = $('#order_details').DataTable({
             processing: true,
             serverSide: true,
-            pageLength: 25,
+            pageLength: 10,
             ajax: "/orders/{{ $order->id }}/details",
             columns: [
                 {data: 'DT_RowIndex', name: 'DT_RowIndex'},
@@ -498,6 +508,11 @@
                 {data: 'produced_ticom', name: 'produced_ticom'},
                 {data: 'batch', name: 'batch'},
                 {data: 'produced_batch', name: 'produced_batch'},
+                {data: 'pcs_height', name: 'pcs_height'},
+                {data: 'rows', name: 'rows'},
+                {data: 'label', name: 'label'},
+                {data: 'foil', name: 'foil'},
+                {data: 'pal', name: 'pal'},
                 {data: 'loading_date', name: 'loading_date'},
             @foreach ($fields as $field)
                 {data: '{{ $field }}', name: '{{ $field }}'},
@@ -536,6 +551,11 @@
             let refinements_list = $('#refinements_list').val();
             let length = $('#length').val();
             let pcs = $('#pcs').val();
+            let pal_pcs = $('#pal_pcs').val();
+            let pcs_height = $('#pcs_height').val();
+            let rows = $('#rows').val();
+            let label = $('#label').val();
+            let foil = $('#foil').val();
             let pal = $('#pal').val();
             let json_data = {};
             $('#details_fields_data').children().each(function() {
@@ -551,7 +571,7 @@
                 dataType: 'json',
                 data: {
                 '_token': '{{ csrf_token() }}',
-                article_id, refinements_list, length, pcs, pal,
+                article_id, refinements_list, length, pcs, pcs_height, rows, label, foil, pal, pal_pcs,
                 details_json: JSON.stringify(json_data)
                 },
                 error: function(err) {
@@ -590,6 +610,11 @@
             let edit_refinements_list = $('#edit_refinements_list').val();
             let edit_length = $('#edit_length').val();
             let edit_pcs = $('#edit_pcs').val();
+            let edit_pcs_height = $('#edit_pcs_height').val();
+            let edit_rows = $('#edit_rows').val();
+            let edit_label = $('#edit_label').val();
+            let edit_foil = $('#edit_foil').val();
+            let edit_pal = $('#edit_pal').val();
             let json_data = {};
             $('#edit_details_fields_data').children().each(function() {
                 $(this).children().each(function() {
@@ -604,7 +629,8 @@
                 dataType: 'json',
                 data: {
                 '_token': '{{ csrf_token() }}',
-                edit_article_id, edit_refinements_list, edit_length, edit_pcs,
+                edit_article_id, edit_refinements_list, edit_length, edit_pcs, edit_pcs_height,
+                edit_rows, edit_label, edit_foil, edit_pal,
                 edit_details_json: JSON.stringify(json_data)
                 },
                 error: function(err) {

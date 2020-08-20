@@ -62,7 +62,7 @@ class OrderDetailsController extends Controller
             $position = $det->position + 1;
         }
 
-        for ($i=0; $i < $request->pal; $i++) {
+        for ($i=0; $i < $request->pal_pcs; $i++) {
             $article = Article::find($request->article_id);
             $detail = new OrderDetail();
             $detail->order_id = $order->id;
@@ -80,6 +80,11 @@ class OrderDetailsController extends Controller
                 $detail->volume = round(($this->pi * ($r**2) * $h * $request->pcs / 1000000000), 3, PHP_ROUND_HALF_UP);
             }
             $detail->position = $position;
+            $detail->pcs_height = $request->pcs_height;
+            $detail->rows = $request->rows;
+            $detail->label = $request->label;
+            $detail->foil = $request->foil;
+            $detail->pal = $request->pal;
             $detail->details_json = $request->details_json;
             $detail->save();
         }
@@ -101,10 +106,10 @@ class OrderDetailsController extends Controller
     public function getPosition(Order $order, $position)
     {
         $pos = DB::table('order_details')
-            ->select('article_id', 'refinements_list', 'length', 'pcs', 'details_json', DB::raw('count(*) as pallets'))
+            ->select('article_id', 'refinements_list', 'length', 'pcs', 'pcs_height', 'rows', 'label', 'foil', 'pal', 'details_json', DB::raw('count(*) as pallets'))
             ->where('order_id', $order->id)
             ->where('position', $position)
-            ->groupBy(['article_id', 'refinements_list', 'length', 'pcs', 'details_json'])
+            ->groupBy(['article_id', 'refinements_list', 'length', 'pcs','pcs_height', 'rows', 'label', 'foil', 'pal','details_json'])
             ->get();
 
         $pos->map(function($item, $index) {
@@ -148,6 +153,11 @@ class OrderDetailsController extends Controller
                     $h = $article->thickness;
                     $position->volume = round(($this->pi * ($r ** 2) * $h * $request->edit_pcs / 1000000000), 3, PHP_ROUND_HALF_UP);
                 }
+                $position->pcs_height = $request->edit_pcs_height;
+                $position->rows = $request->edit_rows;
+                $position->label = $request->edit_label;
+                $position->foil = $request->edit_foil;
+                $position->pal = $request->edit_pal;
                 $position->details_json = $request->edit_details_json;
                 $position->save();
             }
@@ -188,6 +198,11 @@ class OrderDetailsController extends Controller
                 $copy->pcs = $original->pcs;
                 $copy->volume = $original->volume;
                 $copy->position = $original->position;
+                $copy->pcs_height = $original->pcs_height;
+                $copy->rows = $original->rows;
+                $copy->label = $original->label;
+                $copy->foil = $original->foil;
+                $copy->pal = $original->pal;
                 $copy->details_json = $original->details_json;
                 $copy->save();
             }

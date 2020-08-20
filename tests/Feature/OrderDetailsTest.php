@@ -77,7 +77,12 @@ class OrderDetailsTest extends TestCase
             'refinements_list' => [1, 2],
             'length' => '2000',
             'pcs' => '100',
-            'pal' => 2
+            'pcs_height' => '100',
+            'rows' => '100',
+            'label' => '100',
+            'foil' => 0,
+            'pal' => 'palet',
+            'pal_pcs' => 2
         ]);
 
         $response->assertStatus(201)
@@ -90,7 +95,12 @@ class OrderDetailsTest extends TestCase
             'article_id' => $article->id,
             'refinements_list' => '1,2',
             'length' => '2000',
-            'pcs' => '100'
+            'pcs' => '100',
+            'pcs_height' => '100',
+            'rows' => '100',
+            'label' => '100',
+            'foil' => 0,
+            'pal' => 'palet',
         ]);
     }
 
@@ -119,7 +129,12 @@ class OrderDetailsTest extends TestCase
             'refinements_list' => [1, 2],
             'length' => '2000',
             'pcs' => '100',
-            'pal' => 2,
+            'pcs_height' => '100',
+            'rows' => '100',
+            'label' => '100',
+            'foil' => 0,
+            'pal' => 'palet',
+            'pal_pcs' => 2,
             'details_json' => '{"ean":"44444"}'
         ]);
 
@@ -128,6 +143,11 @@ class OrderDetailsTest extends TestCase
             'edit_refinements_list' => [4,5],
             'edit_length' => null,
             'edit_pcs' => 30,
+            'edit_pcs_height' => '200',
+            'edit_rows' => '200',
+            'edit_label' => '200',
+            'edit_foil' => 1,
+            'edit_pal' => 'tac',
             'edit_details_json' => '{"ean":"44445"}'
         ]);
 
@@ -141,6 +161,11 @@ class OrderDetailsTest extends TestCase
             'refinements_list' => '4,5',
             'length' => null,
             'pcs' => '30',
+            'pcs_height' => '200',
+            'rows' => '200',
+            'label' => '200',
+            'foil' => 1,
+            'pal' => 'tac',
             'details_json' => '{"ean":"44445"}'
         ]);
 
@@ -149,6 +174,11 @@ class OrderDetailsTest extends TestCase
             'refinements_list' => '1,2',
             'length' => '2000',
             'pcs' => '100',
+            'pcs_height' => '100',
+            'rows' => '100',
+            'label' => '100',
+            'foil' => 0,
+            'pal' => 'palet',
             'details_json' => '{"ean":"44444"}'
         ]);
     }
@@ -178,7 +208,7 @@ class OrderDetailsTest extends TestCase
             'refinements_list' => [1, 2],
             'length' => '2000',
             'pcs' => '100',
-            'pal' => 3,
+            'pal_pcs' => 3,
             'details_json' => '{"ean":"44444"}'
         ]);
 
@@ -215,7 +245,12 @@ class OrderDetailsTest extends TestCase
             'refinements_list' => [1, 2],
             'length' => '2000',
             'pcs' => '100',
-            'pal' => 3,
+            'pal_pcs' => 3,
+            'pcs_height' => '100',
+            'rows' => '100',
+            'label' => '100',
+            'foil' => 0,
+            'pal' => 'palet',
             'details_json' => '{"ean":"44444"}'
         ]);
 
@@ -254,7 +289,12 @@ class OrderDetailsTest extends TestCase
             'refinements_list' => [1, 2],
             'length' => '2000',
             'pcs' => '100',
-            'pal' => 3,
+            'pal_pcs' => 3,
+            'pcs_height' => '100',
+            'rows' => '100',
+            'label' => '100',
+            'foil' => 0,
+            'pal' => 'palet',
             'details_json' => '{"ean":"44444"}'
         ]);
 

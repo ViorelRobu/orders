@@ -32,25 +32,65 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-lg-2">
+                            <div class="col-lg-3">
                                 <div class="form-group">
                                     <label for="length">Lungime</label>
                                     <input type="number"
                                         class="form-control" name="length" id="length" placeholder="Lungime" min="0" max="8000" step="1">
                                 </div>
                             </div>
-                            <div class="col-lg-2">
+                            <div class="col-lg-3">
                                 <div class="form-group">
                                     <label for="pcs">Bucati</label>
                                     <input type="number"
                                         class="form-control" name="pcs" id="pcs" placeholder="Bucati" min="0" max="500" step="1">
                                 </div>
                             </div>
-                            <div class="col-lg-2">
+                            <div class="col-lg-3">
                                 <div class="form-group">
-                                    <label for="pal">Paleti</label>
+                                    <label for="pcs_height">Buc/Inaltime</label>
+                                    <input type="text"
+                                        class="form-control" name="pcs_height" id="pcs_height" placeholder="Bucati pe inaltime" >
+                                </div>
+                            </div>
+                            <div class="col-lg-3">
+                                <div class="form-group">
+                                    <label for="rows">Randuri</label>
+                                    <input type="text"
+                                        class="form-control" name="rows" id="rows" placeholder="Randuri" >
+                                </div>
+                            </div>
+                            <div class="col-lg-3">
+                                <div class="form-group">
+                                    <label for="label">Eticheta</label>
+                                    <input type="text"
+                                        class="form-control" name="label" id="label" placeholder="Eticheta" >
+                                </div>
+                            </div>
+                            <div class="col-lg-3">
+                                <div class="form-group">
+                                  <label for="foil">Folie</label>
+                                  <select class="form-control" name="foil" id="foil">
+                                    <option value="1">Infoliat</option>
+                                    <option value="0">Neinfoliat</option>
+                                  </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-3">
+                                <div class="form-group">
+                                  <label for="pal">Paletizare</label>
+                                  <select class="form-control" name="pal" id="pal">
+                                    <option value="palet">Palet</option>
+                                    <option value="europalet">Europalet</option>
+                                    <option value="tac">Tac</option>
+                                  </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-3">
+                                <div class="form-group">
+                                    <label for="pal_pcs">Paleti</label>
                                     <input type="number"
-                                        class="form-control" name="pal" id="pal" placeholder="Paleti" min="0" max="100" step="1">
+                                        class="form-control" name="pal_pcs" id="pal_pcs" placeholder="Paleti" min="0" max="100" step="1">
                                 </div>
                             </div>
                         </div>

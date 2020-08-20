@@ -25,6 +25,11 @@ $factory->define(OrderDetail::class, function (Faker $faker) {
         'batch' => $faker->biasedNumberBetween(1, 50, 'sqrt'),
         'produced_batch' => 1,
         'loading_date' => $faker->date(),
+        'pcs_height' => 5,
+        'rows' => 10,
+        'label' => $faker->word(),
+        'foil' => $faker->biasedNumberBetween(0,1,'sqrt'),
+        'pal' => 'palet',
         'details_json' => '{"sticker":"test","cod_ean":"EAN"}'
     ];
 });

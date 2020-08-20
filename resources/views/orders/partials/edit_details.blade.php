@@ -33,25 +33,65 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-lg-2">
+                            <div class="col-lg-3">
                                 <div class="form-group">
                                     <label for="edit_length">Lungime</label>
                                     <input type="number"
                                         class="form-control" name="edit_length" id="edit_length" placeholder="Lungime" min="0" max="8000" step="1">
                                 </div>
                             </div>
-                            <div class="col-lg-2">
+                            <div class="col-lg-3">
                                 <div class="form-group">
                                     <label for="edit_pcs">Bucati</label>
                                     <input type="number"
                                         class="form-control" name="edit_pcs" id="edit_pcs" placeholder="Bucati" min="0" max="500" step="1">
                                 </div>
                             </div>
-                            <div class="col-lg-2">
+                            <div class="col-lg-3">
                                 <div class="form-group">
-                                    <label for="edit_pal">Paleti</label>
+                                    <label for="edit_pcs_height">Buc/Inaltime</label>
+                                    <input type="text"
+                                        class="form-control" name="edit_pcs_height" id="edit_pcs_height" placeholder="Bucati pe inaltime" >
+                                </div>
+                            </div>
+                            <div class="col-lg-3">
+                                <div class="form-group">
+                                    <label for="edit_rows">Randuri</label>
+                                    <input type="text"
+                                        class="form-control" name="edit_rows" id="edit_rows" placeholder="Randuri" >
+                                </div>
+                            </div>
+                            <div class="col-lg-3">
+                                <div class="form-group">
+                                    <label for="edit_label">Eticheta</label>
+                                    <input type="text"
+                                        class="form-control" name="edit_label" id="edit_label" placeholder="Eticheta" >
+                                </div>
+                            </div>
+                            <div class="col-lg-3">
+                                <div class="form-group">
+                                  <label for="edit_foil">Folie</label>
+                                  <select class="form-control" name="edit_foil" id="edit_foil">
+                                    <option value="1">Infoliat</option>
+                                    <option value="0">Neinfoliat</option>
+                                  </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-3">
+                                <div class="form-group">
+                                  <label for="edit_pal">Paletizare</label>
+                                  <select class="form-control" name="edit_pal" id="edit_pal">
+                                    <option value="palet">Palet</option>
+                                    <option value="europalet">Europalet</option>
+                                    <option value="tac">Tac</option>
+                                  </select>
+                                </div>
+                            </div>
+                            <div class="col-lg-3">
+                                <div class="form-group">
+                                    <label for="edit_pal_pcs">Paleti</label>
                                     <input type="number"
-                                        class="form-control" name="edit_pal" id="edit_pal" placeholder="Paleti" min="0" max="100" step="1" disabled>
+                                        class="form-control" name="edit_pal_pcs" id="edit_pal_pcs" placeholder="Paleti" min="0" max="100" step="1" disabled>
                                 </div>
                             </div>
                         </div>

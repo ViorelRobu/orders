@@ -44,7 +44,12 @@ class VolumeCalculationTest extends TestCase
             'refinements_list' => [1, 2],
             'length' => '2000',
             'pcs' => '100',
-            'pal' => 1
+            'pcs_height' => '100',
+            'rows' => '100',
+            'label' => '100',
+            'foil' => 0,
+            'pal' => 'palet',
+            'pal_pcs' => 1
         ]);
 
         $this->assertDatabaseCount('order_details', 1);
@@ -55,6 +60,11 @@ class VolumeCalculationTest extends TestCase
             'refinements_list' => '1,2',
             'length' => '2000',
             'pcs' => '100',
+            'pcs_height' => '100',
+            'rows' => '100',
+            'label' => '100',
+            'foil' => 0,
+            'pal' => 'palet',
             'volume' => '0.72'
         ]);
 
@@ -63,7 +73,12 @@ class VolumeCalculationTest extends TestCase
             'article_id' => $article->id,
             'refinements_list' => [1, 2],
             'pcs' => '100',
-            'pal' => 1
+            'pcs_height' => '100',
+            'rows' => '100',
+            'label' => '100',
+            'foil' => 0,
+            'pal' => 'palet',
+            'pal_pcs' => 1
         ]);
 
         $this->assertDatabaseCount('order_details', 2);
@@ -74,6 +89,11 @@ class VolumeCalculationTest extends TestCase
             'refinements_list' => '1,2',
             'length' => null,
             'pcs' => '100',
+            'pcs_height' => '100',
+            'rows' => '100',
+            'label' => '100',
+            'foil' => 0,
+            'pal' => 'palet',
             'volume' => '0.057'
         ]);
 
