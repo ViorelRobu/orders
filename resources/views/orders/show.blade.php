@@ -109,7 +109,7 @@
                     </div>
                     <br>
                     <div>
-                        <strong>Campuri</strong>
+                        <strong>Campuri extra</strong>
                         <i class="fas fa-edit" data-toggle="modal" data-target="#addFields"></i>
                     </div>
                     <hr>
@@ -224,9 +224,7 @@
                         </div>
                     </div>
                     <div class="col-lg-1">
-                        @if ($order->details_fields != null)
-                            <i id="addNewDetail" class="fas fa-plus float-right fa-2x" data-toggle="modal" data-target="#addDetails"></i>
-                        @endif
+                        <i id="addNewDetail" class="fas fa-plus float-right fa-2x" data-toggle="modal" data-target="#addDetails"></i>
                     </div>
                 </div>
             </div>
@@ -251,9 +249,11 @@
                         <td>Fol</td>
                         <td>Pal</td>
                         <td>Incarcare</td>
-                        @foreach ($fields as $field)
-                            <td>{{ $field }}</td>
-                        @endforeach
+                        @if ($fields != [])
+                            @foreach ($fields as $field)
+                                <td>{{ $field }}</td>
+                            @endforeach
+                        @endif
                         <td></td>
                     </thead>
                 </table>
@@ -372,15 +372,17 @@
                     $('#edit_pal_pcs').val(response.data[0].pallets)
                     // add the inputs for the custom position details
                     const details = response.data[0].details;
-                    for (let detail in details) {
-                        let name = detail.split('_').join(' ');
-                        let label = name.charAt(0).toUpperCase() + name.slice(1);
-                        let html = `<div class="col-lg-3">
-                                        <label for="${detail}">${label}</label>
-                                        <input type="text"
-                                            class="form-control" name="${detail}" id="${detail}" placeholder="${label}" value="${details[detail]}">
-                                    </div>`;
-                        $('#edit_details_fields_data').append(html);
+                    if (details !== {}) {
+                        for (let detail in details) {
+                            let name = detail.split('_').join(' ');
+                            let label = name.charAt(0).toUpperCase() + name.slice(1);
+                            let html = `<div class="col-lg-3">
+                                            <label for="${detail}">${label}</label>
+                                            <input type="text"
+                                                class="form-control" name="${detail}" id="${detail}" placeholder="${label}" value="${details[detail]}">
+                                        </div>`;
+                            $('#edit_details_fields_data').append(html);
+                        }
                     }
                 }
             });
@@ -514,9 +516,11 @@
                 {data: 'foil', name: 'foil'},
                 {data: 'pal', name: 'pal'},
                 {data: 'loading_date', name: 'loading_date'},
+        @if ($fields != [])
             @foreach ($fields as $field)
                 {data: '{{ $field }}', name: '{{ $field }}'},
             @endforeach
+        @endif
                 {data: 'actions', name: 'actions'},
             ]
         });
@@ -529,19 +533,20 @@
                 $('#submit').append(save);
                 $('#details_fields_data').empty();
                 let fields = $('#details_fields_text').html().trim();
-                let fields_arr = fields.split('|');
-                fields_arr.forEach( element => {
-                    let el = element.trim();
-                    let name = element.split('_').join(' ');
-                    let label = name.charAt(0).toUpperCase() + name.slice(1);
-                    let html =  `<div class="col-lg-3">
-                                    <label for="${el}">${label}</label>
-                                    <input type="text"
-                                        class="form-control" name="${el}" id="${el}" placeholder="${label}">
-                            </div>`;
-                        $('#details_fields_data').append(html);
-
-                });
+                if (fields != '') {
+                    let fields_arr = fields.split('|');
+                    fields_arr.forEach( element => {
+                        let el = element.trim();
+                        let name = element.split('_').join(' ');
+                        let label = name.charAt(0).toUpperCase() + name.slice(1);
+                        let html =  `<div class="col-lg-3">
+                                        <label for="${el}">${label}</label>
+                                        <input type="text"
+                                            class="form-control" name="${el}" id="${el}" placeholder="${label}">
+                                </div>`;
+                            $('#details_fields_data').append(html);
+                    });
+                }
             });
 
         // add the details to the DB
@@ -707,11 +712,8 @@
                         toast: true
                     });
                     $('#addFields').modal('hide');
-                    if (fields_text === '') {
-                        location.reload();
-                    }
                     $('#details_fields_text').html(response.data);
-                    table.draw()
+                    location.reload();
                 }
             });
         })

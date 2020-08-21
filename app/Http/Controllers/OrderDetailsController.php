@@ -29,9 +29,11 @@ class OrderDetailsController extends Controller
         $details->map(function($item, $index) {
             $article = Article::find($item->article_id);
             $item->article = $article->name;
-            $details_json = json_decode($item->details_json);
-            foreach ($details_json as $key => $value) {
-                $item->$key = $value;
+            if ($item->details_json != null) {
+                $details_json = json_decode($item->details_json);
+                foreach ($details_json as $key => $value) {
+                    $item->$key = $value;
+                }
             }
         });
 

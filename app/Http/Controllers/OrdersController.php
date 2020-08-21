@@ -230,6 +230,13 @@ class OrdersController extends Controller
         $order->archived = 1;
         $order->save();
 
+        // insert the loading dates for the package that have no loading date
+        $details = OrderDetail::where('order_id', $order->id)->get();
+        foreach ($details as $detail) {
+            $detail->loading_date = (Carbon::parse($request->loading_date))->toDateString();
+            $detail->save();
+        }
+
         $date = (Carbon::parse($request->loading_date))->format('d.m.y');
 
         return back();
@@ -343,7 +350,11 @@ class OrdersController extends Controller
         $countries = Country::all();
         $articles = Article::all();
         $refinements = Refinement::all();
-        $fields = explode('|', $order->details_fields);
+        if ($order->details_fields != null) {
+            $fields = explode('|', $order->details_fields);
+        } else {
+            $fields = [];
+        }
         $order_total = OrderDetail::where('order_id', $order->id)->sum('volume');
         $rest_to_produce = OrderDetail::where('order_id', $order->id)->where('produced_ticom', 0)->sum('volume');
         $delivered = OrderDetail::where('order_id', $order->id)->whereNotNull('loading_date')->sum('volume');
@@ -432,6 +443,18 @@ class OrdersController extends Controller
         if ($order->details_fields == null) {
             $order->details_fields = $request->details_fields;
             $order->save();
+
+            $fields_arr = explode('|', $order->details_fields);
+            $details = OrderDetail::where('order_id', $order->id)->get();
+            foreach ($fields_arr as $field) {
+                foreach ($details as $detail) {
+                    $data = json_decode($detail->details_json);
+                    $data->$field = '';
+                    $new_json_details = OrderDetail::find($detail->id);
+                    $new_json_details->details_json = json_encode($data);
+                    $new_json_details->save();
+                }
+            }
         } else {
             $order->details_fields = rtrim($order->details_fields, '|') . '|' . rtrim($request->details_fields, '|');
             $order->save();
