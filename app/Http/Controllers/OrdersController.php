@@ -234,6 +234,7 @@ class OrdersController extends Controller
         $details = OrderDetail::where('order_id', $order->id)->get();
         foreach ($details as $detail) {
             $detail->loading_date = (Carbon::parse($request->loading_date))->toDateString();
+            $detail->produced_ticom = 1;
             $detail->save();
         }
 
