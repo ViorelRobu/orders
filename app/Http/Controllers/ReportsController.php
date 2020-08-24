@@ -4,6 +4,7 @@ namespace App\Http\Controllers;
 
 use App\Exports\ActiveOrdersExport;
 use App\Exports\ProductionPlanExport;
+use App\Imports\DeliveriesImport;
 use App\Imports\ProductionImport;
 use App\Imports\ProductionPlanImport;
 use Maatwebsite\Excel\Facades\Excel;
@@ -83,6 +84,24 @@ class ReportsController extends Controller
             return back()->with('success', 'Planul de productie a fost actualizat cu success!');
         } catch (\Throwable $th) {
             return back()->with('failure', 'Actualizarea planului de productie nu a reusit.');
+        }
+    }
+
+    /**
+     * Import the deliveries
+     *
+     * @return redirect
+     */
+    public function importDeliveries()
+    {
+        try {
+            if(request()->hasFile('deliveries')) {
+                $file = request()->file('deliveries');
+                Excel::import(new DeliveriesImport, $file);
+            }
+            return back()->with('success', 'Livrarile au fost actualizate cu success!');
+        } catch (\Throwable $th) {
+            return back()->with('failure', 'Actualizarea livrarilor nu a reusit.');
         }
     }
 }

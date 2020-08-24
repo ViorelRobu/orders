@@ -162,6 +162,7 @@ Route::middleware(['auth'])->group(function() {
         Route::get('/', 'ReportsController@imports');
         Route::post('production/start', 'ReportsController@importProduction');
         Route::post('production/plan/start', 'ReportsController@importProductionPlan');
+        Route::post('deliveries/start', 'ReportsController@importDeliveries');
     });
 
 });

@@ -90,8 +90,43 @@
                 </div>
             </form>
         </div>
+
     </div>
     {{-- end import updated production plan --}}
+
+    {{-- start import deliveries --}}
+    <div class="card">
+        <div class="card-header bg-dark">
+            <div class="row">
+                <div class="col-lg-11">
+                    <div class="card-title">
+                        <h5>
+                            Import actualizare livrari
+                        </h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <form action="/import/deliveries/start" method="POST" enctype="multipart/form-data">
+                @csrf
+                @method('POST')
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="form-group">
+                          <label for="deliveries">Selecteaza fisierul cu livrarile</label>
+                          <input type="file" class="form-control-file" name="deliveries" id="deliveries" placeholder="Alege fisierul cu livrarile">
+                        </div>
+                    </div>
+                    <div class="col-lg-2">
+                        <br>
+                        <button class="btn btn-primary" type="submit">Actualizeaza</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    {{-- end import deliveries --}}
 
 
 @stop

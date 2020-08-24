@@ -18,7 +18,7 @@ class ActiveOrdersExport implements FromCollection, WithHeadings
         return [
             'id', 'Comanda interna', 'Comanda client', 'Auftrag', 'Client', 'Articol', 'Finisaje', 'Calitate', 'Grosime',
             'Latime', 'Lungime', 'Piese / inaltime', 'Nr randuri', 'Bucati', 'Volum necesar', 'Tip eticheta', 'Mod infoliere',
-            'Pal', 'Volum produs', 'Saptamana productie', 'Prioritatea', 'Specia'
+            'Pal', 'Volum produs', 'Saptamana productie', 'Livrat', 'Prioritatea', 'Specia'
         ];
     }
 
@@ -55,6 +55,7 @@ class ActiveOrdersExport implements FromCollection, WithHeadings
                 'order_details.produced_ticom as pal',
                 'order_details.volume as vol_prod',
                 'orders.production_kw as saptamana_productie',
+                'order_details.loading_date as livrat',
                 'orders.priority as prioritatea',
                 'species.name as specie'
                 ])
@@ -64,6 +65,9 @@ class ActiveOrdersExport implements FromCollection, WithHeadings
        foreach ($list as $item) {
             $item->finisaje = $this->translateForHumans($item->finisaje);
             $item->saptamana_productie ='KW ' . Carbon::parse($item->saptamana_productie)->weekOfYear;
+            if ($item->livrat != null) {
+                $item->livrat =Carbon::parse($item->livrat)->format('d.m.y');
+            }
             if ($item->pal != 1) {
                 $item->vol_prod = '0';
                 $item->pal = '0';
