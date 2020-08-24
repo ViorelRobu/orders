@@ -3,20 +3,24 @@
 namespace App\Imports;
 
 use App\OrderDetail;
-use Maatwebsite\Excel\Concerns\OnEachRow;
-use Maatwebsite\Excel\Concerns\ToModel;
-use Maatwebsite\Excel\Row;
+use Illuminate\Support\Collection;
+use Maatwebsite\Excel\Concerns\ToCollection;
+use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
-class ProductionImport implements ToModel
+class ProductionImport implements ToCollection, WithHeadingRow
 {
     /**
-     * @param array $row
+     * @param Collection $rows
      *
-     * @return \Illuminate\Database\Eloquent\Model|null
+     * @return void
      */
-    public function model(array $row)
+    public function collection(Collection $rows)
     {
-        return new OrderDetail([
-        ]);
+        // dd($rows);
+        foreach ($rows as $row) {
+            $detail = OrderDetail::find($row['id']);
+            $detail->produced_ticom = $row['pal'];
+            $detail->save();
+        }
     }
 }

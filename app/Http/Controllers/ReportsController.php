@@ -60,13 +60,14 @@ class ReportsController extends Controller
         try {
             if(request()->hasFile('production_file')) {
                 $file = request()->file('production_file');
-                $data = Excel::toArray(new ProductionImport, $file);
-                unset($data[0][0]);
-                foreach ($data[0] as $row) {
-                    $detail = OrderDetail::find($row[0]);
-                    $detail->produced_ticom = $row[17];
-                    $detail->save();
-                }
+                Excel::import(new ProductionImport, $file);
+                // $data = Excel::toArray(new ProductionImport, $file);
+                // unset($data[0][0]);
+                // foreach ($data[0] as $row) {
+                //     $detail = OrderDetail::find($row[0]);
+                //     $detail->produced_ticom = $row[17];
+                //     $detail->save();
+                // }
             }
             return back()->with('success', 'Productia a fost actualizata cu success!');
         } catch (\Throwable $th) {
