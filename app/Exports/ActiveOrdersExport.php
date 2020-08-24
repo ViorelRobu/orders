@@ -7,7 +7,11 @@ use App\Traits\RefinementsTranslator;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\DB;
 use Maatwebsite\Excel\Concerns\FromCollection;
+use Maatwebsite\Excel\Concerns\WithColumnFormatting;
 use Maatwebsite\Excel\Concerns\WithHeadings;
+use Maatwebsite\Excel\Concerns\WithMapping;
+use PhpOffice\PhpSpreadsheet\Shared\Date;
+use PhpOffice\PhpSpreadsheet\Style\NumberFormat;
 
 class ActiveOrdersExport implements FromCollection, WithHeadings
 {
@@ -60,6 +64,7 @@ class ActiveOrdersExport implements FromCollection, WithHeadings
                 'species.name as specie'
                 ])
             ->whereIn('order_id', $active)
+            ->whereNull('order_details.loading_date')
             ->get();
 
        foreach ($list as $item) {
