@@ -22,6 +22,11 @@
                     Comenzi active
                 </a>
             </div>
+            <div class="list-group">
+                <a href="/reports/production/plan" class="list-group-item list-group-item-action" target="_blank">
+                    Plan de productie
+                </a>
+            </div>
         </div>
     </div>
 

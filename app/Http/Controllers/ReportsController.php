@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Exports\ActiveOrdersExport;
+use App\Exports\ProductionPlanExport;
 use App\Imports\ProductionImport;
 use App\OrderDetail;
 use Maatwebsite\Excel\Facades\Excel;
@@ -27,6 +28,16 @@ class ReportsController extends Controller
     public function exportActiveOrders()
     {
         return Excel::download(new ActiveOrdersExport, 'comenzi active.xlsx');
+    }
+
+    /**
+     * Export the production plan
+     *
+     * @return void
+     */
+    public function exportProductionPlan()
+    {
+        return Excel::download(new ProductionPlanExport, 'plan de productie.xlsx');
     }
 
     /**

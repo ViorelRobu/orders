@@ -41,11 +41,18 @@
             <form action="/import/production/start" method="POST" enctype="multipart/form-data">
                 @csrf
                 @method('POST')
-                <div class="form-group">
-                  <label for="production_file">Selecteaza fisierul cu actualizarea productiei</label>
-                  <input type="file" class="form-control-file" name="production_file" id="production_file" placeholder="Alege fisierul de productie">
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="form-group">
+                          <label for="production_file">Selecteaza fisierul cu actualizarea productiei</label>
+                          <input type="file" class="form-control-file" name="production_file" id="production_file" placeholder="Alege fisierul de productie">
+                        </div>
+                    </div>
+                    <div class="col-lg-2">
+                        <br>
+                        <button class="btn btn-primary" type="submit">Actualizeaza productia</button>
+                    </div>
                 </div>
-                <button class="btn btn-primary" type="submit">Actualizeaza productia</button>
             </form>
         </div>
     </div>

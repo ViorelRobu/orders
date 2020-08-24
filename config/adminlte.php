@@ -255,7 +255,7 @@ return [
         [
             'text' => 'Actualizari',
             'url' => 'import',
-            'icon' => 'fas fa-fw fa-file-excel',
+            'icon' => 'fas fa-fw fa-upload',
         ],
         [
             'text' => 'Rapoarte',
