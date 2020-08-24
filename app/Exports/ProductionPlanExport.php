@@ -66,6 +66,9 @@ class ProductionPlanExport implements FromCollection, WithHeadings
         foreach ($list as $item) {
             $item->finisaje = $this->translateForHumans($item->finisaje);
             $item->saptamana_productie = 'KW ' . Carbon::parse($item->saptamana_productie)->weekOfYear;
+            if($item->produs != 1) {
+                $item->produs = '0';
+            }
         }
 
         return $list;

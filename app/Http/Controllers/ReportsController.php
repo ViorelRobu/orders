@@ -5,7 +5,7 @@ namespace App\Http\Controllers;
 use App\Exports\ActiveOrdersExport;
 use App\Exports\ProductionPlanExport;
 use App\Imports\ProductionImport;
-use App\OrderDetail;
+use App\Imports\ProductionPlanImport;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ReportsController extends Controller
@@ -61,17 +61,28 @@ class ReportsController extends Controller
             if(request()->hasFile('production_file')) {
                 $file = request()->file('production_file');
                 Excel::import(new ProductionImport, $file);
-                // $data = Excel::toArray(new ProductionImport, $file);
-                // unset($data[0][0]);
-                // foreach ($data[0] as $row) {
-                //     $detail = OrderDetail::find($row[0]);
-                //     $detail->produced_ticom = $row[17];
-                //     $detail->save();
-                // }
             }
             return back()->with('success', 'Productia a fost actualizata cu success!');
         } catch (\Throwable $th) {
             return back()->with('failure', 'Actualizarea productiei nu a reusit.');
+        }
+    }
+
+    /**
+     * Import the updated production plan
+     *
+     * @return redirect
+     */
+    public function importProductionPlan()
+    {
+        try {
+            if(request()->hasFile('production_plan')) {
+                $file = request()->file('production_plan');
+                Excel::import(new ProductionPlanImport, $file);
+            }
+            return back()->with('success', 'Planul de productie a fost actualizat cu success!');
+        } catch (\Throwable $th) {
+            return back()->with('failure', 'Actualizarea planului de productie nu a reusit.');
         }
     }
 }

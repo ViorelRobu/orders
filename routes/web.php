@@ -161,6 +161,7 @@ Route::middleware(['auth'])->group(function() {
     Route::prefix('/import')->group(function () {
         Route::get('/', 'ReportsController@imports');
         Route::post('production/start', 'ReportsController@importProduction');
+        Route::post('production/plan/start', 'ReportsController@importProductionPlan');
     });
 
 });

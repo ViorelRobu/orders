@@ -7,18 +7,19 @@ use Illuminate\Support\Collection;
 use Maatwebsite\Excel\Concerns\ToCollection;
 use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
-class ProductionImport implements ToCollection, WithHeadingRow
+class ProductionPlanImport implements ToCollection, WithHeadingRow
 {
     /**
-     * @param Collection $rows
-     *
-     * @return void
-     */
+    * @param Collection $rows
+    *
+    * @return void
+    */
     public function collection(Collection $rows)
     {
         foreach ($rows as $row) {
             $detail = OrderDetail::find($row['id']);
-            $detail->produced_ticom = $row['pal'];
+            $detail->batch = $row['lot'];
+            $detail->produced_batch = $row['produs'];
             $detail->save();
         }
     }

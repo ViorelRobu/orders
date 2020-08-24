@@ -25,6 +25,7 @@
     </div>
 @endif
 
+    {{-- start import production --}}
     <div class="card">
         <div class="card-header bg-dark">
             <div class="row">
@@ -50,12 +51,47 @@
                     </div>
                     <div class="col-lg-2">
                         <br>
-                        <button class="btn btn-primary" type="submit">Actualizeaza productia</button>
+                        <button class="btn btn-primary" type="submit">Actualizeaza</button>
                     </div>
                 </div>
             </form>
         </div>
     </div>
+    {{-- end import production --}}
+
+    {{-- start import updated production plan --}}
+    <div class="card">
+        <div class="card-header bg-dark">
+            <div class="row">
+                <div class="col-lg-11">
+                    <div class="card-title">
+                        <h5>
+                            Import actualizare plan productie
+                        </h5>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="card-body">
+            <form action="/import/production/plan/start" method="POST" enctype="multipart/form-data">
+                @csrf
+                @method('POST')
+                <div class="row">
+                    <div class="col-lg-4">
+                        <div class="form-group">
+                          <label for="production_plan">Selecteaza fisierul cu planificarea productiei</label>
+                          <input type="file" class="form-control-file" name="production_plan" id="production_plan" placeholder="Alege fisierul de planificare a productiei">
+                        </div>
+                    </div>
+                    <div class="col-lg-2">
+                        <br>
+                        <button class="btn btn-primary" type="submit">Actualizeaza</button>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+    {{-- end import updated production plan --}}
 
 
 @stop
