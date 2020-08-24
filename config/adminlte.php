@@ -253,6 +253,11 @@ return [
             'icon' => 'fas fa-fw fa-list',
         ],
         [
+            'text' => 'Actualizari',
+            'url' => 'import',
+            'icon' => 'fas fa-fw fa-file-excel',
+        ],
+        [
             'text' => 'Rapoarte',
             'url' => 'reports',
             'icon' => 'fas fa-fw fa-file-excel',

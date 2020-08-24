@@ -151,4 +151,15 @@ Route::middleware(['auth'])->group(function() {
         Route::get('/active', 'ReportsController@exportActiveOrders');
      });
 
+
+    /*
+     |---------------------------------------------------------------
+     |  Import routes
+     |---------------------------------------------------------------
+     */
+    Route::prefix('/import')->group(function () {
+        Route::get('/', 'ReportsController@imports');
+        Route::post('production/start', 'ReportsController@importProduction');
+    });
+
 });

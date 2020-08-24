@@ -3,7 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Exports\ActiveOrdersExport;
-use Illuminate\Http\Request;
+use App\Imports\ProductionImport;
+use App\OrderDetail;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ReportsController extends Controller
@@ -26,5 +27,39 @@ class ReportsController extends Controller
     public function exportActiveOrders()
     {
         return Excel::download(new ActiveOrdersExport, 'comenzi active.xlsx');
+    }
+
+    /**
+     * Shows the import production page
+     *
+     * @return view
+     */
+    public function imports()
+    {
+        return view('reports.import.index');
+    }
+
+    /**
+     * Import the production
+     *
+     * @return redirect
+     */
+    public function importProduction()
+    {
+        try {
+            if(request()->hasFile('production_file')) {
+                $file = request()->file('production_file');
+                $data = Excel::toArray(new ProductionImport, $file);
+                unset($data[0][0]);
+                foreach ($data[0] as $row) {
+                    $detail = OrderDetail::find($row[0]);
+                    $detail->produced_ticom = $row[17];
+                    $detail->save();
+                }
+            }
+            return back()->with('success', 'Productia a fost actualizata cu success!');
+        } catch (\Throwable $th) {
+            return back()->with('failure', 'Actualizarea productiei nu a reusit.');
+        }
     }
 }

@@ -66,6 +66,7 @@ class ActiveOrdersExport implements FromCollection, WithHeadings
             $item->saptamana_productie ='KW ' . Carbon::parse($item->saptamana_productie)->weekOfYear;
             if ($item->pal != 1) {
                 $item->vol_prod = '0';
+                $item->pal = '0';
             }
        }
 
