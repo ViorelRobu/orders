@@ -7,6 +7,8 @@ use App\Exports\ProductionPlanExport;
 use App\Imports\DeliveriesImport;
 use App\Imports\ProductionImport;
 use App\Imports\ProductionPlanImport;
+use Carbon\Carbon;
+use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 
 class ReportsController extends Controller
@@ -28,6 +30,10 @@ class ReportsController extends Controller
      */
     public function exportActiveOrders()
     {
+        $user = auth()->user()->name;
+        $now = Carbon::now()->format('d.m.Y Hms');
+        $filename = 'comenzi active exportat de '. $user . ' in ' . $now . '.xlsx';
+        Excel::store(new ActiveOrdersExport, $filename, 'public');
         return Excel::download(new ActiveOrdersExport, 'comenzi active.xlsx');
     }
 
@@ -38,6 +44,11 @@ class ReportsController extends Controller
      */
     public function exportProductionPlan()
     {
+        $user = auth()->user()->name;
+        $now = Carbon::now()->format('d.m.Y Hms');
+        $filename = 'plan de productie exportat de ' . $user . ' in ' . $now . '.xlsx';
+        Excel::store(new ProductionPlanExport, $filename, 'exports');
+        dd(Storage::url($filename));
         return Excel::download(new ProductionPlanExport, 'plan de productie.xlsx');
     }
 
