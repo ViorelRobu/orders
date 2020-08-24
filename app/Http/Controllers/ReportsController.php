@@ -48,7 +48,6 @@ class ReportsController extends Controller
         $now = Carbon::now()->format('d.m.Y Hms');
         $filename = 'plan de productie exportat de ' . $user . ' in ' . $now . '.xlsx';
         Excel::store(new ProductionPlanExport, $filename, 'exports');
-        dd(Storage::url($filename));
         return Excel::download(new ProductionPlanExport, 'plan de productie.xlsx');
     }
 
