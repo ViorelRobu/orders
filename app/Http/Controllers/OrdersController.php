@@ -9,6 +9,7 @@ use App\Destination;
 use App\Order;
 use App\OrderDetail;
 use App\Refinement;
+use App\Traits\PrintPDF;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -19,6 +20,8 @@ use Yajra\DataTables\Facades\DataTables;
 
 class OrdersController extends Controller
 {
+    use PrintPDF;
+
     protected $rules = [
         'customer_id' => 'required',
         'customer_order' => 'sometimes',
@@ -321,6 +324,17 @@ class OrdersController extends Controller
         }
 
         return back()->with(['errors' => $validator->errors()]);
+    }
+
+    /**
+     * Print the order as PDF
+     *
+     * @param Order $order
+     * @return void
+     */
+    public function print(Order $order)
+    {
+        $this->printPDF(view('print.order', ['order' => $order]), ['A4', 'landscape'], 'comanda ' . $order->order);
     }
 
     /**
