@@ -2,14 +2,17 @@
 
 namespace App\Http\Controllers;
 
+use App\DocArchive;
 use App\Exports\ActiveOrdersExport;
 use App\Exports\ProductionPlanExport;
 use App\Imports\DeliveriesImport;
 use App\Imports\ProductionImport;
 use App\Imports\ProductionPlanImport;
+use App\User;
 use Carbon\Carbon;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
+use Yajra\DataTables\Facades\DataTables;
 
 class ReportsController extends Controller
 {
@@ -32,9 +35,18 @@ class ReportsController extends Controller
     {
         $user = auth()->user()->name;
         $now = Carbon::now()->format('d.m.Y Hms');
-        $filename = 'comenzi active exportat de '. $user . ' in ' . $now . '.xlsx';
-        Excel::store(new ActiveOrdersExport, $filename, 'public');
-        return Excel::download(new ActiveOrdersExport, 'comenzi active.xlsx');
+        $filename = 'comenzi active ' . $now . '.xlsx';
+        Excel::store(new ActiveOrdersExport, $filename, 'exports');
+
+        $archive = new DocArchive();
+        $archive->type = 'export';
+        $archive->link = '/storage/exports/' . $filename;
+        $archive->document = $filename;
+        $archive->user_id = auth()->user()->id;
+        $archive->save();
+
+        return redirect('/storage/exports/' . $filename);
+
     }
 
     /**
@@ -46,9 +58,49 @@ class ReportsController extends Controller
     {
         $user = auth()->user()->name;
         $now = Carbon::now()->format('d.m.Y Hms');
-        $filename = 'plan de productie exportat de ' . $user . ' in ' . $now . '.xlsx';
+        $filename = 'plan de productie' . $now . '.xlsx';
         Excel::store(new ProductionPlanExport, $filename, 'exports');
-        return Excel::download(new ProductionPlanExport, 'plan de productie.xlsx');
+
+        $archive = new DocArchive();
+        $archive->type = 'export';
+        $archive->link = '/storage/exports/' . $filename;
+        $archive->document = $filename;
+        $archive->user_id = auth()->user()->id;
+        $archive->save();
+
+        return redirect('/storage/exports/' . $filename);
+    }
+
+    /**
+     * Display the exports archive
+     *
+     * @return view
+     */
+    public function indexArchive()
+    {
+        return view('reports.documents');
+    }
+
+    /**
+     * Undocumented function
+     *
+     * @return void
+     */
+    public function fetchArchive()
+    {
+        $archive = DocArchive::all()->where('type', 'export');
+        $archive->map(function($item, $index) {
+            $user = User::find($item->user_id);
+            $item->user_id = $user->name;
+        });
+
+        return DataTables::of($archive)
+            ->addIndexColumn()
+            ->addColumn('export', function ($archive) {
+                return '<a href="' . $archive->link . '"><i class="fas fa-download"></i></a>';
+            })
+            ->rawColumns(['export'])
+            ->make(true);
     }
 
     /**

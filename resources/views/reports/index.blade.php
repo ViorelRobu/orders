@@ -9,9 +9,18 @@
             <div class="row">
                 <div class="col-lg-11">
                     <div class="card-title">
-                        <h5>
-                            Rapoarte
-                        </h5>
+                        <div class="row">
+                            <div class="col-lg-10">
+                                <h5>
+                                    Rapoarte
+                                </h5>
+                            </div>
+                            <div class="col-lg-1">
+                                <a href="/reports/archive" target="_blank">
+                                    <i class="fas fa-history"></i>
+                                </a>
+                            </div>
+                        </div>
                     </div>
                 </div>
             </div>
@@ -29,8 +38,6 @@
             </div>
         </div>
     </div>
-
-
 @stop
 
 @section('footer')
