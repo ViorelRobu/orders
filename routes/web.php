@@ -162,6 +162,8 @@ Route::middleware(['auth'])->group(function() {
      */
     Route::prefix('/import')->group(function () {
         Route::get('/', 'ReportsController@imports');
+        Route::get('/archive', 'ReportsController@indexImports');
+        Route::get('archive/fetch', 'ReportsController@fetchImports')->name('imports.fetch');
         Route::post('production/start', 'ReportsController@importProduction');
         Route::post('production/plan/start', 'ReportsController@importProductionPlan');
         Route::post('deliveries/start', 'ReportsController@importDeliveries');

@@ -62,6 +62,13 @@ return [
             'visibility' => 'public',
         ],
 
+        'imports' => [
+            'driver' => 'local',
+            'root' => storage_path('app/public/imports'),
+            'url' => env('APP_URL').'/imports',
+            'visibility' => 'public',
+        ],
+
         's3' => [
             'driver' => 's3',
             'key' => env('AWS_ACCESS_KEY_ID'),

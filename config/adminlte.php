@@ -262,6 +262,22 @@ return [
             'url' => 'reports',
             'icon' => 'fas fa-fw fa-file-excel',
         ],
+        [
+            'text' => 'Istoric excel',
+            'icon' => 'fas fa-history',
+            'submenu' => [
+                [
+                    'text' => 'Actualizari',
+                    'url' => 'import/archive',
+                    'icon' => 'fas fa-fw fa-upload',
+                ],
+                [
+                    'text' => 'Rapoarte',
+                    'url' => 'reports/archive',
+                    'icon' => 'fas fa-fw fa-file-excel',
+                ],
+            ],
+        ],
         ['header' => 'SETARI'],
         [
             'text' => 'Nomenclator',

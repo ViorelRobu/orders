@@ -38,12 +38,7 @@ class ReportsController extends Controller
         $filename = 'comenzi active ' . $now . '.xlsx';
         Excel::store(new ActiveOrdersExport, $filename, 'exports');
 
-        $archive = new DocArchive();
-        $archive->type = 'export';
-        $archive->link = '/storage/exports/' . $filename;
-        $archive->document = $filename;
-        $archive->user_id = auth()->user()->id;
-        $archive->save();
+        $this->archive('export', '/storage/exports/', $filename);
 
         return redirect('/storage/exports/' . $filename);
 
@@ -61,12 +56,7 @@ class ReportsController extends Controller
         $filename = 'plan de productie' . $now . '.xlsx';
         Excel::store(new ProductionPlanExport, $filename, 'exports');
 
-        $archive = new DocArchive();
-        $archive->type = 'export';
-        $archive->link = '/storage/exports/' . $filename;
-        $archive->document = $filename;
-        $archive->user_id = auth()->user()->id;
-        $archive->save();
+        $this->archive('export', '/storage/exports/', $filename);
 
         return redirect('/storage/exports/' . $filename);
     }
@@ -78,11 +68,21 @@ class ReportsController extends Controller
      */
     public function indexArchive()
     {
-        return view('reports.documents');
+        return view('reports.exports');
     }
 
     /**
-     * Undocumented function
+     * Display the imports archive
+     *
+     * @return view
+     */
+    public function indexImports()
+    {
+        return view('reports.imports');
+    }
+
+    /**
+     * Fetch the archive for the exported documents
      *
      * @return void
      */
@@ -98,6 +98,34 @@ class ReportsController extends Controller
             ->addIndexColumn()
             ->addColumn('export', function ($archive) {
                 return '<a href="' . $archive->link . '"><i class="fas fa-download"></i></a>';
+            })
+            ->addColumn('created', function ($archive) {
+                return (Carbon::parse($archive->created_at))->format('d.m.Y H:m:s');
+            })
+            ->rawColumns(['export'])
+            ->make(true);
+    }
+
+    /**
+     * Fetch the archive for the exported documents
+     *
+     * @return void
+     */
+    public function fetchImports()
+    {
+        $archive = DocArchive::all()->where('type', 'import');
+        $archive->map(function($item, $index) {
+            $user = User::find($item->user_id);
+            $item->user_id = $user->name;
+        });
+
+        return DataTables::of($archive)
+            ->addIndexColumn()
+            ->addColumn('export', function ($archive) {
+                return '<a href="' . $archive->link . '"><i class="fas fa-download"></i></a>';
+            })
+            ->addColumn('created', function ($archive) {
+                return (Carbon::parse($archive->created_at))->format('d.m.Y H:m:s');
             })
             ->rawColumns(['export'])
             ->make(true);
@@ -124,6 +152,12 @@ class ReportsController extends Controller
             if(request()->hasFile('production_file')) {
                 $file = request()->file('production_file');
                 Excel::import(new ProductionImport, $file);
+
+                $now = Carbon::now()->format('d.m.Y Hms');
+                $filename = 'import productie ' . $now . '.xlsx';
+                request()->file('production_file')->storeAs('/public/imports', $filename);
+
+                $this->archive('import', '/storage/imports/', $filename);
             }
             return back()->with('success', 'Productia a fost actualizata cu success!');
         } catch (\Throwable $th) {
@@ -142,6 +176,12 @@ class ReportsController extends Controller
             if(request()->hasFile('production_plan')) {
                 $file = request()->file('production_plan');
                 Excel::import(new ProductionPlanImport, $file);
+
+                $now = Carbon::now()->format('d.m.Y Hms');
+                $filename = 'import plan productie ' . $now . '.xlsx';
+                request()->file('production_plan')->storeAs('/public/imports', $filename);
+
+                $this->archive('import', '/storage/imports/', $filename);
             }
             return back()->with('success', 'Planul de productie a fost actualizat cu success!');
         } catch (\Throwable $th) {
@@ -160,10 +200,34 @@ class ReportsController extends Controller
             if(request()->hasFile('deliveries')) {
                 $file = request()->file('deliveries');
                 Excel::import(new DeliveriesImport, $file);
+
+                $now = Carbon::now()->format('d.m.Y Hms');
+                $filename = 'import livrari ' . $now . '.xlsx';
+                request()->file('deliveries')->storeAs('/public/imports', $filename);
+
+                $this->archive('import', '/storage/imports/', $filename);
             }
             return back()->with('success', 'Livrarile au fost actualizate cu success!');
         } catch (\Throwable $th) {
             return back()->with('failure', 'Actualizarea livrarilor nu a reusit.');
         }
+    }
+
+    /**
+     * Save the upload/download to the archive
+     *
+     * @param string $type
+     * @param string $path
+     * @param string $filename
+     * @return void
+     */
+    public function archive(string $type, string $path, string $filename)
+    {
+        $archive = new DocArchive();
+        $archive->type = $type;
+        $archive->link = $path . $filename;
+        $archive->document = $filename;
+        $archive->user_id = auth()->user()->id;
+        $archive->save();
     }
 }

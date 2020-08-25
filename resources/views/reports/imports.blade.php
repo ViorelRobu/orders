@@ -1,6 +1,6 @@
 @extends('adminlte::page')
 
-@section('title', 'Arhiva export rapoarte')
+@section('title', 'Arhiva importuri')
 
 @section('content')
 
@@ -11,7 +11,7 @@
                     <div class="card-title">
                         <div class="row">
                             <h5>
-                                Arhiva export rapoarte
+                                Arhiva importuri
                             </h5>
                         </div>
                     </div>
@@ -41,12 +41,12 @@
         let table = $('#docArchives').DataTable({
             processing: true,
             serverSide: true,
-            ajax: "{{ route('archive.fetch') }}",
+            ajax: "{{ route('imports.fetch') }}",
             order: [[1, 'asc']],
             columns: [
                 {data: 'DT_RowIndex', name: 'DT_RowIndex'},
                 {data: 'document', name: 'document'},
-                {data: 'created_at', name: 'created_at'},
+                {data: 'created', name: 'created'},
                 {data: 'user_id', name: 'user_id'},
                 {data: 'export', name: 'export'},
             ]
