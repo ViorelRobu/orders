@@ -112,7 +112,7 @@ Route::middleware(['auth'])->group(function() {
         Route::prefix('/{order}/')->group(function() {
             Route::get('/show', 'OrdersController@show');
             Route::get('/details', 'OrderDetailsController@fetch');
-            Route::get('/print', 'OrdersController@print');
+            Route::get('/print/{orientation}', 'OrdersController@print');
             Route::post('/details/copy', 'OrderDetailsController@copy');
             Route::delete('/details/package/delete', 'OrderDetailsController@destroyPackage');
             Route::prefix('/details/{position}')->group(function() {

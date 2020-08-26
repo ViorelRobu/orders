@@ -27,6 +27,12 @@
                     @endif
                 </div>
                 <div class="col-lg-1">
+                    <a href="/orders/{{ $order->id }}/print/portrait" target="_blank" style="color: white">
+                        <i id="print_pdf" class="far fa-file-pdf float-right fa-2x" style="margin-left:10px"></i>
+                    </a>
+                    <a href="/orders/{{ $order->id }}/print/landscape" target="_blank" style="color: white">
+                        <i id="print_pdf" class="far fa-file-pdf float-right fa-2x fa-rotate-270" style="margin-left:10px"></i>
+                    </a>
                     <i id="edit_details" class="fas fa-edit float-right fa-2x" style="margin-left:10px"></i>
                 </div>
             </div>

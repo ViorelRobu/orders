@@ -9,7 +9,7 @@ use App\Destination;
 use App\Order;
 use App\OrderDetail;
 use App\Refinement;
-use App\Traits\PrintPDF;
+use App\Traits\RefinementsTranslator;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -17,10 +17,11 @@ use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Ui\Presets\React;
 use Yajra\DataTables\Facades\DataTables;
+use PDF;
 
 class OrdersController extends Controller
 {
-    use PrintPDF;
+    use RefinementsTranslator;
 
     protected $rules = [
         'customer_id' => 'required',
@@ -332,9 +333,34 @@ class OrdersController extends Controller
      * @param Order $order
      * @return void
      */
-    public function print(Order $order)
+    public function print(Order $order, $orientation)
     {
-        $this->printPDF(view('print.order', ['order' => $order]), ['A4', 'landscape'], 'comanda ' . $order->order);
+        $document = 'comanda ' . $order->order;
+        $details = OrderDetail::where('order_id', $order->id)->get();
+        $fields = [];
+        if ($order->details_fields != null) {
+            foreach(explode('|', $order->details_fields) as $field) {
+                $fields[] = $field;
+            }
+        }
+
+        $details->map(function($item, $index) {
+            $item->refinements_list = $this->translateForHumans($item->refinements_list);
+            $item->index = $index+1;
+            if($item->details_json != '{}') {
+                foreach(json_decode($item->details_json) as $key => $value) {
+                    $item[$key] = $value;
+                }
+            }
+        });
+
+        return PDF::loadHTML(view('print.' . $orientation, [
+                            'order' => $order,
+                            'details' => $details,
+                            'fields' => $fields
+                        ]))
+                    ->setPaper('A4', $orientation)
+                    ->stream($document);
     }
 
     /**
