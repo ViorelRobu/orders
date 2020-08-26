@@ -335,8 +335,9 @@ class OrdersController extends Controller
      */
     public function print(Order $order, $orientation)
     {
-        $document = 'comanda ' . $order->order;
+        $document = 'comanda ' . $order->order . '.pdf';
         $details = OrderDetail::where('order_id', $order->id)->get();
+        $total = OrderDetail::where('order_id', $order->id)->sum('volume');
         $fields = [];
         if ($order->details_fields != null) {
             foreach(explode('|', $order->details_fields) as $field) {
@@ -357,7 +358,8 @@ class OrdersController extends Controller
         return PDF::loadHTML(view('print.' . $orientation, [
                             'order' => $order,
                             'details' => $details,
-                            'fields' => $fields
+                            'fields' => $fields,
+                            'total' => $total,
                         ]))
                     ->setPaper('A4', $orientation)
                     ->stream($document);

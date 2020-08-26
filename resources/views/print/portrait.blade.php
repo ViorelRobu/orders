@@ -31,19 +31,20 @@
             width: 100%;
             font-size: 90%;
         }
-        .content {
-            width: auto;
-        }
-        .basic_details {
-            border: 0px solid black;
-        }
         .details_table {
             border-collapse: collapse;
             font-size: 75%;
+            margin-left: auto;
+            margin-right: auto;
             text-align: center;
         }
         .details_table td {
             padding: 3px;
+        }
+        .total {
+            text-align: right;
+            font-weight: bold;
+            font-style: italic;
         }
     </style>
 </head>
@@ -135,6 +136,12 @@
         </table>
     </div>
     <!-- end of the details table -->
+
+    <hr>
+
+    <div class="total">
+        TOTAL COMANDA: <span style="color: red">{{ $total }}</span> m&sup3;
+    </div>
 
     <hr>
 
