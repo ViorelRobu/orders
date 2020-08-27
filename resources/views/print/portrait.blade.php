@@ -6,6 +6,15 @@
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Comanda</title>
     <style>
+        .orange {
+            background-color: rgba(231, 179, 21, 0.6);
+        }
+        .grey {
+            background-color: rgba(163, 162, 157, 0.6)
+        }
+        .green {
+            background-color: rgba(154, 238, 105, 0.6)
+        }
         p {
             margin: 1px;
         }
@@ -112,24 +121,24 @@
                 @foreach ($details as $item)
                     <tr>
                         <td>{{ $item->index }}</td>
-                        <td>{{ $item->article->name }}</td>
-                        <td>{{ $item->refinements_list }}</td>
-                        <td>{{ $item->article->quality->name }}</td>
-                        <td>{{ $item->thickness }}</td>
-                        <td>{{ $item->width }}</td>
-                        <td>{{ $item->length }}</td>
-                        <td>{{ $item->pcs }}</td>
-                        <td>{{ $item->preoduced_ticom }}</td>
-                        <td>{{ $item->volume }}</td>
-                        <td>{{ $item->pcs_height }}</td>
-                        <td>{{ $item->rows }}</td>
-                        <td>{{ $item->label }}</td>
+                        <td class="orange">{{ $item->article->name }}</td>
+                        <td class="orange">{{ $item->refinements_list }}</td>
+                        <td class="orange">{{ $item->article->quality->name }}</td>
+                        <td class="orange">{{ $item->thickness }}</td>
+                        <td class="orange">{{ $item->width }}</td>
+                        <td class="orange">{{ $item->length }}</td>
+                        <td class="orange">{{ $item->pcs }}</td>
+                        <td class="grey">{{ $item->produced_ticom }}</td>
+                        <td class="green">{{ $item->volume }}</td>
+                        <td class="grey">{{ $item->pcs_height }}</td>
+                        <td class="grey">{{ $item->rows }}</td>
+                        <td class="orange">{{ $item->label }}</td>
                         @if ($fields != [])
                             @foreach ($fields as $field)
-                                <td>{{ $item[$field] }}</td>
+                                <td class="orange">{{ $item[$field] }}</td>
                             @endforeach
                         @endif
-                        <td>{{ $item->pal }}</td>
+                        <td class="orange">{{ $item->pal }}</td>
                     </tr>
                 @endforeach
             </tbody>
