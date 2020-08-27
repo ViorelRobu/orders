@@ -372,11 +372,12 @@ class OrderTest extends TestCase
         $quality = factory(Quality::class, 4)->create();
         $product_types = factory(ProductType::class, 4)->create();
         $articles = factory(Article::class, 4)->create();
-        $details = factory(OrderDetail::class)->create(['order_id' => 1]);
 
         $response = $this->actingAs($user)->json('POST', '/orders/1/fields', [
             'details_fields' => 'sticker|cod_ean',
         ]);
+
+        $details = factory(OrderDetail::class)->create(['order_id' => 1]);
 
         $new = $this->actingAs($user)->json('POST', '/orders/1/fields', [
             'details_fields' => 'camp_nou',

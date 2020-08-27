@@ -6,7 +6,7 @@
     <div class="card">
         <div class="card-header bg-dark">
             <div class="row">
-                <div class="col-lg-11">
+                <div class="col-lg-10">
                     <div class="card-title">
                         <h5>Comanda {{ $order->order }}
                             @if ($order->loading_date != null)
@@ -26,7 +26,8 @@
                         <i class="fas fa-truck-loading" style="margin-left:10px" data-toggle="modal" data-target="#loadingDate"></i>
                     @endif
                 </div>
-                <div class="col-lg-1">
+                <div class="col-lg-2">
+                    <i class="fas fa-paperclip fa-2x fa-rotate-180 float-right" style="margin-left: 10px"></i>
                     <a href="/orders/{{ $order->id }}/print/portrait" target="_blank" style="color: white">
                         <i id="print_pdf" class="far fa-file-pdf float-right fa-2x" style="margin-left:10px"></i>
                     </a>
