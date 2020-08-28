@@ -6,7 +6,7 @@
     <div class="card">
         <div class="card-header bg-dark">
             <div class="row">
-                <div class="col-lg-10">
+                <div class="col-lg-7">
                     <div class="card-title">
                         <h5>Comanda {{ $order->order }}
                             @if ($order->loading_date != null)
@@ -26,8 +26,26 @@
                         <i class="fas fa-truck-loading" style="margin-left:10px" data-toggle="modal" data-target="#loadingDate"></i>
                     @endif
                 </div>
+                <div class="col-lg-3">
+                    <form method="POST" action="/orders/{{ $order->id }}/documents/upload" enctype="multipart/form-data">
+                        @csrf
+                        @method('POST')
+                        <div class="row">
+                            <div class="col-lg-10">
+                                <div class="form-group">
+                                  <input type="file" class="form-control-file" name="docs_file" id="docs_file" placeholder="">
+                                </div>
+                            </div>
+                            <div class="col-lg-2">
+                                <div>
+                                    <button class="btn btn-primary" type="submit">Incarca</button>
+                                </div>
+                            </div>
+                        </div>
+                    </form>
+                </div>
                 <div class="col-lg-2">
-                    <i class="fas fa-paperclip fa-2x fa-rotate-180 float-right" style="margin-left: 10px"></i>
+                    <i class="fas fa-paperclip fa-2x fa-rotate-180 float-right" style="margin-left: 10px" data-toggle="modal" data-target="#documents"></i>
                     <a href="/orders/{{ $order->id }}/print/portrait" target="_blank" style="color: white">
                         <i id="print_pdf" class="far fa-file-pdf float-right fa-2x" style="margin-left:10px"></i>
                     </a>
@@ -274,6 +292,8 @@
     @include('orders.partials.delete_pos')
     @include('orders.partials.delete_pak')
     @include('orders.partials.copy')
+    @include('orders.partials.documents')
+    @include('orders.partials.delete_file')
 
 @stop
 
@@ -433,6 +453,11 @@
         });
 
         // set the id of the package to be deleted
+        const setDocId = id => {
+            $('#delete_file').attr('onclick', `deleteFile(${id})`);
+        }
+
+        // set the id of the package to be deleted
         const setIdPak = id => {
             $('#deletePackage').attr('onclick', `deletePackage(${id})`);
         }
@@ -467,6 +492,31 @@
             });
         }
 
+        // delete the document
+        const deleteFile = id => {
+            $.ajax({
+                url: `/orders/{{ $order->id }}/documents/${id}/delete`,
+                dataType: 'json',
+                type: 'DELETE',
+                data: {
+                    '_token': '{{ csrf_token() }}',
+                },
+                success: function(response){
+                    $('#deleteDocument').modal('hide');
+                    Swal.fire({
+                        position: 'top-end',
+                        type: response.type,
+                        title: 'Succes',
+                        title: response.message,
+                        showConfirmButton: false,
+                        timer: 5000,
+                        toast: true
+                    });
+                    documents.draw();
+                }
+            });
+        }
+
         // delete all the positions
         const deletePackage = id => {
             $.ajax({
@@ -496,6 +546,19 @@
         // reset the edit details form on closing the modal
         $('#editDetails').on('hidden.bs.modal', function () {
             $('#edit_details_fields_data').empty();
+        });
+
+        // order documents datatable
+        let documents = $('#docsTable').DataTable({
+            processing: true,
+            serverSide: true,
+            pageLength: 10,
+            ajax: "/orders/{{ $order->id }}/documents/fetch",
+            columns: [
+                {data: 'DT_RowIndex', name: 'DT_RowIndex'},
+                {data: 'file', name: 'file'},
+                {data: 'actions', name: 'actions'},
+            ]
         });
 
         // order details datatable

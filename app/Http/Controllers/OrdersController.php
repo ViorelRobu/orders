@@ -7,6 +7,7 @@ use App\Country;
 use App\Customer;
 use App\Destination;
 use App\Order;
+use App\OrderAttachment;
 use App\OrderDetail;
 use App\Refinement;
 use App\Traits\RefinementsTranslator;
@@ -14,6 +15,7 @@ use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Ui\Presets\React;
 use Yajra\DataTables\Facades\DataTables;
@@ -525,6 +527,57 @@ class OrdersController extends Controller
             'message' => 'Campuri adaugate/modificate cu succes!',
             'type' => 'success',
             'data' => $order->details_fields
+        ]);
+    }
+
+    /**
+     * Fetch the attached documents
+     *
+     * @param Order $order
+     * @return Datatables
+     */
+    public function fetchAttachments(Order $order)
+    {
+        $documents = OrderAttachment::where('order_id', $order->id)->get();
+
+        return DataTables::of($documents)
+            ->addIndexColumn()
+            ->addColumn('actions', function ($documents) {
+                return view('orders.partials.actions_docs', ['documents' => $documents]);
+            })
+            ->rawColumns(['actions'])
+            ->make(true);
+    }
+
+    /**
+     * Upload the attachment
+     *
+     * @param Order $order
+     * @return void
+     */
+    public function uploadAttachment(Order $order)
+    {
+        if(request()->hasFile('docs_file')) {
+            Storage::putFileAs('/public/documents/' . $order->id, request()->file('docs_file'), request()->file('docs_file')->getClientOriginalName());
+            $document = new OrderAttachment();
+            $document->create([
+                'order_id' => $order->id,
+                'file' => request()->file('docs_file')->getClientOriginalName(),
+                'user_id' => auth()->user()->id
+            ]);
+            return back();
+        }
+    }
+
+    public function deleteAttachment(Order $order, OrderAttachment $document)
+    {
+        Storage::disk('documents')->delete($document->order_id . '/' . $document->file);
+        $document->delete();
+
+        return response()->json([
+            'deleted' => true,
+            'message' => 'Document sters',
+            'type' => 'success',
         ]);
     }
 }

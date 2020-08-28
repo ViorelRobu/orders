@@ -111,6 +111,9 @@ Route::middleware(['auth'])->group(function() {
         Route::post('/add', 'OrdersController@store');
         Route::prefix('/{order}/')->group(function() {
             Route::get('/show', 'OrdersController@show');
+            Route::get('/documents/fetch', 'OrdersController@fetchAttachments');
+            Route::post('/documents/upload', 'OrdersController@uploadAttachment');
+            Route::delete('/documents/{document}/delete', 'OrdersController@deleteAttachment');
             Route::get('/details', 'OrderDetailsController@fetch');
             Route::get('/print/{orientation}', 'OrdersController@print');
             Route::post('/details/copy', 'OrderDetailsController@copy');
