@@ -111,25 +111,31 @@ Route::middleware(['auth'])->group(function() {
         Route::post('/add', 'OrdersController@store');
         Route::prefix('/{order}/')->group(function() {
             Route::get('/show', 'OrdersController@show');
-            Route::get('/documents/fetch', 'OrdersController@fetchAttachments');
-            Route::post('/documents/upload', 'OrdersController@uploadAttachment');
-            Route::delete('/documents/{document}/delete', 'OrdersController@deleteAttachment');
-            Route::get('/details', 'OrderDetailsController@fetch');
             Route::get('/print/{orientation}', 'OrdersController@print');
-            Route::post('/details/copy', 'OrderDetailsController@copy');
-            Route::delete('/details/package/delete', 'OrderDetailsController@destroyPackage');
-            Route::prefix('/details/{position}')->group(function() {
-                Route::get('/fetch', 'OrderDetailsController@getPosition');
-                Route::patch('/update', 'OrderDetailsController@update');
-                Route::delete('/delete', 'OrderDetailsController@destroyPosition');
+            Route::prefix('/documents')->group(function() {
+                Route::get('/fetch', 'OrdersController@fetchAttachments');
+                Route::post('/upload', 'OrdersController@uploadAttachment');
+                Route::delete('/{document}/delete', 'OrdersController@deleteAttachment');
             });
-            Route::post('/details/add', 'OrderDetailsController@store');
+            Route::prefix('/details')->group(function() {
+                Route::get('/', 'OrderDetailsController@fetch');
+                Route::post('/add', 'OrderDetailsController@store');
+                Route::post('/copy', 'OrderDetailsController@copy');
+                Route::delete('/package/delete', 'OrderDetailsController@destroyPackage');
+                Route::prefix('/{position}')->group(function() {
+                    Route::get('/fetch', 'OrderDetailsController@getPosition');
+                    Route::patch('/update', 'OrderDetailsController@update');
+                    Route::delete('/delete', 'OrderDetailsController@destroyPosition');
+                });
+            });
             Route::post('/fields', 'OrdersController@fields');
-            Route::patch('/update', 'OrdersController@update');
-            Route::patch('/update/priority', 'OrdersController@setPriority');
-            Route::patch('/update/details', 'OrdersController@setDetails');
-            Route::patch('/update/observations', 'OrdersController@setObservations');
-            Route::patch('/update/dates', 'OrdersController@setDates');
+            Route::prefix('/update')->group(function() {
+                Route::patch('/', 'OrdersController@update');
+                Route::patch('/priority', 'OrdersController@setPriority');
+                Route::patch('/details', 'OrdersController@setDetails');
+                Route::patch('/observations', 'OrdersController@setObservations');
+                Route::patch('/dates', 'OrdersController@setDates');
+            });
             Route::patch('/ship', 'OrdersController@ship');
         });
     });
