@@ -19,7 +19,7 @@ class CreateArticlesTable extends Migration
             $table->unsignedBigInteger('species_id');
             $table->unsignedBigInteger('quality_id');
             $table->unsignedBigInteger('product_type_id');
-            $table->string('default_refinements');
+            $table->string('default_refinements')->nullable();
             $table->double('thickness', 3, 1);
             $table->double('width', 5, 1);
             $table->timestamps();

@@ -72,6 +72,9 @@ class ArticlesController extends Controller
         return DataTables::of($articles)
             ->addIndexColumn()
             ->editColumn('default_refinements', function($articles) {
+                if (is_null($articles->default_refinements)) {
+                    return '';
+                }
                 return $this->translateForHumans($articles->default_refinements);
             })
             ->addColumn('actions', function ($articles) {

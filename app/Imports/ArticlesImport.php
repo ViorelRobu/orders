@@ -26,15 +26,15 @@ class ArticlesImport implements ToCollection,WithHeadingRow
                 $finisaje = null;
             }
 
-            $article = new Article();
-            $article->name = $row['matchcode'];
-            $article->species_id = $row['specie'];
-            $article->quality_id = $row['calitate'];
-            $article->product_type_id = $row['tip_produs'];
-            $article->default_refinements = $finisaje;
-            $article->thickness = $row['grosime'];
-            $article->width = $row['latime'];
-            $article->save();
+            $data = Article::create([
+                'name' => $row['matchcode'],
+                'species_id' => $row['specie'],
+                'quality_id' => $row['calitate'],
+                'product_type_id' => $row['tip_produs'],
+                'default_refinements' => $finisaje,
+                'thickness' => $row['grosime'],
+                'width' => $row['latime'],
+            ]);
         }
     }
 }
