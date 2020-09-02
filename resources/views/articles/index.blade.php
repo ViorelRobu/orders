@@ -8,14 +8,41 @@
             <h1 class="m-0 text-dark">Articole</h1>
         </div>
         <div class="col-lg-6">
+            <a href="" class="btn btn-primary float-right" style="margin-left: 5px;" data-toggle="modal" data-target="#import">Importa articole</a>
             <a href="" class="btn btn-primary float-right" id="addNew" data-toggle="modal" data-target="#newArticle">Articol nou</a>
         </div>
     </div>
 @stop
 
 @include('articles.partials.form')
+@include('articles.partials.import')
 
 @section('content')
+
+
+    @if (session('success'))
+        <div class="alert alert-success alert-dismissible fade show" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <strong>
+            {{ session('success') }}
+        </strong>
+        </div>
+    @endif
+
+    @if (session('failure'))
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        <strong>
+            {{ session('failure') }}
+        </strong>
+        </div>
+    @endif
+
+
     <div class="row">
         <div class="col-lg-12">
             <div class="card">

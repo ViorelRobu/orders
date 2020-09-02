@@ -24,5 +24,8 @@ class ProductTypesSeeder extends Seeder
         DB::table('product_types')->insert([
             'name' => 'DIY Lamella'
         ]);
+        DB::table('product_types')->insert([
+            'name' => 'Cheeseboards'
+        ]);
     }
 }

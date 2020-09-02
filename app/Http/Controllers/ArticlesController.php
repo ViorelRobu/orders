@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Article;
+use App\Imports\ArticlesImport;
 use App\ProductType;
 use App\Quality;
 use App\Refinement;
@@ -11,6 +12,7 @@ use App\Traits\RefinementsTranslator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
+use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
 
 class ArticlesController extends Controller
@@ -161,5 +163,18 @@ class ArticlesController extends Controller
         $article->refinements_arr = $default_refinements;
 
         return (new JsonResponse(['message' => 'success', 'message_type' => 'success', 'data' => $article]));
+    }
+
+    public function import()
+    {
+        try {
+            if (request()->hasFile('articles')) {
+                $file = request()->file('articles');
+                Excel::import(new ArticlesImport, $file);
+            }
+            return back()->with('success', 'Articolele au fost importate cu success!');
+        } catch (\Throwable $th) {
+            return back()->with('failure', 'Articolele nu au putut fi importate!');
+        }
     }
 }

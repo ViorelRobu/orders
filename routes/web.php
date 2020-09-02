@@ -82,6 +82,7 @@ Route::middleware(['auth'])->group(function() {
         Route::get('/all', 'ArticlesController@fetchAll')->name('articles.index');
         Route::get('/fetch', 'ArticlesController@fetch')->name('articles.fetch');
         Route::post('/add', 'ArticlesController@store');
+        Route::post('/import', 'ArticlesController@import');
         Route::patch('/{article}/update', 'ArticlesController@update');
     });
 
