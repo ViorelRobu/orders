@@ -254,7 +254,7 @@
                 </div>
             </div>
             <div class="card-body" style="overflow-x: auto; white-space: nowrap;">
-                <table id="order_details" class="table table-bordered table-hover">
+                <table id="order_details" class="table table-bordered table-hover table-sm">
                     <thead>
                         <td><i class="fas fa-chevron-up"></i></td>
                         <td>Poz</td>

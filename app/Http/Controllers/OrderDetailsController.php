@@ -28,6 +28,7 @@ class OrderDetailsController extends Controller
         $details = OrderDetail::where('order_id', $order->id)->get();
         $details->map(function($item, $index) {
             $article = Article::find($item->article_id);
+            $item->volume = round($item->volume, 3, PHP_ROUND_HALF_UP);
             $item->article = $article->name;
             if ($item->details_json != null) {
                 $details_json = json_decode($item->details_json);
