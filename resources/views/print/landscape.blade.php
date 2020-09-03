@@ -23,22 +23,33 @@
         }
         .headings {
             width: 100%;
-            height: 180px;
+            height: 160px;
         }
         #number {
-            margin-top: 10px;
+            width: 40%;
+            padding-top: 60px;
+            padding-left: 100px;
+            padding-right: -100px;
             font-weight: bold;
-            font-size: 250%;
+            font-size: 350%;
         }
         .headings div {
             display: inline-block;
         }
+        .basic-details, td {
+            padding: 3px;
+            font-size: 120%;
+            border: none;
+        }
         #order_details {
-            width: 40%;
+            width: 60%;
         }
         #observations {
             width: 60%;
             font-size: 90%;
+        }
+        .details_table td {
+            border: 1px solid black;
         }
         .details_table {
             border-collapse: collapse;
@@ -60,8 +71,11 @@
 <body>
     <div class="headings">
         <!-- start of column 1 -->
+        <div id="number">{{ $order->order }}</div>
+        <!-- end of column 1 -->
+
+        <!-- start of column 2 -->
         <div id="order_details">
-            <div id="number">{{ $order->order }}</div>
             <table class="basic_details">
                 <tr>
                     <td class="label"><i>Client:</i></td>
@@ -85,16 +99,20 @@
                 </tr>
             </table>
         </div>
-        <!-- end of column 1 -->
-
-        <!-- start of column 2 -->
-        <div class="observations">
-            {!! $order->observations !!}
-        </div>
         <!-- end of column 2 -->
+
+
     </div>
 
     <hr>
+
+    @if ($order->observations != null)
+        <div class="observations">
+            {!! $order->observations !!}
+        </div>
+
+        <hr>
+    @endif
 
     <!-- start of the details table -->
     <div class="details">
@@ -158,12 +176,6 @@
     </div>
 
     <hr>
-
-    <!-- start of column 2 -->
-    <div class="observations">
-        {!! $order->observations !!}
-    </div>
-    <!-- end of column 2 -->
 
 </body>
 </html>

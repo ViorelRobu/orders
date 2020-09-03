@@ -23,26 +23,33 @@
         }
         .headings {
             width: 100%;
-            height: 180px;
+            height: 120px;
         }
         #number {
-            margin-top: 10px;
+            width: 30%;
+            padding-top: 50px;
             font-weight: bold;
             font-size: 250%;
         }
         .headings div {
             display: inline-block;
         }
+        .basic-details, td {
+            border: none;
+        }
         #order_details {
-            width: 100%;
+            width: 70%;
         }
         #observations {
             width: 100%;
             font-size: 90%;
         }
+        .details_table td {
+            border: 1px solid black;
+        }
         .details_table {
             border-collapse: collapse;
-            font-size: 75%;
+            font-size: 65%;
             margin-left: auto;
             margin-right: auto;
             text-align: center;
@@ -60,8 +67,8 @@
 <body>
     <div class="headings">
         <!-- start of column 1 -->
+        <div id="number">{{ $order->order }}</div>
         <div id="order_details">
-            <div id="number">{{ $order->order }}</div>
             <table class="basic_details">
                 <tr>
                     <td class="label"><i>Client:</i></td>
@@ -90,6 +97,14 @@
     </div>
 
     <hr>
+
+    @if ($order->observations != null)
+        <div class="observations">
+            {!! $order->observations !!}
+        </div>
+
+        <hr>
+    @endif
 
     <!-- start of the details table -->
     <div class="details">
@@ -153,12 +168,6 @@
     </div>
 
     <hr>
-
-    <!-- start of column 2 -->
-    <div class="observations">
-        {!! $order->observations !!}
-    </div>
-    <!-- end of column 2 -->
 
 </body>
 </html>
