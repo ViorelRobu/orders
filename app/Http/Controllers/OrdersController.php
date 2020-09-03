@@ -77,6 +77,7 @@ class OrdersController extends Controller
             Carbon::setLocale('ro');
             $articles = DB::table('order_details')
                     ->select('article_id')
+                    ->where('order_id', $item->id)
                     ->groupBy('article_id')
                     ->pluck('article_id');
             $specification_ids = DB::table('articles')
