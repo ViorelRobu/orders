@@ -65,6 +65,13 @@ class ActiveOrdersExport implements FromCollection, WithHeadings
                 ])
             ->whereIn('order_id', $active)
             ->whereNull('order_details.loading_date')
+            ->orderBy('orders.order', 'asc')
+            ->orderBy('quality.name', 'asc')
+            ->orderBy('species.name', 'asc')
+            ->orderBy('order_details.thickness', 'asc')
+            ->orderBy('order_details.width', 'asc')
+            ->orderBy('order_details.length', 'asc')
+            ->whereIn('order_id', $active)
             ->get();
 
        foreach ($list as $item) {
