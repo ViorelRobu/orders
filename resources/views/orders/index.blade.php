@@ -30,29 +30,29 @@
         <div class="col-lg-12">
             <div class="card">
                 <div class="card-body" style="overflow-x: auto; white-space: nowrap;">
-                    <table id="orders" class="table table-bordered table-hover">
-                        <thead>
-                            <th style="background-color: rgba(249,196,5,0.44)"></th>
-                            <td style="background-color: rgba(249,196,5,0.44)">Cda</td>
-                            <td style="background-color: rgba(249,196,5,0.44)">Specif</td>
-                            <td style="background-color: rgba(249,196,5,0.44)"><i class="fas fa-chevron-up"></i></td>
-                            <td style="background-color: rgba(249,196,5,0.44)">Client</td>
-                            <td style="background-color: rgba(249,196,5,0.44)">Cda client</td>
-                            <td style="background-color: rgba(249,196,5,0.44)">Auftrag</td>
-                            <td style="background-color: rgba(249,196,5,0.44)">Productie</td>
-                            <td style="background-color: rgba(249,196,5,0.44)">Destinatie</td>
-                            <td style="background-color: rgba(249,196,5,0.44)">Luna</td>
-                            <td style="background-color: rgba(249,196,5,0.44)">Livrare</td>
-                            <td style="background-color: rgba(249,196,5,0.44)">ETA</td>
-                            <td style="background-color: rgba(249,196,5,0.44)">KW Client</td>
-                            <td style="background-color: rgba(249,196,5,0.44)">Total</td>
-                            <td style="background-color: rgba(249,196,5,0.44)">Produs</td>
-                            <td style="background-color: rgba(249,196,5,0.44)">Rest</td>
-                            <td style="background-color: rgba(249,196,5,0.44)">Livrat</td>
-                            <td style="background-color: rgba(249,196,5,0.44)">Rest livrare</td>
-                            <td style="background-color: rgba(249,196,5,0.44)">Gata livrare</td>
-                            <td style="background-color: rgba(249,196,5,0.44)">%</td>
-                            <td style="background-color: rgba(249,196,5,0.44)"></td>
+                    <table id="orders" class="table table-hover table-bordered table-striped">
+                        <thead class="thead-dark">
+                            <th></th>
+                            <th>Cda</th>
+                            <th>Specif</th>
+                            <th><i class="fas fa-chevron-up"></i></th>
+                            <th>Client</th>
+                            <th>Cda client</th>
+                            <th>Auftrag</th>
+                            <th>Productie</th>
+                            <th>Destinatie</th>
+                            <th>Luna</th>
+                            <th>Livrare</th>
+                            <th>ETA</th>
+                            <th>KW Client</th>
+                            <th>Total</th>
+                            <th>Produs</th>
+                            <th>Rest</th>
+                            <th>Livrat</th>
+                            <th>Rest livrare</th>
+                            <th>Gata livrare</th>
+                            <th>%</th>
+                            <th></th>
                         </thead>
                     </table>
                 </div>
@@ -233,24 +233,24 @@
                 {data: 'actions', name: 'actions'},
             ],
             rowCallback: function(row, data, index) {
-                $('td:eq(1)', row).css('backgroundColor', 'rgba(107,107,107,0.44)');
-                $('td:eq(2)', row).css('backgroundColor', 'rgba(95,153,236,0.64)');
-                $('td:eq(3)', row).css('backgroundColor', 'rgba(107,107,107,0.44)');
-                $('td:eq(4)', row).css('backgroundColor', 'rgba(103,197,104,0.44)');
-                $('td:eq(5)', row).css('backgroundColor', 'rgba(103,197,104,0.44)');
-                $('td:eq(6)', row).css('backgroundColor', 'rgba(103,197,104,0.44)');
-                $('td:eq(7)', row).css('backgroundColor', 'rgba(103,197,104,0.44)');
-                $('td:eq(8)', row).css('backgroundColor', 'rgba(103,197,104,0.44)');
-                $('td:eq(9)', row).css('backgroundColor', 'rgba(103,197,104,0.44)');
-                $('td:eq(10)', row).css('backgroundColor', 'rgba(103,197,104,0.44)');
-                $('td:eq(11)', row).css('backgroundColor', 'rgba(103,197,104,0.44)');
-                $('td:eq(12)', row).css('backgroundColor', 'rgba(103,197,104,0.44)');
-                $('td:eq(13)', row).css('backgroundColor', 'rgba(103,197,104,0.44)');
-                $('td:eq(14)', row).css('backgroundColor', 'rgba(103,197,104,0.44)');
-                $('td:eq(15)', row).css('backgroundColor', 'rgba(103,197,104,0.44)');
-                $('td:eq(16)', row).css('backgroundColor', 'rgba(103,197,104,0.44)');
-                $('td:eq(17)', row).css('backgroundColor', 'rgba(103,197,104,0.44)');
-                $('td:eq(18)', row).css('backgroundColor', 'rgba(103,197,104,0.44)');
+                // $('td:eq(1)', row).css('backgroundColor', 'rgba(107,107,107,0.44)');
+                // $('td:eq(2)', row).css('backgroundColor', 'rgba(95,153,236,0.64)');
+                // $('td:eq(3)', row).css('backgroundColor', 'rgba(107,107,107,0.44)');
+                // $('td:eq(4)', row).css('backgroundColor', 'rgba(103,197,104,0.44)');
+                // $('td:eq(5)', row).css('backgroundColor', 'rgba(103,197,104,0.44)');
+                // $('td:eq(6)', row).css('backgroundColor', 'rgba(103,197,104,0.44)');
+                // $('td:eq(7)', row).css('backgroundColor', 'rgba(103,197,104,0.44)');
+                // $('td:eq(8)', row).css('backgroundColor', 'rgba(103,197,104,0.44)');
+                // $('td:eq(9)', row).css('backgroundColor', 'rgba(103,197,104,0.44)');
+                // $('td:eq(10)', row).css('backgroundColor', 'rgba(103,197,104,0.44)');
+                // $('td:eq(11)', row).css('backgroundColor', 'rgba(103,197,104,0.44)');
+                // $('td:eq(12)', row).css('backgroundColor', 'rgba(103,197,104,0.44)');
+                // $('td:eq(13)', row).css('backgroundColor', 'rgba(103,197,104,0.44)');
+                // $('td:eq(14)', row).css('backgroundColor', 'rgba(103,197,104,0.44)');
+                // $('td:eq(15)', row).css('backgroundColor', 'rgba(103,197,104,0.44)');
+                // $('td:eq(16)', row).css('backgroundColor', 'rgba(103,197,104,0.44)');
+                // $('td:eq(17)', row).css('backgroundColor', 'rgba(103,197,104,0.44)');
+                // $('td:eq(18)', row).css('backgroundColor', 'rgba(103,197,104,0.44)');
                 $('td:eq(19)', row).css('color', getColor(data.percentage)).css('backgroundColor', 'rgba(107,107,107,0.44)');
             },
         });
