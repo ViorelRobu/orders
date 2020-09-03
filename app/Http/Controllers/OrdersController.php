@@ -143,13 +143,26 @@ class OrdersController extends Controller
         $orders = Order::where('archived', '=', 1)->get();
 
         $orders->map(function ($item, $index) {
+            $articles = DB::table('order_details')
+            ->select('article_id')
+                ->where('order_id', $item->id)
+                ->groupBy('article_id')
+                ->pluck('article_id');
+            $specification_ids = DB::table('articles')
+                ->select('product_type_id')
+                ->whereIn('id', $articles)
+                ->groupBy('product_type_id')
+                ->pluck('product_type_id');
+            $specifications = DB::table('product_types')->select('name')->whereIn('id', $specification_ids)->pluck('name')->toArray();
+            $item->specification = implode(',', $specifications);
             $customer = Customer::find($item->customer_id);
             $destination = Destination::find($item->destination_id);
             $country = Country::find($destination->country_id);
             $item->customer = $customer->name;
             $item->destination = $destination->address . ', ' . $country->name;
             $item->loading_date = (Carbon::parse($item->loading_date))->format('d.m.Y');
-            $item->total = 50;
+            $order_total = round(OrderDetail::where('order_id', $item->id)->sum('volume'), 3, PHP_ROUND_HALF_UP);
+            $item->total = $order_total;
         });
 
         return DataTables::of($orders)

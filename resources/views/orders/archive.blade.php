@@ -15,16 +15,17 @@
         <div class="col-lg-12">
             <div class="card">
                 <div class="card-body">
-                    <table id="orders" class="table table-bordered table-hover">
-                        <thead>
-                            <td>Cda</td>
-                            <td>Client</td>
-                            <td>Cda client</td>
-                            <td>Auftrag</td>
-                            <td>Destinatie</td>
-                            <td>Data incarcare</td>
-                            <td>Total</td>
-                            <td></td>
+                    <table id="orders" class="table table-hover">
+                        <thead class="thead-dark">
+                            <th>Cda</th>
+                            <th>Specif</th>
+                            <th>Client</th>
+                            <th>Cda client</th>
+                            <th>Auftrag</th>
+                            <th>Destinatie</th>
+                            <th>Data incarcare</th>
+                            <th>Volum (m&sup3;)</th>
+                            <th></th>
                         </thead>
                     </table>
                 </div>
@@ -56,6 +57,7 @@
             ajax: "{{ route('archive.index') }}",
             columns: [
                 {data: 'order', name: 'order'},
+                {data: 'specification', name: 'specification'},
                 {data: 'customer', name: 'customer'},
                 {data: 'customer_order', name: 'customer_order'},
                 {data: 'auftrag', name: 'auftrag'},
@@ -63,7 +65,17 @@
                 {data: 'loading_date', name: 'loading_date'},
                 {data: 'total', name: 'total'},
                 {data: 'actions', name: 'actions'},
-            ]
+            ],
+            rowCallback: function(row, data, index) {
+                $('td:eq(0)', row).addClass('table-secondary').css('font-weight', 'bold');
+                $('td:eq(1)', row).addClass('table-primary').css('font-weight', 'bold');
+                $('td:eq(2)', row).addClass('table-success').css('font-weight', 'bold');
+                $('td:eq(3)', row).addClass('table-success').css('font-weight', 'bold');
+                $('td:eq(4)', row).addClass('table-success').css('font-weight', 'bold');
+                $('td:eq(5)', row).addClass('table-success').css('font-weight', 'bold');
+                $('td:eq(6)', row).addClass('table-success').css('font-weight', 'bold');
+                $('td:eq(7)', row).addClass('table-success').css('font-weight', 'bold');
+            },
         });
     });
     </script>
