@@ -153,7 +153,7 @@ class ReportsController extends Controller
                 $file = request()->file('production_file');
                 Excel::import(new ProductionImport, $file);
 
-                $now = Carbon::now()->format('d.m.Y Hms');
+                $now = Carbon::now()->format('d.m.Y His');
                 $filename = 'import productie ' . $now . '.xlsx';
                 request()->file('production_file')->storeAs('/public/imports', $filename);
 
