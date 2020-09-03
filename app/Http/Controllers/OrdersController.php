@@ -75,6 +75,17 @@ class OrdersController extends Controller
 
         $orders->map(function ($item, $index) {
             Carbon::setLocale('ro');
+            $articles = DB::table('order_details')
+                    ->select('article_id')
+                    ->groupBy('article_id')
+                    ->pluck('article_id');
+            $specification_ids = DB::table('articles')
+                    ->select('product_type_id')
+                    ->whereIn('id', $articles)
+                    ->groupBy('product_type_id')
+                    ->pluck('product_type_id');
+            $specifications = DB::table('product_types')->select('name')->whereIn('id', $specification_ids)->pluck('name')->toArray();
+            $item->specification = implode(',', $specifications);
             $customer = Customer::find($item->customer_id);
             $destination = Destination::find($item->destination_id);
             $country = Country::find($destination->country_id);
@@ -87,21 +98,36 @@ class OrdersController extends Controller
             $item->eta = 'KW ' . (Carbon::parse($item->eta))->weekOfYear;
             $item->date_loading = (Carbon::parse($item->loading_date))->format('d.m.Y');
             $item->date_loading = (Carbon::parse($item->loading_date))->format('d.m.Y');
-            $item->total = 50;
-            $item->produced = 50;
-            $item->to_produce = 0;
-            $item->delivered = 50;
-            $item->to_deliver = 0;
-            $item->ready_to_deliver = 0;
-            $item->percentage = 0.954822;
+            $order_total = round(OrderDetail::where('order_id', $item->id)->sum('volume'), 3, PHP_ROUND_HALF_UP);
+            $item->total = $order_total;
+            $order_produced = round(OrderDetail::where('order_id', $item->id)
+                    ->where('produced_ticom', 1)
+                    ->sum('volume'), 3, PHP_ROUND_HALF_UP);
+            $item->produced = $order_produced;
+            $item->to_produce = round($order_total - $order_produced, 3, PHP_ROUND_HALF_UP);
+            $order_delivered = round(OrderDetail::where('order_id', $item->id)
+                    ->where('loading_date', '!=', null)
+                    ->sum('volume'), 3, PHP_ROUND_HALF_UP);
+            $item->delivered = $order_delivered;
+            $order_ready_to_deliver = round(OrderDetail::where('order_id', $item->id)
+            ->where('loading_date', '=', null)
+            ->where('produced_ticom', 1)
+            ->sum('volume'), 3, PHP_ROUND_HALF_UP);
+            $item->ready_to_deliver = $order_ready_to_deliver;
+            $item->to_deliver = round($order_total - $order_delivered, 3, PHP_ROUND_HALF_UP);
+            $item->percentage = round($order_produced / $order_total, 3, PHP_ROUND_HALF_UP);
             $item->percentageDisplay = round(($item->percentage * 100),2) . '%';
 
         });
 
         return DataTables::of($orders)
+            ->addColumn('show', function ($orders) {
+                return '<a href="/orders/' .  $orders->id . '/show" class="show" target="_blank"><i class="fas fa-eye"></i></a>';
+            })
             ->addColumn('actions', function ($orders) {
                 return view('orders.partials.actions', ['order' => $orders]);
             })
+            ->rawColumns(['show'])
             ->make(true);
     }
 

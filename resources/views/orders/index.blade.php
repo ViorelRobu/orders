@@ -29,25 +29,30 @@
     <div class="row">
         <div class="col-lg-12">
             <div class="card">
-                <div class="card-body">
+                <div class="card-body" style="overflow-x: auto; white-space: nowrap;">
                     <table id="orders" class="table table-bordered table-hover">
                         <thead>
-                            <td>Cda</td>
-                            <td><i class="fas fa-chevron-up"></i></td>
-                            <td>Client</td>
-                            <td>Cda client</td>
-                            <td>Auftrag</td>
-                            <td>Productie</td>
-                            <td>Destinatie</td>
-                            <td>Luna</td>
-                            <td>Livrare</td>
-                            <td>ETA</td>
-                            <td>KW Client</td>
-                            <td>Total</td>
-                            <td>Produs</td>
-                            <td>Rest</td>
-                            <td>%</td>
-                            <td></td>
+                            <th style="background-color: rgba(249,196,5,0.44)"></th>
+                            <td style="background-color: rgba(249,196,5,0.44)">Cda</td>
+                            <td style="background-color: rgba(249,196,5,0.44)">Specif</td>
+                            <td style="background-color: rgba(249,196,5,0.44)"><i class="fas fa-chevron-up"></i></td>
+                            <td style="background-color: rgba(249,196,5,0.44)">Client</td>
+                            <td style="background-color: rgba(249,196,5,0.44)">Cda client</td>
+                            <td style="background-color: rgba(249,196,5,0.44)">Auftrag</td>
+                            <td style="background-color: rgba(249,196,5,0.44)">Productie</td>
+                            <td style="background-color: rgba(249,196,5,0.44)">Destinatie</td>
+                            <td style="background-color: rgba(249,196,5,0.44)">Luna</td>
+                            <td style="background-color: rgba(249,196,5,0.44)">Livrare</td>
+                            <td style="background-color: rgba(249,196,5,0.44)">ETA</td>
+                            <td style="background-color: rgba(249,196,5,0.44)">KW Client</td>
+                            <td style="background-color: rgba(249,196,5,0.44)">Total</td>
+                            <td style="background-color: rgba(249,196,5,0.44)">Produs</td>
+                            <td style="background-color: rgba(249,196,5,0.44)">Rest</td>
+                            <td style="background-color: rgba(249,196,5,0.44)">Livrat</td>
+                            <td style="background-color: rgba(249,196,5,0.44)">Rest livrare</td>
+                            <td style="background-color: rgba(249,196,5,0.44)">Gata livrare</td>
+                            <td style="background-color: rgba(249,196,5,0.44)">%</td>
+                            <td style="background-color: rgba(249,196,5,0.44)"></td>
                         </thead>
                     </table>
                 </div>
@@ -205,7 +210,9 @@
             serverSide: true,
             ajax: "{{ route('orders.index') }}",
             columns: [
+                {data: 'show', name: 'show'},
                 {data: 'order', name: 'order'},
+                {data: 'specification', name: 'specification'},
                 {data: 'priority', name: 'priority'},
                 {data: 'customer', name: 'customer'},
                 {data: 'customer_order', name: 'customer_order'},
@@ -219,11 +226,32 @@
                 {data: 'total', name: 'total'},
                 {data: 'produced', name: 'produced'},
                 {data: 'to_produce', name: 'to_produce'},
+                {data: 'delivered', name: 'delivered'},
+                {data: 'to_deliver', name: 'to_deliver'},
+                {data: 'ready_to_deliver', name: 'ready_to_deliver'},
                 {data: 'percentageDisplay', name: 'percentageDisplay'},
                 {data: 'actions', name: 'actions'},
             ],
             rowCallback: function(row, data, index) {
-                $('td:eq(14)', row).css('color', getColor(data.percentage));
+                $('td:eq(1)', row).css('backgroundColor', 'rgba(107,107,107,0.44)');
+                $('td:eq(2)', row).css('backgroundColor', 'rgba(95,153,236,0.64)');
+                $('td:eq(3)', row).css('backgroundColor', 'rgba(107,107,107,0.44)');
+                $('td:eq(4)', row).css('backgroundColor', 'rgba(103,197,104,0.44)');
+                $('td:eq(5)', row).css('backgroundColor', 'rgba(103,197,104,0.44)');
+                $('td:eq(6)', row).css('backgroundColor', 'rgba(103,197,104,0.44)');
+                $('td:eq(7)', row).css('backgroundColor', 'rgba(103,197,104,0.44)');
+                $('td:eq(8)', row).css('backgroundColor', 'rgba(103,197,104,0.44)');
+                $('td:eq(9)', row).css('backgroundColor', 'rgba(103,197,104,0.44)');
+                $('td:eq(10)', row).css('backgroundColor', 'rgba(103,197,104,0.44)');
+                $('td:eq(11)', row).css('backgroundColor', 'rgba(103,197,104,0.44)');
+                $('td:eq(12)', row).css('backgroundColor', 'rgba(103,197,104,0.44)');
+                $('td:eq(13)', row).css('backgroundColor', 'rgba(103,197,104,0.44)');
+                $('td:eq(14)', row).css('backgroundColor', 'rgba(103,197,104,0.44)');
+                $('td:eq(15)', row).css('backgroundColor', 'rgba(103,197,104,0.44)');
+                $('td:eq(16)', row).css('backgroundColor', 'rgba(103,197,104,0.44)');
+                $('td:eq(17)', row).css('backgroundColor', 'rgba(103,197,104,0.44)');
+                $('td:eq(18)', row).css('backgroundColor', 'rgba(103,197,104,0.44)');
+                $('td:eq(19)', row).css('color', getColor(data.percentage)).css('backgroundColor', 'rgba(107,107,107,0.44)');
             },
         });
 
