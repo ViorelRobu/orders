@@ -34,7 +34,7 @@ class ReportsController extends Controller
     public function exportActiveOrders()
     {
         $user = auth()->user()->name;
-        $now = Carbon::now()->format('d.m.Y Hms');
+        $now = Carbon::now()->format('d.m.Y His');
         $filename = 'comenzi active ' . $now . '.xlsx';
         Excel::store(new ActiveOrdersExport, $filename, 'exports');
 
@@ -52,7 +52,7 @@ class ReportsController extends Controller
     public function exportProductionPlan()
     {
         $user = auth()->user()->name;
-        $now = Carbon::now()->format('d.m.Y Hms');
+        $now = Carbon::now()->format('d.m.Y His');
         $filename = 'plan de productie' . $now . '.xlsx';
         Excel::store(new ProductionPlanExport, $filename, 'exports');
 
@@ -100,7 +100,7 @@ class ReportsController extends Controller
                 return '<a href="' . $archive->link . '"><i class="fas fa-download"></i></a>';
             })
             ->addColumn('created', function ($archive) {
-                return (Carbon::parse($archive->created_at))->format('d.m.Y H:m:s');
+                return (Carbon::parse($archive->created_at))->format('d.m.Y H:i:s');
             })
             ->rawColumns(['export'])
             ->make(true);
@@ -125,7 +125,7 @@ class ReportsController extends Controller
                 return '<a href="' . $archive->link . '"><i class="fas fa-download"></i></a>';
             })
             ->addColumn('created', function ($archive) {
-                return (Carbon::parse($archive->created_at))->format('d.m.Y H:m:s');
+                return (Carbon::parse($archive->created_at))->format('d.m.Y H:i:s');
             })
             ->rawColumns(['export'])
             ->make(true);
