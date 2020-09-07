@@ -96,7 +96,7 @@
                     </div>
                     <div>
                         <div id="auftrag_text" class="form-group">
-                            {{ $order->auftrag }}
+                            {{ $order->auftrag == null ? 'inexistent' : $order->auftrag }}
                         </div>
                         <input type="text"
                             class="form-control" name="auftrag" id="auftrag" placeholder="Auftrag" style="display: none">
@@ -875,7 +875,11 @@
             $('#customer_order').val($('#customer_order_text').html().trim());
             $('#auftrag_text').hide(100);
             $('#auftrag').show(100);
-            $('#auftrag').val($('#auftrag_text').html().trim());
+            if ($('#auftrag_text').html().trim() === 'inexistent') {
+                $('#auftrag').val('');
+            } else {
+                $('#auftrag').val($('#auftrag_text').html().trim());
+            }
             $('#country_text').hide(100);
             $('#country_id').show(100);
             $('#country_id').val($('#country__id').val());
