@@ -282,13 +282,20 @@
                 },
                 error: function(err) {
                     console.log(err);
+                    let errors = err.responseJSON.message;
+                    let errors_arr = [];
+                    for (let error in errors) {
+                        errors[error].forEach(el => {
+                            errors_arr.push(el + '<br>');
+                        });
+                    }
                     Swal.fire({
                         position: 'top-end',
                         type: 'error',
                         title: 'Eroare',
-                        titleText: err.responseJSON.message,
+                        html: errors_arr.toString().split(',').join(''),
                         showConfirmButton: false,
-                        timer: 5000,
+                        timer: 10000,
                         toast: true
                     });
                 },

@@ -10,12 +10,52 @@ use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use App\Refinement;
 use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
 
 class OrderDetailsController extends Controller
 {
     use RefinementsTranslator;
 
     protected $pi = 3.142;
+
+    protected $rules = [
+        'pal_pcs' => 'required|integer',
+        'article_id' => 'required',
+        'length' => 'sometimes',
+        'pcs' => 'required|integer',
+        'pcs_height' => 'sometimes',
+        'rows' => 'sometimes',
+        'label' => 'sometimes',
+        'foil' => 'required',
+        'pal' => 'required',
+    ];
+
+    protected $messages = [
+        'pal_pcs.required' => 'Numarul de paleti este necesar!',
+        'pal_pcs.integer' => 'Numarul de paleti trebuie sa fie un numar intreg!',
+        'article_id.required' => 'Selectati articolul',
+        'pcs.required' => 'Numarul de bucati/palet este necesar!',
+        'pcs.integer' => 'Numarul de bucati/palet trebuie sa fie un numar intreg!',
+        'foil.required' => 'Selectati daca marfa este infoliata sau nu!',
+        'pal.required' => 'Selectati modul de paletizare!',
+    ];
+
+    protected $rules_update = [
+        'edit_length' => 'sometimes',
+        'edit_pcs' => 'required|integer',
+        'edit_pcs_height' => 'sometimes',
+        'edit_rows' => 'sometimes',
+        'edit_label' => 'sometimes',
+        'edit_foil' => 'required',
+        'edit_pal' => 'required',
+    ];
+
+    protected $messages_update = [
+        'edit_pcs.required' => 'Numarul de bucati/palet este necesar!',
+        'edit_pcs.integer' => 'Numarul de bucati/palet trebuie sa fie un numar intreg!',
+        'edit_foil.required' => 'Selectati daca marfa este infoliata sau nu!',
+        'edit_pal.required' => 'Selectati modul de paletizare!',
+    ];
 
     /**
      * Fetch the order details of a certain order
@@ -58,45 +98,55 @@ class OrderDetailsController extends Controller
      */
     public function store(Order $order, Request $request)
     {
-        $det = OrderDetail::where('order_id', $order->id)->latest()->first();
-        if ($det == null) {
-            $position = 1;
-        } else {
-            $position = $det->position + 1;
-        }
+        $validator = Validator::make($request->all(), $this->rules, $this->messages);
 
-        for ($i=0; $i < $request->pal_pcs; $i++) {
-            $article = Article::find($request->article_id);
-            $detail = new OrderDetail();
-            $detail->order_id = $order->id;
-            $detail->article_id = $request->article_id;
-            $detail->refinements_list = implode(',',$request->refinements_list);
-            $detail->thickness = $article->thickness;
-            $detail->width = $article->width;
-            $detail->length = $request->length;
-            $detail->pcs = $request->pcs;
-            if ($request->length != null) {
-                $detail->volume = ($article->thickness * $article->width * $request->length * $request->pcs) / 1000000000;
+        if ($validator->passes()) {
+            $det = OrderDetail::where('order_id', $order->id)->latest()->first();
+            if ($det == null) {
+                $position = 1;
             } else {
-                $r = $article->width / 2;
-                $h = $article->thickness;
-                $detail->volume = round(($this->pi * ($r**2) * $h * $request->pcs / 1000000000), 3, PHP_ROUND_HALF_UP);
+                $position = $det->position + 1;
             }
-            $detail->position = $position;
-            $detail->pcs_height = $request->pcs_height;
-            $detail->rows = $request->rows;
-            $detail->label = $request->label;
-            $detail->foil = $request->foil;
-            $detail->pal = $request->pal;
-            $detail->details_json = $request->details_json;
-            $detail->save();
-        }
 
-        return response()->json([
-            'created' => true,
-            'message' => 'Pozitia a fost adaugata in baza de date!',
-            'type' => 'success'
-        ], 201);
+            for ($i=0; $i < $validator->valid()['pal_pcs']; $i++) {
+                $article = Article::find($request->article_id);
+                $detail = new OrderDetail();
+                $detail->order_id = $order->id;
+                $detail->article_id = $validator->valid()['article_id'];
+                $detail->refinements_list = implode(',',$request->refinements_list);
+                $detail->thickness = $article->thickness;
+                $detail->width = $article->width;
+                $detail->length = $validator->valid()['length'];
+                $detail->pcs = $validator->valid()['pcs'];
+                if ($request->length != null) {
+                    $detail->volume = ($article->thickness * $article->width * $request->length * $request->pcs) / 1000000000;
+                } else {
+                    $r = $article->width / 2;
+                    $h = $article->thickness;
+                    $detail->volume = round(($this->pi * ($r**2) * $h * $request->pcs / 1000000000), 3, PHP_ROUND_HALF_UP);
+                }
+                $detail->position = $position;
+                $detail->pcs_height = $validator->passes()['pcs_height'];
+                $detail->rows = $validator->passes()['rows'];
+                $detail->label = $validator->passes()['label'];
+                $detail->foil = $validator->passes()['foil'];
+                $detail->pal = $validator->passes()['pal'];
+                $detail->details_json = $request->details_json;
+                $detail->save();
+            }
+
+            return response()->json([
+                'created' => true,
+                'message' => 'Pozitia a fost adaugata in baza de date!',
+                'type' => 'success'
+            ], 201);
+        } else {
+            return response()->json([
+                'created' => false,
+                'message' => $validator->errors(),
+                'type' => 'error'
+            ], 406);
+        }
     }
 
     /**
@@ -138,7 +188,9 @@ class OrderDetailsController extends Controller
      */
     public function update(Order $order, $position, Request $request)
     {
-        try {
+        $validator = Validator::make($request->all(), $this->rules_update, $this->messages_update);
+
+        if ($validator->passes()) {
             $positions = OrderDetail::where('order_id', $order->id)->where('position', $position)->get();
             $article = Article::find($request->edit_article_id);
             foreach ($positions as $item) {
@@ -147,8 +199,8 @@ class OrderDetailsController extends Controller
                 $position->refinements_list = implode(',', $request->edit_refinements_list);
                 $position->thickness = $article->thickness;
                 $position->width = $article->width;
-                $position->length = $request->edit_length;
-                $position->pcs = $request->edit_pcs;
+                $position->length = $validator->passes()['edit_length'];
+                $position->pcs = $validator->passes()['edit_pcs'];
                 if ($request->edit_length != null) {
                     $position->volume = ($article->thickness * $article->width * $request->edit_length * $request->edit_pcs) / 1000000000;
                 } else {
@@ -156,11 +208,11 @@ class OrderDetailsController extends Controller
                     $h = $article->thickness;
                     $position->volume = round(($this->pi * ($r ** 2) * $h * $request->edit_pcs / 1000000000), 3, PHP_ROUND_HALF_UP);
                 }
-                $position->pcs_height = $request->edit_pcs_height;
-                $position->rows = $request->edit_rows;
-                $position->label = $request->edit_label;
-                $position->foil = $request->edit_foil;
-                $position->pal = $request->edit_pal;
+                $position->pcs_height = $validator->passes()['edit_pcs_height'];
+                $position->rows = $validator->passes()['edit_rows'];
+                $position->label = $validator->passes()['edit_label'];
+                $position->foil = $validator->passes()['edit_foil'];
+                $position->pal = $validator->passes()['edit_pal'];
                 $position->details_json = $request->edit_details_json;
                 $position->save();
             }
@@ -169,13 +221,13 @@ class OrderDetailsController extends Controller
                 'message' => 'Pozitiile au fost modificate cu succes!',
                 'type' => 'success'
             ]);
-        } catch(\Throwable $th) {
+        } else {
             return response()->json([
                 'updated' => false,
-                'message' => 'A aparut o eroare. Va rugam reincercati!',
+                'message' => $validator->errors(),
                 'type' => 'error',
-                'error' => $th
-            ]);
+                'error' => ''
+            ], 406);
         }
     }
 

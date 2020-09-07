@@ -37,6 +37,14 @@ class OrdersController extends Controller
         'observations' => 'sometimes',
     ];
 
+    protected $messages = [
+        'customer_id.required' => 'Selectati un furnizor!',
+        'destination_id.required' => 'Introduceti o adresa de livrare!',
+        'production_kw.required' => 'Selectati saptamana de productie!',
+        'delivery_kw.required' => 'Selectati saptamana de incarcare!',
+        'eta.required' => 'Selectati ETA!',
+    ];
+
     /**
      * Show the all orders page
      *
@@ -205,14 +213,23 @@ class OrdersController extends Controller
      */
     public function setPriority(Order $order, Request $request)
     {
-        $order->priority = $request->priority;
-        $order->save();
+        $validator = Validator::make($request->all(), ['priority' => 'required'], ['priority.required' => 'Trebuie sa introduceti o prioritate!']);
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Prioritatea a fost setata cu success!',
-            'value' => $request->priority
-        ]);
+        if ($validator->passes()) {
+            $order->priority = $request->priority;
+            $order->save();
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Prioritatea a fost setata cu success!',
+                'value' => $request->priority
+            ]);
+        } else {
+            return response()->json([
+                'status' => 'failure',
+                'message' => $validator->errors(),
+            ], 406);
+        }
     }
 
     /**
@@ -224,24 +241,44 @@ class OrdersController extends Controller
      */
     public function setDetails(Order $order, Request $request)
     {
-        $order->customer_id = $request->customer_id;
-        $order->customer_order = $request->customer_order;
-        $order->auftrag = $request->auftrag;
-        $order->destination_id = $request->destination_id;
-        $order->save();
+        $validator = Validator::make($request->all(),
+            [
+                'customer_id' => 'required',
+                'customer_order' => 'sometimes',
+                'auftrag' => 'required',
+                'destination_id' => 'required',
+            ],
+            [
+                'customer_id.required' => 'Selectati un client!',
+                'auftrag.required' => 'Introduceti numarul de auftrag!',
+                'destination_id.required' => 'Introduceti locul de livrare!',
+            ]);
 
-        $customer = Customer::find($order->customer_id);
-        $destination = Destination::find($order->destination_id);
-        $country = Country::find($destination->country_id);
+        if ($validator->passes()) {
+            $order->customer_id = $request->customer_id;
+            $order->customer_order = $request->customer_order;
+            $order->auftrag = $request->auftrag;
+            $order->destination_id = $request->destination_id;
+            $order->save();
 
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Detaliile comenzii au fost actualizate cu success!',
-            'order' => $order,
-            'customer' => $customer,
-            'country' => $country,
-            'destination' => $destination
-        ]);
+            $customer = Customer::find($order->customer_id);
+            $destination = Destination::find($order->destination_id);
+            $country = Country::find($destination->country_id);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Detaliile comenzii au fost actualizate cu success!',
+                'order' => $order,
+                'customer' => $customer,
+                'country' => $country,
+                'destination' => $destination
+            ]);
+        } else {
+            return response()->json([
+                'status' => 'failure',
+                'message' => $validator->errors(),
+            ], 406);
+        }
     }
 
     /**
@@ -272,21 +309,27 @@ class OrdersController extends Controller
      */
     public function ship(Order $order, Request $request)
     {
-        $order->loading_date = (Carbon::parse($request->loading_date))->toDateString();
-        $order->archived = 1;
-        $order->save();
+        $validator = Validator::make($request->all(), ['loading_date' => 'required'], ['loading_date.required' => 'Introduceti o data de livrare!']);
 
-        // insert the loading dates for the package that have no loading date
-        $details = OrderDetail::where('order_id', $order->id)->get();
-        foreach ($details as $detail) {
-            $detail->loading_date = (Carbon::parse($request->loading_date))->toDateString();
-            $detail->produced_ticom = 1;
-            $detail->save();
+        if ($validator->passes()) {
+            $order->loading_date = (Carbon::parse($request->loading_date))->toDateString();
+            $order->archived = 1;
+            $order->save();
+
+            // insert the loading dates for the package that have no loading date
+            $details = OrderDetail::where('order_id', $order->id)->get();
+            foreach ($details as $detail) {
+                $detail->loading_date = (Carbon::parse($request->loading_date))->toDateString();
+                $detail->produced_ticom = 1;
+                $detail->save();
+            }
+
+            $date = (Carbon::parse($request->loading_date))->format('d.m.y');
+
+            return back();
+        } else {
+            return back()->with(['errors' => $validator->errors()]);
         }
-
-        $date = (Carbon::parse($request->loading_date))->format('d.m.y');
-
-        return back();
     }
 
     /**
@@ -298,28 +341,49 @@ class OrdersController extends Controller
      */
     public function setDates(Order $order, Request $request)
     {
-        Carbon::setLocale('ro');
-        $order->customer_kw = $request->customer_kw;
-        $order->production_kw = $request->production_kw;
-        $order->delivery_kw = $request->delivery_kw;
-        $order->eta = $request->eta;
-        $order->save();
+        $validator = Validator::make(
+            $request->all(),
+            [
+                'customer_kw' => 'sometimes',
+                'production_kw' => 'required',
+                'delivery_kw' => 'required',
+                'eta' => 'sometimes',
+            ],
+            [
+                'production_kw.required' => 'Selectati o saptamana de productie!',
+                'delivery_kw.required' => 'Selectati saptamana de livrare!',
+            ]
+        );
 
-        $order->customer_kw_text = (Carbon::parse($order->customer_kw))->weekOfYear;
-        $order->production_kw_text = (Carbon::parse($order->production_kw))->weekOfYear;
-        $order->delivery_kw_text = (Carbon::parse($order->delivery_kw))->weekOfYear;
-        if ($order->eta != null) {
-            $order->eta_text = (Carbon::parse($order->eta))->weekOfYear;
+        if ($validator->passes()) {
+            Carbon::setLocale('ro');
+            $order->customer_kw = $request->customer_kw;
+            $order->production_kw = $request->production_kw;
+            $order->delivery_kw = $request->delivery_kw;
+            $order->eta = $request->eta;
+            $order->save();
+
+            $order->customer_kw_text = (Carbon::parse($order->customer_kw))->weekOfYear;
+            $order->production_kw_text = (Carbon::parse($order->production_kw))->weekOfYear;
+            $order->delivery_kw_text = (Carbon::parse($order->delivery_kw))->weekOfYear;
+            if ($order->eta != null) {
+                $order->eta_text = (Carbon::parse($order->eta))->weekOfYear;
+            } else {
+                $order->eta_text = 'nespecificat';
+            }
+            $order->month = strtoupper((Carbon::parse($order->delivery_kw))->monthName);
+
+            return response()->json([
+                'status' => 'success',
+                'message' => 'Datele au fost modificate cu success!',
+                'order' => $order
+            ]);
         } else {
-            $order->eta_text = 'nespecificat';
+            return response()->json([
+                'status' => 'failure',
+                'message' => $validator->errors()
+            ], 406);
         }
-        $order->month = strtoupper((Carbon::parse($order->delivery_kw))->monthName);
-
-        return response()->json([
-            'status' => 'success',
-            'message' => 'Datele au fost modificate cu success!',
-            'order' => $order
-        ]);
     }
 
     /**
@@ -331,7 +395,7 @@ class OrdersController extends Controller
      */
     public function store(Order $order, Request $request)
     {
-        $validator = Validator::make($request->all(), $this->rules);
+        $validator = Validator::make($request->all(), $this->rules, $this->messages);
 
         $latest_order = DB::table('orders')->latest()->first();
         if ($latest_order) {
@@ -488,7 +552,7 @@ class OrdersController extends Controller
      */
     public function update(Order $order, Request $request)
     {
-        $validator = Validator::make($request->all(), $this->rules);
+        $validator = Validator::make($request->all(), $this->rules, $this->messages);
 
         if ($validator->passes()) {
             $order->customer_id = $validator->valid()['customer_id'];
@@ -511,9 +575,9 @@ class OrdersController extends Controller
 
         return response()->json([
             'updated' => false,
-            'message' => 'A aparut o eroare. Verificati daca ati completat corect toate datele cerute.',
+            'message' => $validator->errors(),
             'type' => 'error'
-        ]);
+        ], 406);
     }
 
     /**

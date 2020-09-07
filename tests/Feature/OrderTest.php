@@ -46,7 +46,12 @@ class OrderTest extends TestCase
         $country = factory(Country::class, 3)->create();
         $customers = factory(Customer::class, 4)->create();
         $destinations = factory(Destination::class, 4)->create();
-        $orders = factory(Order::class)->create();
+        $orders = factory(Order::class)->create(['loading_date' => null]);
+        $species = factory(Species::class, 4)->create();
+        $quality = factory(Quality::class, 4)->create();
+        $product_types = factory(ProductType::class, 4)->create();
+        $article = factory(Article::class, 4)->create();
+        $details = factory(OrderDetail::class)->create(['order_id' => 1]);
 
         // run asserts
         $this->allowAccess('/orders');

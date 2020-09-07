@@ -3,6 +3,16 @@
 @section('title', 'Comanda ' . $order->order . $order->archived_text)
 
 @section('content')
+    @if ($errors->any())
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            @foreach ($errors->all() as $error)
+                <p>{{ $error }}</p>
+            @endforeach
+            <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                <span aria-hidden="true">&times;</span>
+            </button>
+        </div>
+    @endif
     <div class="card">
         <div class="card-header bg-dark">
             <div class="row">
@@ -651,13 +661,20 @@
                 },
                 error: function(err) {
                     console.log(err);
+                    let errors = err.responseJSON.message;
+                    let errors_arr = [];
+                    for (let error in errors) {
+                        errors[error].forEach(el => {
+                            errors_arr.push(el + '<br>');
+                        });
+                    }
                     Swal.fire({
                         position: 'top-end',
                         type: 'error',
                         title: 'Eroare',
-                        titleText: err.responseJSON.message,
+                        html: errors_arr.toString().split(',').join(''),
                         showConfirmButton: false,
-                        timer: 5000,
+                        timer: 10000,
                         toast: true
                     });
                 },
@@ -710,13 +727,20 @@
                 },
                 error: function(err) {
                     console.log(err);
+                    let errors = err.responseJSON.message;
+                    let errors_arr = [];
+                    for (let error in errors) {
+                        errors[error].forEach(el => {
+                            errors_arr.push(el + '<br>');
+                        });
+                    }
                     Swal.fire({
                         position: 'top-end',
                         type: 'error',
                         title: 'Eroare',
-                        titleText: err.responseJSON.message,
+                        html: errors_arr.toString().split(',').join(''),
                         showConfirmButton: false,
-                        timer: 5000,
+                        timer: 10000,
                         toast: true
                     });
                 },
@@ -808,13 +832,20 @@
                     },
                     error: function(err) {
                         console.log(err);
+                        let errors = err.responseJSON.message;
+                        let errors_arr = [];
+                        for (let error in errors) {
+                            errors[error].forEach(el => {
+                                errors_arr.push(el + '<br>');
+                            });
+                        }
                         Swal.fire({
                             position: 'top-end',
                             type: 'error',
                             title: 'Eroare',
-                            titleText: err.responseJSON.message,
+                            html: errors_arr.toString(),
                             showConfirmButton: false,
-                            timer: 5000,
+                            timer: 10000,
                             toast: true
                         });
                     },
@@ -894,13 +925,20 @@
                 },
                 error: function(err) {
                     console.log(err);
+                    let errors = err.responseJSON.message;
+                    let errors_arr = [];
+                    for (let error in errors) {
+                        errors[error].forEach(el => {
+                            errors_arr.push(el + '<br>');
+                        });
+                    }
                     Swal.fire({
                         position: 'top-end',
                         type: 'error',
                         title: 'Eroare',
-                        titleText: err.responseJSON.message,
+                        html: errors_arr.toString().split(',').join(''),
                         showConfirmButton: false,
-                        timer: 5000,
+                        timer: 10000,
                         toast: true
                     });
                 },
@@ -1093,13 +1131,20 @@
                 },
                 error: function(err) {
                     console.log(err);
+                    let errors = err.responseJSON.message;
+                    let errors_arr = [];
+                    for (let error in errors) {
+                        errors[error].forEach(el => {
+                            errors_arr.push(el + '<br>');
+                        });
+                    }
                     Swal.fire({
                         position: 'top-end',
                         type: 'error',
                         title: 'Eroare',
-                        titleText: err.responseJSON.message,
+                        html: errors_arr.toString().split(',').join(''),
                         showConfirmButton: false,
-                        timer: 5000,
+                        timer: 10000,
                         toast: true
                     });
                 },
