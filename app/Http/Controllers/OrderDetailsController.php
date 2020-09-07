@@ -116,8 +116,8 @@ class OrderDetailsController extends Controller
                 $detail->refinements_list = implode(',',$request->refinements_list);
                 $detail->thickness = $article->thickness;
                 $detail->width = $article->width;
-                $detail->length = $validator->valid()['length'];
-                $detail->pcs = $validator->valid()['pcs'];
+                $detail->length = $request->length;
+                $detail->pcs = $request->pcs;
                 if ($request->length != null) {
                     $detail->volume = ($article->thickness * $article->width * $request->length * $request->pcs) / 1000000000;
                 } else {
@@ -126,11 +126,11 @@ class OrderDetailsController extends Controller
                     $detail->volume = round(($this->pi * ($r**2) * $h * $request->pcs / 1000000000), 3, PHP_ROUND_HALF_UP);
                 }
                 $detail->position = $position;
-                $detail->pcs_height = $validator->passes()['pcs_height'];
-                $detail->rows = $validator->passes()['rows'];
-                $detail->label = $validator->passes()['label'];
-                $detail->foil = $validator->passes()['foil'];
-                $detail->pal = $validator->passes()['pal'];
+                $detail->pcs_height = $request->pcs_height;
+                $detail->rows = $request->rows;
+                $detail->label = $request->label;
+                $detail->foil = $request->foil;
+                $detail->pal = $request->pal;
                 $detail->details_json = $request->details_json;
                 $detail->save();
             }
@@ -199,8 +199,8 @@ class OrderDetailsController extends Controller
                 $position->refinements_list = implode(',', $request->edit_refinements_list);
                 $position->thickness = $article->thickness;
                 $position->width = $article->width;
-                $position->length = $validator->passes()['edit_length'];
-                $position->pcs = $validator->passes()['edit_pcs'];
+                $position->length = $request->edit_length;
+                $position->pcs = $request->edit_pcs;
                 if ($request->edit_length != null) {
                     $position->volume = ($article->thickness * $article->width * $request->edit_length * $request->edit_pcs) / 1000000000;
                 } else {
@@ -208,11 +208,11 @@ class OrderDetailsController extends Controller
                     $h = $article->thickness;
                     $position->volume = round(($this->pi * ($r ** 2) * $h * $request->edit_pcs / 1000000000), 3, PHP_ROUND_HALF_UP);
                 }
-                $position->pcs_height = $validator->passes()['edit_pcs_height'];
-                $position->rows = $validator->passes()['edit_rows'];
-                $position->label = $validator->passes()['edit_label'];
-                $position->foil = $validator->passes()['edit_foil'];
-                $position->pal = $validator->passes()['edit_pal'];
+                $position->pcs_height = $request->edit_pcs_height;
+                $position->rows = $request->edit_rows;
+                $position->label = $request->edit_label;
+                $position->foil = $request->edit_foil;
+                $position->pal = $request->edit_pal;
                 $position->details_json = $request->edit_details_json;
                 $position->save();
             }
