@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use App\Country;
 use App\Customer;
+use App\Traits\GetAudits;
+use App\Traits\Translatable;
 use Exception;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -15,10 +17,20 @@ use Yajra\DataTables\DataTables;
 
 class CustomersController extends Controller
 {
+    use GetAudits, Translatable;
+
     protected $rules = [
             'fibu' => 'required',
             'name' => 'required',
             'country_id' => 'required'
+        ];
+
+    protected $dictionary = [
+            'country_id' => [
+                'new_name' => 'tara',
+                'model' => 'App\Country',
+                'property' => 'name'
+            ]
         ];
 
     /**
@@ -131,5 +143,16 @@ class CustomersController extends Controller
             'message' => 'A aparut o eroare. Verificati daca ati completat corect toate campurile marcate cu stea si reincercati.',
             'type' => 'error'
         ]);
+    }
+
+    /**
+     * Return the audits
+     *
+     * @param Request $request
+     * @return collection
+     */
+    public function audits(Request $request)
+    {
+        return $this->getAudits(Customer::class, $request->id);
     }
 }

@@ -16,6 +16,7 @@
 
 @include('articles.partials.form')
 @include('articles.partials.import')
+@include('audits')
 
 @section('content')
 
@@ -98,6 +99,46 @@
             }
         });
     }
+
+    const audit = id => {
+        $.ajax({
+            url: `articles/audits`,
+            dataType: 'json',
+            data: {id: id},
+            type: 'GET',
+            success: function(response){
+                response.forEach(element => {
+                    let old_values = [];
+                    for (let key in element.old_values) {
+                        old_values.push(`${key}: ${element.old_values[key]}|`);
+                    }
+                    let new_values = [];
+                    for (let key in element.new_values) {
+                        new_values.push(`${key}: ${element.new_values[key]}|`);
+                    }
+                    let html = `
+                    <tr>
+                        <td>
+                            ${element.user}<br>
+                            <small class="text-muted">
+                                ${element.event}<br>
+                                ${new Date(element.created_at)}
+                            </small>
+                        </td>
+                        <td>${old_values.toString().split('|,').join('<br>').replace('|','')}</td>
+                        <td>${new_values.toString().split('|,').join('<br>').replace('|','')}</td>
+                    </tr>
+                    `;
+
+                    $('#audits-table').append(html);
+                });
+            }
+        });
+    }
+
+    $('#audits').on('hidden.bs.modal', function () {
+        $('#audits-table').empty();
+    });
 
     $(document).ready(function() {
 

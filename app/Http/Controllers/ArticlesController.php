@@ -8,6 +8,7 @@ use App\ProductType;
 use App\Quality;
 use App\Refinement;
 use App\Species;
+use App\Traits\GetAudits;
 use App\Traits\RefinementsTranslator;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -18,6 +19,7 @@ use Yajra\DataTables\Facades\DataTables;
 class ArticlesController extends Controller
 {
     use RefinementsTranslator;
+    use GetAudits;
 
     protected $rules = [
         'name' => 'required',
@@ -27,6 +29,24 @@ class ArticlesController extends Controller
         'default_refinements' => 'required',
         'thickness' => 'required',
         'width' => 'required'
+    ];
+
+    protected $dictionary = [
+        'species_id' => [
+            'new_name' => 'specie',
+            'model' => 'App\Species',
+            'property' => 'name'
+        ],
+        'quality_id' => [
+            'new_name' => 'calitate',
+            'model' => 'App\Quality',
+            'property' => 'name'
+        ],
+        'product_type_id' => [
+            'new_name' => 'tip produs',
+            'model' => 'App\ProductType',
+            'property' => 'name'
+        ],
     ];
 
     /**
@@ -179,5 +199,16 @@ class ArticlesController extends Controller
         } catch (\Throwable $th) {
             return back()->with('failure', 'Articolele nu au putut fi importate!');
         }
+    }
+
+    /**
+     * Return the audits
+     *
+     * @param Request $request
+     * @return collection
+     */
+    public function audits(Request $request)
+    {
+        return $this->getAudits(Article::class, $request->id);
     }
 }

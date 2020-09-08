@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\OrderNumber;
+use App\Traits\GetAudits;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
@@ -11,9 +12,13 @@ use Yajra\DataTables\Facades\DataTables;
 
 class OrderNumbersController extends Controller
 {
+    use GetAudits;
+
     protected $rules = [
         'start_number' => 'required',
     ];
+
+    protected $dictionary = [];
 
     /**
      * Show the all order numbers page
@@ -39,6 +44,9 @@ class OrderNumbersController extends Controller
             ->addIndexColumn()
             ->editColumn('created_at', function($numbers) {
                 return (new Carbon($numbers->created_at))->toDateTimeString();
+            })
+            ->addColumn('actions', function($numbers) {
+                return view('numbers.partials.actions', ['numbers' => $numbers]);
             })
             ->make(true);
     }
@@ -70,5 +78,16 @@ class OrderNumbersController extends Controller
             'message' => 'A aparut o eroare. Verificati daca ati completat numarul nou de comanda!',
             'type' => 'error'
         ]);
+    }
+
+    /**
+     * Return the audits
+     *
+     * @param Request $request
+     * @return collection
+     */
+    public function audits(Request $request)
+    {
+        return $this->getAudits(OrderNumber::class, $request->id);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\ProductType;
+use App\Traits\GetAudits;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -10,9 +11,13 @@ use Yajra\DataTables\DataTables;
 
 class ProductTypesController extends Controller
 {
+    use GetAudits;
+
     protected $rules = [
         'name' => 'required|unique:product_types,name',
     ];
+
+    protected $dictionary = [];
 
     /**
      * Show the all products page
@@ -110,5 +115,16 @@ class ProductTypesController extends Controller
     {
         $product = ProductType::find($request->id);
         return (new JsonResponse(['message' => 'success', 'message_type' => 'success', 'data' => $product]));
+    }
+
+    /**
+     * Return the audits
+     *
+     * @param Request $request
+     * @return collection
+     */
+    public function audits(Request $request)
+    {
+        return $this->getAudits(ProductType::class, $request->id);
     }
 }

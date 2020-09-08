@@ -14,6 +14,7 @@
 @stop
 
 @include('numbers.partials.form')
+@include('audits')
 
 @section('content')
     <div class="row">
@@ -25,6 +26,7 @@
                         <td>Nr crt</td>
                         <td>Numar de comanda</td>
                         <td>Adaugat la</td>
+                        <td>Actiuni</td>
                         </thead>
                     </table>
                 </div>
@@ -41,6 +43,46 @@
     <script>
     const save = '<button type="submit" id="save" class="btn btn-primary">Creaza</button>';
 
+    const audit = id => {
+        $.ajax({
+            url: `numbers/audits`,
+            dataType: 'json',
+            data: {id: id},
+            type: 'GET',
+            success: function(response){
+                response.forEach(element => {
+                    let old_values = [];
+                    for (let key in element.old_values) {
+                        old_values.push(`${key}: ${element.old_values[key]}|`);
+                    }
+                    let new_values = [];
+                    for (let key in element.new_values) {
+                        new_values.push(`${key}: ${element.new_values[key]}|`);
+                    }
+                    let html = `
+                    <tr>
+                        <td>
+                            ${element.user}<br>
+                            <small class="text-muted">
+                                ${element.event}<br>
+                                ${new Date(element.created_at)}
+                            </small>
+                        </td>
+                        <td>${old_values.toString().split('|,').join('<br>').replace('|','')}</td>
+                        <td>${new_values.toString().split('|,').join('<br>').replace('|','')}</td>
+                    </tr>
+                    `;
+
+                    $('#audits-table').append(html);
+                });
+            }
+        });
+    }
+
+    $('#audits').on('hidden.bs.modal', function () {
+        $('#audits-table').empty();
+    });
+
     $(document).ready(function() {
         $('#addNew').click(function() {
             $('#submit').append(save);
@@ -55,6 +97,7 @@
                 {data: 'DT_RowIndex', name: 'DT_RowIndex'},
                 {data: 'start_number', name: 'start_number'},
                 {data: 'created_at', name: 'created_at'},
+                {data: 'actions', name: 'actions'},
             ]
         });
 

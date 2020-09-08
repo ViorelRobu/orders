@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Country;
+use App\Traits\GetAudits;
 use Exception;
 use Illuminate\Contracts\Foundation\Application;
 use Illuminate\Contracts\View\Factory;
@@ -14,9 +15,13 @@ use Yajra\DataTables\DataTables;
 
 class CountriesController extends Controller
 {
+    use GetAudits;
+
     protected $rules = [
         'name' => 'required|unique:countries,name',
     ];
+
+    protected $dictionary = [];
 
     /**
      * Display the countries page to the user
@@ -115,5 +120,16 @@ class CountriesController extends Controller
         $country = Country::find($request->id);
 
         return (new JsonResponse(['message' => 'success', 'message_type' => 'success', 'data' => $country]));
+    }
+
+    /**
+     * Return the audits
+     *
+     * @param Request $request
+     * @return collection
+     */
+    public function audits(Request $request)
+    {
+        return $this->getAudits(Country::class, $request->id);
     }
 }

@@ -28,6 +28,7 @@ Route::middleware(['auth'])->group(function() {
         Route::get('/', 'CountriesController@index');
         Route::get('/all', 'CountriesController@fetchAll')->name('countries.index');
         Route::get('/fetch', 'CountriesController@fetch')->name('countries.fetch');
+        Route::get('/audits', 'CountriesController@audits');
         Route::post('/add','CountriesController@store');
         Route::patch('/{country}/update', 'CountriesController@update');
     });
@@ -36,6 +37,7 @@ Route::middleware(['auth'])->group(function() {
         Route::get('/', 'CustomersController@index');
         Route::get('/all', 'CustomersController@fetchAll')->name('customers.index');
         Route::get('/fetch', 'CustomersController@fetch')->name('customers.fetch');
+        Route::get('/audits', 'CustomersController@audits');
         Route::post('/add', 'CustomersController@store');
         Route::prefix('/{customer}')->group(function() {
             Route::patch('/update', 'CustomersController@update');
@@ -49,6 +51,7 @@ Route::middleware(['auth'])->group(function() {
         Route::get('/', 'SpeciesController@index');
         Route::get('/all', 'SpeciesController@fetchAll')->name('species.index');
         Route::get('/fetch', 'SpeciesController@fetch')->name('species.fetch');
+        Route::get('/audits', 'SpeciesController@audits');
         Route::post('/add', 'SpeciesController@store');
         Route::patch('/{species}/update', 'SpeciesController@update');
     });
@@ -57,6 +60,7 @@ Route::middleware(['auth'])->group(function() {
         Route::get('/', 'ProductTypesController@index');
         Route::get('/all', 'ProductTypesController@fetchAll')->name('products.index');
         Route::get('/fetch', 'ProductTypesController@fetch')->name('products.fetch');
+        Route::get('/audits', 'ProductTypesController@audits');
         Route::post('/add', 'ProductTypesController@store');
         Route::patch('/{product}/update', 'ProductTypesController@update');
     });
@@ -65,6 +69,7 @@ Route::middleware(['auth'])->group(function() {
         Route::get('/', 'QualityController@index');
         Route::get('/all', 'QualityController@fetchAll')->name('quality.index');
         Route::get('/fetch', 'QualityController@fetch')->name('quality.fetch');
+        Route::get('/audits', 'QualityController@audits');
         Route::post('/add', 'QualityController@store');
         Route::patch('/{quality}/update', 'QualityController@update');
     });
@@ -73,6 +78,7 @@ Route::middleware(['auth'])->group(function() {
         Route::get('/', 'RefinementsController@index');
         Route::get('/all', 'RefinementsController@fetchAll')->name('refinements.index');
         Route::get('/fetch', 'RefinementsController@fetch')->name('refinements.fetch');
+        Route::get('/audits', 'RefinementsController@audits');
         Route::post('/add', 'RefinementsController@store');
         Route::patch('/{refinement}/update', 'RefinementsController@update');
     });
@@ -81,6 +87,7 @@ Route::middleware(['auth'])->group(function() {
         Route::get('/', 'ArticlesController@index');
         Route::get('/all', 'ArticlesController@fetchAll')->name('articles.index');
         Route::get('/fetch', 'ArticlesController@fetch')->name('articles.fetch');
+        Route::get('/audits', 'ArticlesController@audits');
         Route::post('/add', 'ArticlesController@store');
         Route::post('/import', 'ArticlesController@import');
         Route::patch('/{article}/update', 'ArticlesController@update');
@@ -89,15 +96,8 @@ Route::middleware(['auth'])->group(function() {
     Route::prefix('/numbers')->group(function() {
         Route::get('/', 'OrderNumbersController@index');
         Route::get('/all', 'OrderNumbersController@fetchAll')->name('order_numbers.index');
+        Route::get('/audits', 'OrderNumbersController@audits');
         Route::post('/add', 'OrderNumbersController@store');
-    });
-
-    Route::prefix('/articles')->group(function () {
-        Route::get('/', 'ArticlesController@index');
-        Route::get('/all', 'ArticlesController@fetchAll')->name('articles.index');
-        Route::get('/fetch', 'ArticlesController@fetch')->name('articles.fetch');
-        Route::post('/add', 'ArticlesController@store');
-        Route::patch('/{article}/update', 'ArticlesController@update');
     });
 
     /*

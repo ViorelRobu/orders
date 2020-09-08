@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Species;
+use App\Traits\GetAudits;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -10,9 +11,13 @@ use Yajra\DataTables\DataTables;
 
 class SpeciesController extends Controller
 {
+    use GetAudits;
+
     protected $rules = [
         'name' => 'required|unique:species,name',
     ];
+
+    protected $dictionary = [];
 
     /**
      * Show the all species page
@@ -110,5 +115,16 @@ class SpeciesController extends Controller
     {
         $species = Species::find($request->id);
         return (new JsonResponse(['message' => 'success', 'message_type' => 'success', 'data' => $species]));
+    }
+
+    /**
+     * Return the audits
+     *
+     * @param Request $request
+     * @return collection
+     */
+    public function audits(Request $request)
+    {
+        return $this->getAudits(Species::class, $request->id);
     }
 }

@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Quality;
+use App\Traits\GetAudits;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -10,9 +11,13 @@ use Yajra\DataTables\DataTables;
 
 class QualityController extends Controller
 {
+    use GetAudits;
+
     protected $rules = [
         'name' => 'required|unique:quality,name',
     ];
+
+    protected $dictionary = [];
 
     /**
      * Show the all quality page
@@ -110,5 +115,16 @@ class QualityController extends Controller
     {
         $quality = Quality::find($request->id);
         return (new JsonResponse(['message' => 'success', 'message_type' => 'success', 'data' => $quality]));
+    }
+
+    /**
+     * Return the audits
+     *
+     * @param Request $request
+     * @return collection
+     */
+    public function audits(Request $request)
+    {
+        return $this->getAudits(Quality::class, $request->id);
     }
 }

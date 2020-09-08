@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Refinement;
+use App\Traits\GetAudits;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -10,10 +11,14 @@ use Yajra\DataTables\DataTables;
 
 class RefinementsController extends Controller
 {
+    use GetAudits;
+
     protected $rules = [
         'name' => 'required',
         'description' => 'sometimes'
     ];
+
+    protected $dictionary = [];
 
     /**
      * Show the all refinements page
@@ -113,5 +118,16 @@ class RefinementsController extends Controller
     {
         $refinement = Refinement::find($request->id);
         return (new JsonResponse(['message' => 'success', 'message_type' => 'success', 'data' => $refinement]));
+    }
+
+    /**
+     * Return the audits
+     *
+     * @param Request $request
+     * @return collection
+     */
+    public function audits(Request $request)
+    {
+        return $this->getAudits(Refinement::class, $request->id);
     }
 }
