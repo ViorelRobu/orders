@@ -60,13 +60,11 @@ class ArticlesTest extends TestCase
         $quality = factory(Quality::class)->create();
         $product = factory(ProductType::class)->create();
         $refinements = factory(Refinement::class, 5)->create();
-        $default_refinements = [1, 2];
         $response = $this->actingAs($user)->json('POST', '/articles/add', [
             'name' => 'PLA-FI-DIY-18x200-C',
             'species_id' => $species->id,
             'quality_id' => $quality->id,
             'product_type_id' => $product->id,
-            'default_refinements' => $default_refinements,
             'thickness' => 18,
             'width' => 200,
         ]);
@@ -79,7 +77,6 @@ class ArticlesTest extends TestCase
             'species_id' => $species->id,
             'quality_id' => $quality->id,
             'product_type_id' => $product->id,
-            'default_refinements' => '1,2',
             'thickness' => 18,
             'width' => 200,
         ]);
@@ -98,14 +95,12 @@ class ArticlesTest extends TestCase
         $product = factory(ProductType::class, 2)->create();
         $refinements = factory(Refinement::class, 4)->create();
         $article = factory(Article::class)->create();
-        $default_refinements = [3,4];
 
         $response = $this->actingAs($user)->json('PATCH', '/articles/1/update', [
             'name' => 'PLA-FI-DIY-18x200-C',
             'species_id' => 2,
             'quality_id' => 4,
             'product_type_id' => 2,
-            'default_refinements' => $default_refinements,
             'thickness' => 18,
             'width' => 200,
         ]);
@@ -118,7 +113,6 @@ class ArticlesTest extends TestCase
             'species_id' => 2,
             'quality_id' => 4,
             'product_type_id' => 2,
-            'default_refinements' => '3,4',
             'thickness' => 18,
             'width' => 200,
         ]);
@@ -127,7 +121,6 @@ class ArticlesTest extends TestCase
             'species_id' => $article->species_id,
             'quality_id' => $article->quality_id,
             'product_type_id' => $article->product_type_id,
-            'default_refinements' => $article->default_refinements,
             'thickness' => $article->thickness,
             'width' => $article->width,
         ]);

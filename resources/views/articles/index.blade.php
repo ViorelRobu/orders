@@ -55,7 +55,6 @@
                         <td>Specie</td>
                         <td>Calitate</td>
                         <td>Tip produs</td>
-                        <td>Finisaje</td>
                         <td>Grosime</td>
                         <td>Latime</td>
                         <td>Actiuni</td>
@@ -87,7 +86,6 @@
                         $('#species_id').val(response.data.species_id);
                         $('#quality_id').val(response.data.quality_id);
                         $('#product_type_id').val(response.data.product_type_id);
-                        $('#default_refinements').val(response.data.refinements_arr).trigger('change');
                         $('#thickness').val(response.data.thickness);
                         $('#width').val(response.data.width);
                         $('.modal-title').html('Editeaza');
@@ -148,12 +146,6 @@
             $('#update').remove();
         });
 
-        $('#default_refinements').select2({
-            width: '100%',
-            tags: true,
-            tokenSeparators: [','],
-        });
-
         let table = $('#articles').DataTable({
             processing: true,
             serverSide: true,
@@ -165,7 +157,6 @@
                 {data: 'species', name: 'species'},
                 {data: 'quality', name: 'quality'},
                 {data: 'product', name: 'product'},
-                {data: 'default_refinements', name: 'default_refinements'},
                 {data: 'thickness', name: 'thickness'},
                 {data: 'width', name: 'width'},
                 {data: 'actions', name: 'actions'},
@@ -178,11 +169,10 @@
             let species_id = $('#species_id').val();
             let quality_id = $('#quality_id').val();
             let product_type_id = $('#product_type_id').val();
-            let default_refinements = $('#default_refinements').val();
             let thickness = $('#thickness').val();
             let width = $('#width').val();
             axios.post('/articles/add', {
-                name, species_id, quality_id, product_type_id, default_refinements, thickness, width
+                name, species_id, quality_id, product_type_id, thickness, width
             }).then(function(response) {
                 $('#newArticle').modal('hide');
                 Swal.fire({
@@ -216,11 +206,10 @@
             let species_id = $('#species_id').val();
             let quality_id = $('#quality_id').val();
             let product_type_id = $('#product_type_id').val();
-            let default_refinements = $('#default_refinements').val();
             let thickness = $('#thickness').val();
             let width = $('#width').val();
             axios.post(uri, {
-                name, species_id, quality_id, product_type_id, default_refinements, thickness, width,
+                name, species_id, quality_id, product_type_id, thickness, width,
                 _method: 'patch'
             }).then(function(response) {
                 $('#newArticle').modal('hide');
@@ -254,7 +243,6 @@
             $('#species_id').val('');
             $('#quality_id').val('');
             $('#product_type_id').val('');
-            $('#default_refinements').val('');
             $('#thickness').val('');
             $('#width').val('');
             $('.modal-title').html('Articol nou');

@@ -12,7 +12,6 @@ $factory->define(Article::class, function (Faker $faker) {
         'species_id' => 1,
         'quality_id' => $faker->biasedNumberBetween(1, 3, 'sqrt'),
         'product_type_id' => 1,
-        'default_refinements' => '1,2',
         'thickness' => $faker->biasedNumberBetween(14, 27, 'sqrt'),
         'width' => $faker->biasedNumberBetween(200, 1250, 'sqrt'),
     ];

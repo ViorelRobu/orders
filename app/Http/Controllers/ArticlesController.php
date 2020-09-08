@@ -26,7 +26,6 @@ class ArticlesController extends Controller
         'species_id' => 'required',
         'quality_id' => 'required',
         'product_type_id' => 'required',
-        'default_refinements' => 'required',
         'thickness' => 'required',
         'width' => 'required'
     ];
@@ -91,12 +90,6 @@ class ArticlesController extends Controller
 
         return DataTables::of($articles)
             ->addIndexColumn()
-            ->editColumn('default_refinements', function($articles) {
-                if (is_null($articles->default_refinements)) {
-                    return '';
-                }
-                return $this->translateForHumans($articles->default_refinements);
-            })
             ->addColumn('actions', function ($articles) {
                 return view('articles.partials.actions', ['article' => $articles]);
             })
@@ -119,7 +112,6 @@ class ArticlesController extends Controller
             $article->species_id = $validator->valid()['species_id'];
             $article->quality_id = $validator->valid()['quality_id'];
             $article->product_type_id = $validator->valid()['product_type_id'];
-            $article->default_refinements = implode(',', $validator->valid()['default_refinements']);
             $article->thickness = $validator->valid()['thickness'];
             $article->width = $validator->valid()['width'];
             $article->save();
@@ -150,13 +142,12 @@ class ArticlesController extends Controller
         $validator = Validator::make($request->all(), $this->rules);
 
         if ($validator->passes()) {
-            $article->name = $validator->valid()['name'];
-            $article->species_id = $validator->valid()['species_id'];
-            $article->quality_id = $validator->valid()['quality_id'];
-            $article->product_type_id = $validator->valid()['product_type_id'];
-            $article->default_refinements = implode(',', $validator->valid()['default_refinements']);
-            $article->thickness = $validator->valid()['thickness'];
-            $article->width = $validator->valid()['width'];
+            $article->name = $request->name;
+            $article->species_id = $request->species_id;
+            $article->quality_id = $request->quality_id;
+            $article->product_type_id = $request->product_type_id;
+            $article->thickness = $request->thickness;
+            $article->width = $request->width;
             $article->save();
 
             return response()->json([
