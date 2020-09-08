@@ -27,6 +27,7 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
         $schedule->command('docArchive:delete')->dailyAt('19:00');
+        $schedule->command('telescope:prune --hours=96')->daily();
     }
 
     /**
