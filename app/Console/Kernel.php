@@ -3,6 +3,7 @@
 namespace App\Console;
 
 use App\Console\Commands\DeleteOlderDocArchiveCommand;
+use App\Console\Commands\PruneOrderAuditsCommand;
 use Illuminate\Console\Scheduling\Schedule;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 
@@ -15,6 +16,7 @@ class Kernel extends ConsoleKernel
      */
     protected $commands = [
         DeleteOlderDocArchiveCommand::class,
+        PruneOrderAuditsCommand::class,
     ];
 
     /**
@@ -27,6 +29,7 @@ class Kernel extends ConsoleKernel
     {
         // $schedule->command('inspire')->hourly();
         $schedule->command('docArchive:delete')->dailyAt('19:00');
+        $schedule->command('audits:pune')->dailyAt('19:00');
         $schedule->command('telescope:prune --hours=96')->daily();
     }
 
