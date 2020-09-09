@@ -620,12 +620,16 @@ class OrdersController extends Controller
                 }
             }
         } else {
-            $order->details_fields = rtrim($order->details_fields, '|') . '|' . rtrim($request->details_fields, '|');
+            $fields = explode('|', $order->details_fields);
+            $extra = explode('|', trim($request->details_fields, '|'));
+
+            $diff = array_diff($extra, $fields);
+
+            $order->details_fields = rtrim($order->details_fields, '|') . '|' . implode('|', $diff);
             $order->save();
 
-            $fields_arr = explode('|', $order->details_fields);
             $details = OrderDetail::where('order_id',$order->id)->get();
-            foreach ($fields_arr as $field) {
+            foreach ($diff as $field) {
                 foreach ($details as $detail) {
                     $data = json_decode($detail->details_json);
                     foreach ($data as $new_detail) {
