@@ -17,7 +17,7 @@ use Yajra\DataTables\DataTables;
 
 class CustomersController extends Controller
 {
-    use GetAudits, Translatable;
+    use GetAudits;
 
     protected $rules = [
             'fibu' => 'required',
