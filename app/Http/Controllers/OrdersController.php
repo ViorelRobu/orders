@@ -10,6 +10,7 @@ use App\Order;
 use App\OrderAttachment;
 use App\OrderDetail;
 use App\Refinement;
+use App\Traits\GetAudits;
 use App\Traits\RefinementsTranslator;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
@@ -24,6 +25,7 @@ use PDF;
 class OrdersController extends Controller
 {
     use RefinementsTranslator;
+    use GetAudits;
 
     protected $rules = [
         'customer_id' => 'required',
@@ -43,6 +45,19 @@ class OrdersController extends Controller
         'production_kw.required' => 'Selectati saptamana de productie!',
         'delivery_kw.required' => 'Selectati saptamana de incarcare!',
         'eta.required' => 'Selectati ETA!',
+    ];
+
+    protected $dictionary = [
+        'customer_id' => [
+            'new_name' => 'client',
+            'model' => 'App\Customer',
+            'property' => 'name'
+        ],
+        'destination_id' => [
+            'new_name' => 'adresa de livrare',
+            'model' => 'App\Destination',
+            'property' => 'address'
+        ],
     ];
 
     /**
@@ -683,5 +698,16 @@ class OrdersController extends Controller
             'message' => 'Document sters',
             'type' => 'success',
         ]);
+    }
+
+    /**
+     * Return the audits
+     *
+     * @param Request $request
+     * @return collection
+     */
+    public function audits(Request $request)
+    {
+        return $this->getAudits(Order::class, $request->id);
     }
 }

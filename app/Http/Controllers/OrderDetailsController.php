@@ -9,12 +9,13 @@ use App\Traits\RefinementsTranslator;
 use Illuminate\Http\Request;
 use Yajra\DataTables\Facades\DataTables;
 use App\Refinement;
+use App\Traits\GetAudits;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 
 class OrderDetailsController extends Controller
 {
-    use RefinementsTranslator;
+    use RefinementsTranslator, GetAudits;
 
     protected $pi = 3.142;
 
@@ -55,6 +56,19 @@ class OrderDetailsController extends Controller
         'edit_pcs.integer' => 'Numarul de bucati/palet trebuie sa fie un numar intreg!',
         'edit_foil.required' => 'Selectati daca marfa este infoliata sau nu!',
         'edit_pal.required' => 'Selectati modul de paletizare!',
+    ];
+
+    protected $dictionary = [
+        'order_id' => [
+            'new_name' => 'comanda interna',
+            'model' => 'App\Order',
+            'property' => 'order'
+        ],
+        'article_id' => [
+            'new_name' => 'articol',
+            'model' => 'App\Article',
+            'property' => 'name'
+        ],
     ];
 
     /**
@@ -331,5 +345,53 @@ class OrderDetailsController extends Controller
                 'error' => $th
             ]);
         }
+    }
+
+    /**
+     * Return the audits
+     *
+     * @param Request $request
+     * @return collection
+     */
+    public function audits(Request $request)
+    {
+        $audits =  $this->getAudits(OrderDetail::class, $request->id);
+
+        foreach ($audits as $audit) {
+            $old_values = [];
+            foreach ($audit->old_values as $key => $value) {
+                if($key == 'refinements_list') {
+                    $old_values[$key] = $this->translateForHumans($value);
+                } elseif ($key == 'details_json' && $value != '{}') {
+                    $details = json_decode($value);
+                    foreach ($details as $k => $v) {
+                        $old_values[$k] = $v;
+                    }
+                } else {
+
+                    $old_values[$key] = $value;
+                }
+            }
+
+            $new_values = [];
+            foreach ($audit->new_values as $key => $value) {
+                if($key == 'refinements_list') {
+                    $new_values[$key] = $this->translateForHumans($value);
+                } elseif ($key == 'details_json' && $value != '{}') {
+                    $details = json_decode($value);
+                    foreach ($details as $k => $v) {
+                        $new_values[$k] = $v;
+                    }
+                } else {
+                    $new_values[$key] = $value;
+                }
+            }
+
+            $audit->old_values = $old_values;
+            $audit->new_values = $new_values;
+
+        }
+
+        return $audits;
     }
 }
