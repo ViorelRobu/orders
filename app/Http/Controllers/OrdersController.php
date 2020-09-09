@@ -487,6 +487,39 @@ class OrdersController extends Controller
     }
 
     /**
+     * Print the multiple orders as a single PDF
+     *
+     * @param Request $request
+     * @return void
+     */
+    public function printMultiple(Request $request)
+    {
+        $start = Order::where('order', $request->start)->pluck('id');
+        $end = Order::where('order', $request->end)->pluck('id');
+        $orders = Order::whereBetween('id', [$start[0], $end[0]])->where('archived', 0)->get();
+
+        $document = 'comenzi multiple.pdf';
+
+        $orders->map(function($item, $index) {
+            $fields = [];
+            if ($item->details_fields != null) {
+                foreach(explode('|', $item->details_fields) as $field) {
+                    $fields[] = $field;
+                }
+            }
+            $total = OrderDetail::where('order_id', $item->id)->sum('volume');
+            $item->details_fields = $fields;
+            $item->total = $total;
+        });
+
+        return PDF::loadHTML(view('print.multiple.' . $request->orientation, [
+                            'orders' => $orders,
+                        ]))
+                    ->setPaper('A4', $request->orientation)
+                    ->stream($document);
+    }
+
+    /**
      * Display to the user the order page
      *
      * @param Order $order

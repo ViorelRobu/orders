@@ -27,9 +27,16 @@
                     Plan de productie
                 </a>
             </div>
+            <div class="list-group">
+                <a href="#" class="list-group-item list-group-item-action" data-toggle="modal" data-target="#printOrders">
+                    Printare comenzi multiple
+                </a>
+            </div>
         </div>
     </div>
 @stop
+
+@include('reports.partials.print')
 
 @section('footer')
     @include('footer')

@@ -111,6 +111,7 @@ Route::middleware(['auth'])->group(function() {
         Route::get('/fetch', 'OrdersController@fetch')->name('orders.fetch');
         Route::get('/audits', 'OrdersController@audits');
         Route::get('/details/audits', 'OrderDetailsController@audits')->name('details.audits');
+        Route::post('/print/multiple', 'OrdersController@printMultiple');
         Route::post('/add', 'OrdersController@store');
         Route::prefix('/{order}/')->group(function() {
             Route::get('/show', 'OrdersController@show');

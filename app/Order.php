@@ -18,4 +18,9 @@ class Order extends Model implements Auditable
     {
         return $this->belongsTo(Destination::class);
     }
+
+    public function details()
+    {
+        return $this->hasMany(OrderDetail::class);
+    }
 }
