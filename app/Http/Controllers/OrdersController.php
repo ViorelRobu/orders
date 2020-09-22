@@ -771,24 +771,18 @@ class OrdersController extends Controller
      */
     public function copy(Order $order, Request $request)
     {
-        // get the latest order number
-        $latest_order = DB::table('orders')->latest()->first();
-
         // get the order details
         $details = OrderDetail::where('order_id', $order->id)->get();
 
         // copy the order N times
         for ($i=0; $i < $request->copies; $i++) {
+            // get the latest order number
+            $latest_order = DB::table('orders')->latest()->first();
+
             $newOrder = new Order();
             $newOrder->order = $latest_order->order + 1;
             $newOrder->customer_id = $order->customer_id;
-            $newOrder->customer_order = $order->customer_order;
-            $newOrder->auftrag = $order->auftrag;
             $newOrder->destination_id = $order->destination_id;
-            $newOrder->customer_kw = $order->customer_kw;
-            $newOrder->production_kw = $order->production_kw;
-            $newOrder->delivery_kw = $order->delivery_kw;
-            $newOrder->eta = $order->eta;
             $newOrder->observations = $order->observations;
             $newOrder->details_fields = $order->details_fields;
             $newOrder->save();
