@@ -84,6 +84,7 @@
                                     <option value="palet">Palet</option>
                                     <option value="europalet">Europalet</option>
                                     <option value="tac">Tac</option>
+                                    <option value="4wpal">4WPAL</option>
                                   </select>
                                 </div>
                             </div>

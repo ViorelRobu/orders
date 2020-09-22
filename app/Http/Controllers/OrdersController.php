@@ -139,7 +139,11 @@ class OrdersController extends Controller
             ->sum('volume'), 3, PHP_ROUND_HALF_UP);
             $item->ready_to_deliver = $order_ready_to_deliver;
             $item->to_deliver = round($order_total - $order_delivered, 3, PHP_ROUND_HALF_UP);
-            $item->percentage = round($order_produced / $order_total, 3, PHP_ROUND_HALF_UP);
+            if ($order_total == 0 && $order_produced == 0) {
+                $item->percentage = 0;
+            } else {
+                $item->percentage = round($order_produced / $order_total, 3, PHP_ROUND_HALF_UP);
+            }
             $item->percentageDisplay = round(($item->percentage * 100),2) . '%';
 
         });
