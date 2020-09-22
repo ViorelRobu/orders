@@ -78,7 +78,6 @@
         <script src="{{ asset('vendor/jquery_ui/jquery-ui.js') }}"></script>
         <script src="{{ asset('vendor/tinymce/tinymce.min.js') }}"></script>
         <script src="{{ asset('vendor/tinymce/jquery.tinymce.min.js') }}"></script>
-        <script src="{{ mix(config('adminlte.laravel_mix_js_path', 'js/app.js')) }}"></script>
 
         {{-- Configured Scripts --}}
         @include('adminlte::plugins', ['type' => 'js'])

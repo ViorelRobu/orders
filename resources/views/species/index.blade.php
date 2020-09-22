@@ -122,6 +122,7 @@
         $(document).on('click', '#save', function(event) {
             event.preventDefault();
             let name = $('#name').val();
+            $('#save').prop('disabled', true);
 
             $.ajax({
                 url: '/species/add',
@@ -149,6 +150,7 @@
                         timer: 10000,
                         toast: true
                     });
+                    $('#save').prop('disabled', false);
                 },
                 success: function(response) {
                     console.log(response.error);
@@ -172,6 +174,7 @@
             let id = $('#id').val();
             let uri = '/species/' + id + '/update';
             let name = $('#name').val();
+            $('#update').prop('disabled', true);
 
             $.ajax({
                 url: uri,
@@ -199,6 +202,7 @@
                         timer: 10000,
                         toast: true
                     });
+                    $('#update').prop('disabled', false);
                 },
                 success: function(response) {
                     console.log(response.error);

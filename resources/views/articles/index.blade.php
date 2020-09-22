@@ -171,7 +171,8 @@
             let product_type_id = $('#product_type_id').val();
             let thickness = $('#thickness').val();
             let width = $('#width').val();
-
+            // disable the save button until you get an answer from the server
+            $('#save').prop('disabled', true);
 
             $.ajax({
                 url: `/articles/add`,
@@ -199,6 +200,7 @@
                         timer: 10000,
                         toast: true
                     });
+                    $('#save').prop('disabled', false);
                 },
                 success: function(response) {
                     console.log(response.error);

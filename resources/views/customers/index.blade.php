@@ -151,6 +151,7 @@
             let fibu = $('#fibu').val();
             let name = $('#name').val();
             let country_id = $('#country_id').val();
+            $('#save').prop('disabled', true);
 
             $.ajax({
                 url: '/customers/add',
@@ -178,6 +179,8 @@
                         timer: 10000,
                         toast: true
                     });
+                    $('#save').prop('disabled', false);
+
                 },
                 success: function(response) {
                     console.log(response.error);
@@ -204,6 +207,8 @@
             let country_id = $('#country_id').val();
             let id = $('#id').val();
             let uri = '/customers/' + id + '/update';
+            $('#update').prop('disabled', true);
+
             $.ajax({
                 url: uri,
                 method: 'PATCH',
@@ -230,6 +235,8 @@
                         timer: 10000,
                         toast: true
                     });
+                    $('#update').prop('disabled', false);
+
                 },
                 success: function(response) {
                     console.log(response.error);

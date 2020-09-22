@@ -104,6 +104,7 @@
         $(document).on('click', '#save', function(event) {
             event.preventDefault();
             let start_number = $('#start_number').val();
+            $('#save').prop('disabled', true);
 
             $.ajax({
                 url: '/numbers/add',
@@ -131,6 +132,8 @@
                         timer: 10000,
                         toast: true
                     });
+                    $('#save').prop('disabled', false);
+
                 },
                 success: function(response) {
                     console.log(response.error);
@@ -150,10 +153,7 @@
         });
 
         $('#newNumber').on('hidden.bs.modal', function () {
-            $('#name').val('');
-            $('.modal-title').html('Numar de comanda nou');
-            $('#newQualityForm').attr('action', '/numbers/add');
-            $("input[name='_method']").val('POST');
+            $('#start_number').val('');
             $('#save').remove();
         });
     })
