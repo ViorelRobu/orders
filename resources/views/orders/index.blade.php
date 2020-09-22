@@ -14,7 +14,7 @@
 @stop
 
 @include('orders.partials.form')
-@include('orders.partials.copy_order')
+
 @include('audits')
 
 @section('content')

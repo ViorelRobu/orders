@@ -113,13 +113,31 @@ class OrdersController extends Controller
             $customer = Customer::find($item->customer_id);
             $destination = Destination::find($item->destination_id);
             $country = Country::find($destination->country_id);
-            $item->month = strtoupper((Carbon::parse($item->delivery_kw))->monthName);
+
             $item->customer = $customer->name;
             $item->destination = $destination->address . ', ' . $country->name;
-            $item->kw_customer = 'KW ' . (Carbon::parse($item->customer_kw))->weekOfYear;
-            $item->kw_production = 'KW ' . (Carbon::parse($item->production_kw))->weekOfYear;
-            $item->kw_delivery = 'KW ' . (Carbon::parse($item->delivery_kw))->weekOfYear;
-            $item->eta = 'KW ' . (Carbon::parse($item->eta))->weekOfYear;
+            if ($item->customer_kw != null) {
+                $item->kw_customer = 'KW ' . (Carbon::parse($item->customer_kw))->weekOfYear;
+            } else {
+                $item->kw_customer = '';
+            }
+            if ($item->production_kw != null) {
+                $item->kw_production = 'KW ' . (Carbon::parse($item->production_kw))->weekOfYear;
+            } else {
+                $item->kw_production = '';
+            }
+            if ($item->delivery_kw != null) {
+                $item->kw_delivery = 'KW ' . (Carbon::parse($item->delivery_kw))->weekOfYear;
+                $item->month = strtoupper((Carbon::parse($item->delivery_kw))->monthName);
+            } else {
+                $item->kw_delivery = '';
+                $item->month = '';
+            }
+            if ($item->eta != null) {
+                $item->eta = 'KW ' . (Carbon::parse($item->eta))->weekOfYear;
+            } else {
+                $item->eta = '';
+            }
             $item->date_loading = (Carbon::parse($item->loading_date))->format('d.m.Y');
             $item->date_loading = (Carbon::parse($item->loading_date))->format('d.m.Y');
             $order_total = round(OrderDetail::where('order_id', $item->id)->sum('volume'), 3, PHP_ROUND_HALF_UP);
@@ -535,12 +553,26 @@ class OrdersController extends Controller
         $customer = Customer::find($order->customer_id);
         $destination = Destination::find($order->destination_id);
         $country = Country::find($destination->country_id);
-        $order->month = strtoupper((Carbon::parse($order->delivery_kw))->monthName);
         $order->archived_text = $order->archived === 1 ? ' - Arhivata' : '';
 
-        $customer_kw = (Carbon::parse($order->customer_kw))->weekOfYear;
-        $production_kw = (Carbon::parse($order->production_kw))->weekOfYear;
-        $delivery_kw = (Carbon::parse($order->delivery_kw))->weekOfYear;
+        if ($order->customer_kw != null) {
+            $customer_kw = (Carbon::parse($order->customer_kw))->weekOfYear;
+        } else {
+            $customer_kw = 'nespecificat';
+        }
+        if ($order->production_kw != null) {
+            $production_kw = (Carbon::parse($order->production_kw))->weekOfYear;
+        } else {
+            $production_kw = 'nespecificat';
+        }
+        if ($order->delivery_kw != null) {
+            $delivery_kw = (Carbon::parse($order->delivery_kw))->weekOfYear;
+            $order->month = strtoupper((Carbon::parse($order->delivery_kw))->monthName);
+        } else {
+            $delivery_kw = 'nespecificat';
+            $order->month = 'nespecificat';
+        }
+
         if ($order->eta == null) {
             $eta = 'nespecificat';
         } else {
@@ -816,6 +848,6 @@ class OrdersController extends Controller
             $message = 'Comanda a fost copiata cu succes!';
         }
 
-        return back()->with('success', $message);
+        return redirect('/orders')->with('success', $message);
     }
 }

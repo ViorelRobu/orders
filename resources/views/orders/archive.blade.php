@@ -10,6 +10,8 @@
     </div>
 @stop
 
+@include('orders.partials.copy_order')
+
 @section('content')
     <div class="row">
         <div class="col-lg-12">
@@ -40,6 +42,9 @@
 
 @section('js')
     <script>
+    const setOrder = id => {
+        $('#copyOrderForm').attr('action', `/orders/${id}/copy`);
+    }
     $(document).ready(function() {
         // percentage color for order completion percentage
         function getColor(value){
