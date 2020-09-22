@@ -229,10 +229,18 @@ class OrdersController extends Controller
         $customer = Customer::find($order->customer_id);
         $destination = Destination::find($order->destination_id);
         $country = Country::find($destination->country_id);
-        $order->customer_kw = (Carbon::parse($order->customer_kw))->format('d.m.Y');
-        $order->production_kw = (Carbon::parse($order->production_kw))->format('d.m.Y');
-        $order->delivery_kw = (Carbon::parse($order->delivery_kw))->format('d.m.Y');
-        $order->eta = (Carbon::parse($order->eta))->format('d.m.Y');
+        if ($order->customer_kw != null) {
+            $order->customer_kw = (Carbon::parse($order->customer_kw))->format('d.m.Y');
+        }
+        if ($order->production_kw != null) {
+            $order->production_kw = (Carbon::parse($order->production_kw))->format('d.m.Y');
+        }
+        if ($order->delivery_kw != null) {
+            $order->delivery_kw = (Carbon::parse($order->delivery_kw))->format('d.m.Y');
+        }
+        if ($order->eta != null) {
+            $order->eta = (Carbon::parse($order->eta))->format('d.m.Y');
+        }
         $order->customer = $customer->name;
         $order->address = $destination->address;
         $order->country = $country->name;
