@@ -126,31 +126,48 @@
             event.preventDefault();
             let name = $('#name').val();
             let description = $('#description').val();
-            axios.post('/refinements/add', {
-                name,
-                description
-            }).then(function(response) {
-                $('#newRefinement').modal('hide');
-                Swal.fire({
-                    position: 'top-end',
-                    type: response.data.type,
-                    title: 'Succes',
-                    title: response.data.message,
-                    showConfirmButton: false,
-                    timer: 5000,
-                    toast: true
-                });
-                table.draw()
-            }).catch(function(err) {
-                Swal.fire({
-                    position: 'top-end',
-                    type: 'error',
-                    title: 'Eroare',
-                    titleText: err,
-                    showConfirmButton: false,
-                    timer: 5000,
-                    toast: true
-                });
+
+            $.ajax({
+                url: '/refinements/add',
+                method: 'POST',
+                dataType: 'json',
+                data: {
+                    '_token': '{{ csrf_token() }}',
+                    name, description
+                },
+                error: function(err) {
+                    console.log(err);
+                    let errors = err.responseJSON.message;
+                    let errors_arr = [];
+                    for (let error in errors) {
+                        errors[error].forEach(el => {
+                            errors_arr.push(el + '<br>');
+                        });
+                    }
+                    Swal.fire({
+                        position: 'top-end',
+                        type: 'error',
+                        title: 'Eroare',
+                        html: errors_arr.toString().split(',').join(''),
+                        showConfirmButton: false,
+                        timer: 10000,
+                        toast: true
+                    });
+                },
+                success: function(response) {
+                    console.log(response.error);
+                    Swal.fire({
+                        position: 'top-end',
+                        type: response.type,
+                        title: 'Succes',
+                        title: response.message,
+                        showConfirmButton: false,
+                        timer: 5000,
+                        toast: true
+                    });
+                    $('#newRefinement').modal('hide');
+                    table.draw()
+                }
             });
         });
 
@@ -160,32 +177,48 @@
             let uri = '/refinements/' + id + '/update';
             let name = $('#name').val();
             let description = $('#description').val();
-            axios.post(uri, {
-                name,
-                description,
-                _method: 'patch'
-            }).then(function(response) {
-                Swal.fire({
-                    position: 'top-end',
-                    type: response.data.type,
-                    title: 'Succes',
-                    title: response.data.message,
-                    showConfirmButton: false,
-                    timer: 1500,
-                    toast: true
-                });
-                table.draw()
-            }).catch(function(err) {
-                $('#newRefinement').modal('hide');
-                Swal.fire({
-                    position: 'top-end',
-                    type: 'error',
-                    title: 'Eroare',
-                    titleText: err,
-                    showConfirmButton: false,
-                    timer: 5000,
-                    toast: true
-                });
+
+            $.ajax({
+                url: uri,
+                method: 'PATCH',
+                dataType: 'json',
+                data: {
+                    '_token': '{{ csrf_token() }}',
+                    name, description
+                },
+                error: function(err) {
+                    console.log(err);
+                    let errors = err.responseJSON.message;
+                    let errors_arr = [];
+                    for (let error in errors) {
+                        errors[error].forEach(el => {
+                            errors_arr.push(el + '<br>');
+                        });
+                    }
+                    Swal.fire({
+                        position: 'top-end',
+                        type: 'error',
+                        title: 'Eroare',
+                        html: errors_arr.toString().split(',').join(''),
+                        showConfirmButton: false,
+                        timer: 10000,
+                        toast: true
+                    });
+                },
+                success: function(response) {
+                    console.log(response.error);
+                    Swal.fire({
+                        position: 'top-end',
+                        type: response.type,
+                        title: 'Succes',
+                        title: response.message,
+                        showConfirmButton: false,
+                        timer: 5000,
+                        toast: true
+                    });
+                    $('#newRefinement').modal('hide');
+                    table.draw()
+                }
             });
         });
 

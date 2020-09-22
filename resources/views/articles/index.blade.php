@@ -171,30 +171,49 @@
             let product_type_id = $('#product_type_id').val();
             let thickness = $('#thickness').val();
             let width = $('#width').val();
-            axios.post('/articles/add', {
-                name, species_id, quality_id, product_type_id, thickness, width
-            }).then(function(response) {
-                $('#newArticle').modal('hide');
-                Swal.fire({
-                    position: 'top-end',
-                    type: response.data.type,
-                    title: 'Succes',
-                    title: response.data.message,
-                    showConfirmButton: false,
-                    timer: 5000,
-                    toast: true
-                });
-                table.draw()
-            }).catch(function(err) {
-                Swal.fire({
-                    position: 'top-end',
-                    type: 'error',
-                    title: 'Eroare',
-                    titleText: err,
-                    showConfirmButton: false,
-                    timer: 5000,
-                    toast: true
-                });
+
+
+            $.ajax({
+                url: `/articles/add`,
+                method: 'POST',
+                dataType: 'json',
+                data: {
+                    '_token': '{{ csrf_token() }}',
+                    name, species_id, quality_id, product_type_id, thickness, width
+                },
+                error: function(err) {
+                    console.log(err);
+                    let errors = err.responseJSON.message;
+                    let errors_arr = [];
+                    for (let error in errors) {
+                        errors[error].forEach(el => {
+                            errors_arr.push(el + '<br>');
+                        });
+                    }
+                    Swal.fire({
+                        position: 'top-end',
+                        type: 'error',
+                        title: 'Eroare',
+                        html: errors_arr.toString().split(',').join(''),
+                        showConfirmButton: false,
+                        timer: 10000,
+                        toast: true
+                    });
+                },
+                success: function(response) {
+                    console.log(response.error);
+                    Swal.fire({
+                        position: 'top-end',
+                        type: response.type,
+                        title: 'Succes',
+                        title: response.message,
+                        showConfirmButton: false,
+                        timer: 5000,
+                        toast: true
+                    });
+                    $('#newArticle').modal('hide');
+                    table.draw()
+                }
             });
         });
 
@@ -208,32 +227,76 @@
             let product_type_id = $('#product_type_id').val();
             let thickness = $('#thickness').val();
             let width = $('#width').val();
-            axios.post(uri, {
-                name, species_id, quality_id, product_type_id, thickness, width,
-                _method: 'patch'
-            }).then(function(response) {
-                $('#newArticle').modal('hide');
-                Swal.fire({
-                    position: 'top-end',
-                    type: response.data.type,
-                    title: 'Succes',
-                    title: response.data.message,
-                    showConfirmButton: false,
-                    timer: 1500,
-                    toast: true
-                });
-                table.draw()
-            }).catch(function(err) {
-                Swal.fire({
-                    position: 'top-end',
-                    type: 'error',
-                    title: 'Eroare',
-                    titleText: err,
-                    showConfirmButton: false,
-                    timer: 5000,
-                    toast: true
-                });
+
+            $.ajax({
+                url: uri,
+                method: 'PATCH',
+                dataType: 'json',
+                data: {
+                    '_token': '{{ csrf_token() }}',
+                    name, species_id, quality_id, product_type_id, thickness, width
+                },
+                error: function(err) {
+                    console.log(err);
+                    let errors = err.responseJSON.message;
+                    let errors_arr = [];
+                    for (let error in errors) {
+                        errors[error].forEach(el => {
+                            errors_arr.push(el + '<br>');
+                        });
+                    }
+                    Swal.fire({
+                        position: 'top-end',
+                        type: 'error',
+                        title: 'Eroare',
+                        html: errors_arr.toString().split(',').join(''),
+                        showConfirmButton: false,
+                        timer: 10000,
+                        toast: true
+                    });
+                },
+                success: function(response) {
+                    console.log(response.error);
+                    Swal.fire({
+                        position: 'top-end',
+                        type: response.type,
+                        title: 'Succes',
+                        title: response.message,
+                        showConfirmButton: false,
+                        timer: 5000,
+                        toast: true
+                    });
+                    $('#newArticle').modal('hide');
+                    table.draw()
+                }
             });
+
+            // axios.post(uri, {
+            //     name, species_id, quality_id, product_type_id, thickness, width,
+            //     _method: 'patch'
+            // }).then(function(response) {
+            //     $('#newArticle').modal('hide');
+            //     Swal.fire({
+            //         position: 'top-end',
+            //         type: response.data.type,
+            //         title: 'Succes',
+            //         title: response.data.message,
+            //         showConfirmButton: false,
+            //         timer: 1500,
+            //         toast: true
+            //     });
+            //     table.draw()
+            // }).catch(function(err) {
+            //     Swal.fire({
+            //         position: 'top-end',
+            //         type: 'error',
+            //         title: 'Eroare',
+            //         titleText: err,
+            //         showConfirmButton: false,
+            //         timer: 5000,
+            //         toast: true
+            //     });
+            // });
         });
 
 

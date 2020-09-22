@@ -151,33 +151,50 @@
             let fibu = $('#fibu').val();
             let name = $('#name').val();
             let country_id = $('#country_id').val();
-            axios.post('/customers/add', {
-                fibu: fibu,
-                name: name,
-                country_id: country_id
-            }).then(function(response) {
-                $('#newCustomer').modal('hide');
-                Swal.fire({
-                    position: 'top-end',
-                    type: response.data.type,
-                    title: 'Succes',
-                    titleText: response.data.message,
-                    showConfirmButton: false,
-                    timer: 5000,
-                    toast: true
-                });
-                table.draw()
-            }).catch(function(err) {
-                Swal.fire({
-                    position: 'top-end',
-                    type: 'error',
-                    title: 'Eroare',
-                    titleText: err,
-                    showConfirmButton: false,
-                    timer: 5000,
-                    toast: true
-                });
+
+            $.ajax({
+                url: '/customers/add',
+                method: 'POST',
+                dataType: 'json',
+                data: {
+                    '_token': '{{ csrf_token() }}',
+                    fibu, name, country_id
+                },
+                error: function(err) {
+                    console.log(err);
+                    let errors = err.responseJSON.message;
+                    let errors_arr = [];
+                    for (let error in errors) {
+                        errors[error].forEach(el => {
+                            errors_arr.push(el + '<br>');
+                        });
+                    }
+                    Swal.fire({
+                        position: 'top-end',
+                        type: 'error',
+                        title: 'Eroare',
+                        html: errors_arr.toString().split(',').join(''),
+                        showConfirmButton: false,
+                        timer: 10000,
+                        toast: true
+                    });
+                },
+                success: function(response) {
+                    console.log(response.error);
+                    Swal.fire({
+                        position: 'top-end',
+                        type: response.type,
+                        title: 'Succes',
+                        title: response.message,
+                        showConfirmButton: false,
+                        timer: 5000,
+                        toast: true
+                    });
+                    $('#newCustomer').modal('hide');
+                    table.draw()
+                }
             });
+
         });
 
         $(document).on('click', '#update', function(event) {
@@ -187,34 +204,47 @@
             let country_id = $('#country_id').val();
             let id = $('#id').val();
             let uri = '/customers/' + id + '/update';
-            axios.post(uri, {
-                fibu: fibu,
-                name: name,
-                country_id: country_id,
-                _method: 'patch'
-            }).then(function(response) {
-                $('#newCustomer').modal('hide');
-                Swal.fire({
-                    position: 'top-end',
-                    type: response.data.type,
-                    title: 'Succes',
-                    title: response.data.message,
-                    showConfirmButton: false,
-                    timer: 5000,
-                    toast: true
-                });
-                table.draw()
-            }).catch(function(err) {
-                console.log(err);
-                Swal.fire({
-                    position: 'top-end',
-                    type: 'error',
-                    title: 'Eroare',
-                    titleText: err,
-                    showConfirmButton: false,
-                    timer: 5000,
-                    toast: true
-                });
+            $.ajax({
+                url: uri,
+                method: 'PATCH',
+                dataType: 'json',
+                data: {
+                    '_token': '{{ csrf_token() }}',
+                    fibu, name, country_id
+                },
+                error: function(err) {
+                    console.log(err);
+                    let errors = err.responseJSON.message;
+                    let errors_arr = [];
+                    for (let error in errors) {
+                        errors[error].forEach(el => {
+                            errors_arr.push(el + '<br>');
+                        });
+                    }
+                    Swal.fire({
+                        position: 'top-end',
+                        type: 'error',
+                        title: 'Eroare',
+                        html: errors_arr.toString().split(',').join(''),
+                        showConfirmButton: false,
+                        timer: 10000,
+                        toast: true
+                    });
+                },
+                success: function(response) {
+                    console.log(response.error);
+                    Swal.fire({
+                        position: 'top-end',
+                        type: response.type,
+                        title: 'Succes',
+                        title: response.message,
+                        showConfirmButton: false,
+                        timer: 5000,
+                        toast: true
+                    });
+                    $('#newCustomer').modal('hide');
+                    table.draw()
+                }
             });
         });
 

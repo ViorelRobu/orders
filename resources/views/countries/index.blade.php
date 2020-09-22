@@ -122,31 +122,51 @@
         $(document).on('click', '#save', function(event) {
             event.preventDefault();
             let country = $('#name').val();
-            axios.post('/countries/add', {
-                name: country
-            }).then(function(response) {
-                $('#newCountry').modal('hide');
-                Swal.fire({
-                    position: 'top-end',
-                    type: response.data.type,
-                    title: 'Succes',
-                    title: response.data.message,
-                    showConfirmButton: false,
-                    timer: 5000,
-                    toast: true
-                });
-                table.draw()
-            }).catch(function(err) {
-                Swal.fire({
-                    position: 'top-end',
-                    type: 'error',
-                    title: 'Eroare',
-                    titleText: err,
-                    showConfirmButton: false,
-                    timer: 5000,
-                    toast: true
-                });
+
+
+            $.ajax({
+                url: `/countries/add`,
+                method: 'POST',
+                dataType: 'json',
+                data: {
+                    '_token': '{{ csrf_token() }}',
+                    name: country
+                },
+                error: function(err) {
+                    console.log(err);
+                    let errors = err.responseJSON.message;
+                    let errors_arr = [];
+                    for (let error in errors) {
+                        errors[error].forEach(el => {
+                            errors_arr.push(el + '<br>');
+                        });
+                    }
+                    Swal.fire({
+                        position: 'top-end',
+                        type: 'error',
+                        title: 'Eroare',
+                        html: errors_arr.toString().split(',').join(''),
+                        showConfirmButton: false,
+                        timer: 10000,
+                        toast: true
+                    });
+                },
+                success: function(response) {
+                    console.log(response.error);
+                    Swal.fire({
+                        position: 'top-end',
+                        type: response.type,
+                        title: 'Succes',
+                        title: response.message,
+                        showConfirmButton: false,
+                        timer: 5000,
+                        toast: true
+                    });
+                    $('#newCountry').modal('hide');
+                    table.draw()
+                }
             });
+
         });
 
         $(document).on('click', '#update', function(event) {
@@ -154,32 +174,51 @@
             let id = $('#id').val();
             let uri = '/countries/' + id + '/update';
             let country = $('#name').val();
-            axios.post(uri, {
-                name: country,
-                _method: 'patch'
-            }).then(function(response) {
-                $('#newCountry').modal('hide');
-                Swal.fire({
-                    position: 'top-end',
-                    type: response.data.type,
-                    title: 'Succes',
-                    title: response.data.message,
-                    showConfirmButton: false,
-                    timer: 1500,
-                    toast: true
-                });
-                table.draw()
-            }).catch(function(err) {
-                Swal.fire({
-                    position: 'top-end',
-                    type: 'error',
-                    title: 'Eroare',
-                    titleText: err,
-                    showConfirmButton: false,
-                    timer: 5000,
-                    toast: true
-                });
+
+
+            $.ajax({
+                url: uri,
+                method: 'PATCH',
+                dataType: 'json',
+                data: {
+                    '_token': '{{ csrf_token() }}',
+                    name: country
+                },
+                error: function(err) {
+                    console.log(err);
+                    let errors = err.responseJSON.message;
+                    let errors_arr = [];
+                    for (let error in errors) {
+                        errors[error].forEach(el => {
+                            errors_arr.push(el + '<br>');
+                        });
+                    }
+                    Swal.fire({
+                        position: 'top-end',
+                        type: 'error',
+                        title: 'Eroare',
+                        html: errors_arr.toString().split(',').join(''),
+                        showConfirmButton: false,
+                        timer: 10000,
+                        toast: true
+                    });
+                },
+                success: function(response) {
+                    console.log(response.error);
+                    Swal.fire({
+                        position: 'top-end',
+                        type: response.type,
+                        title: 'Succes',
+                        title: response.message,
+                        showConfirmButton: false,
+                        timer: 5000,
+                        toast: true
+                    });
+                    $('#newCountry').modal('hide');
+                    table.draw()
+                }
             });
+
         });
 
 

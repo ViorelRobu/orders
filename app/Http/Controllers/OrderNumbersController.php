@@ -18,6 +18,10 @@ class OrderNumbersController extends Controller
         'start_number' => 'required',
     ];
 
+    protected $messages = [
+        'start_number.required' => 'Introduceti un numar de comanda!'
+    ];
+
     protected $dictionary = [];
 
     /**
@@ -60,10 +64,10 @@ class OrderNumbersController extends Controller
      */
     public function store(OrderNumber $number, Request $request)
     {
-        $validator = Validator::make($request->all(), $this->rules);
+        $validator = Validator::make($request->all(), $this->rules, $this->messages);
 
         if ($validator->passes()) {
-            $number->start_number = $validator->valid()['start_number'];
+            $number->start_number = $request->start_number;
             $number->save();
 
             return response()->json([
@@ -75,9 +79,9 @@ class OrderNumbersController extends Controller
 
         return response()->json([
             'created' => false,
-            'message' => 'A aparut o eroare. Verificati daca ati completat numarul nou de comanda!',
+            'message' => $validator->errors(),
             'type' => 'error'
-        ]);
+        ], 406);
     }
 
     /**

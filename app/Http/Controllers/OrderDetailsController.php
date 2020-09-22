@@ -126,7 +126,7 @@ class OrderDetailsController extends Controller
                 $article = Article::find($request->article_id);
                 $detail = new OrderDetail();
                 $detail->order_id = $order->id;
-                $detail->article_id = $validator->valid()['article_id'];
+                $detail->article_id = $request->article_id;
                 $detail->refinements_list = implode(',',$request->refinements_list);
                 $detail->thickness = $article->thickness;
                 $detail->width = $article->width;

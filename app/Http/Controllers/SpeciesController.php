@@ -17,6 +17,11 @@ class SpeciesController extends Controller
         'name' => 'required|unique:species,name',
     ];
 
+    protected $messages = [
+        'name.required' => 'Introduceti denumirea speciei!',
+        'name.unique' => 'Exista inca o specie cu acelasi nume!',
+    ];
+
     protected $dictionary = [];
 
     /**
@@ -56,10 +61,10 @@ class SpeciesController extends Controller
      */
     public function store(Species $species, Request $request)
     {
-        $validator = Validator::make($request->all(), $this->rules);
+        $validator = Validator::make($request->all(), $this->rules, $this->messages);
 
         if ($validator->passes()) {
-            $species->name = $validator->valid()['name'];
+            $species->name = $request->name;
             $species->save();
 
             return response()->json([
@@ -71,9 +76,9 @@ class SpeciesController extends Controller
 
         return response()->json([
             'created' => false,
-            'message' => 'A aparut o eroare. Verificati daca specia introdusa nu exista deja in baza de date!',
+            'message' => $validator->errors(),
             'type' => 'error'
-        ]);
+        ], 406);
     }
 
     /**
@@ -85,10 +90,10 @@ class SpeciesController extends Controller
      */
     public function update(Species $species, Request $request)
     {
-        $validator = Validator::make($request->all(), $this->rules);
+        $validator = Validator::make($request->all(), $this->rules, $this->messages);
 
         if ($validator->passes()) {
-            $species->name = $validator->valid()['name'];
+            $species->name = $request->name;
             $species->save();
 
             return response()->json([
@@ -100,9 +105,9 @@ class SpeciesController extends Controller
 
         return response()->json([
             'updated' => false,
-            'message' => 'A aparut o eroare. Reincercati!',
+            'message' => $validator->errors(),
             'type' => 'error'
-        ]);
+        ], 406);
     }
 
     /**

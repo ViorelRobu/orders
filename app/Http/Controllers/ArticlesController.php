@@ -30,6 +30,15 @@ class ArticlesController extends Controller
         'width' => 'required'
     ];
 
+    protected $messages = [
+        'name.required' => 'Introduceti numele articolului!',
+        'species_id.required' => 'Selectati o specie!',
+        'quality_id.required' => 'Selectati o calitate!',
+        'product_type_id.required' => 'Selectati o grupa de produs!',
+        'thickness.required' => 'Introduceti grosimea!',
+        'width.required' => 'Introduceti latimea!',
+    ];
+
     protected $dictionary = [
         'species_id' => [
             'new_name' => 'specie',
@@ -105,15 +114,15 @@ class ArticlesController extends Controller
      */
     public function store(Article $article, Request $request)
     {
-        $validator = Validator::make($request->all(), $this->rules);
+        $validator = Validator::make($request->all(), $this->rules, $this->messages);
 
         if ($validator->passes()) {
-            $article->name = $validator->valid()['name'];
-            $article->species_id = $validator->valid()['species_id'];
-            $article->quality_id = $validator->valid()['quality_id'];
-            $article->product_type_id = $validator->valid()['product_type_id'];
-            $article->thickness = $validator->valid()['thickness'];
-            $article->width = $validator->valid()['width'];
+            $article->name = $request->name;
+            $article->species_id = $request->species_id;
+            $article->quality_id = $request->quality_id;
+            $article->product_type_id = $request->product_type_id;
+            $article->thickness = $request->thickness;
+            $article->width = $request->width;
             $article->save();
 
             return response()->json([
@@ -125,9 +134,9 @@ class ArticlesController extends Controller
 
         return response()->json([
             'created' => false,
-            'message' => 'A aparut o eroare. Completati toate campurile!',
+            'message' => $validator->errors(),
             'type' => 'error'
-        ]);
+        ], 406);
     }
 
     /**
@@ -139,7 +148,7 @@ class ArticlesController extends Controller
      */
     public function update(Article $article, Request $request)
     {
-        $validator = Validator::make($request->all(), $this->rules);
+        $validator = Validator::make($request->all(), $this->rules, $this->messages);
 
         if ($validator->passes()) {
             $article->name = $request->name;
@@ -159,9 +168,9 @@ class ArticlesController extends Controller
 
         return response()->json([
             'updated' => false,
-            'message' => 'A aparut o eroare. Reincercati!',
+            'message' => $validator->errors(),
             'type' => 'error'
-        ]);
+        ], 406);
     }
 
     /**

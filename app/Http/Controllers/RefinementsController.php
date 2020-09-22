@@ -15,7 +15,12 @@ class RefinementsController extends Controller
 
     protected $rules = [
         'name' => 'required',
-        'description' => 'sometimes'
+        'description' => 'required',
+    ];
+
+    protected $messages = [
+        'name.required' => 'Introduceti denumirea finisajului!',
+        'description.required' => 'Introduceti descrierea finisajului!',
     ];
 
     protected $dictionary = [];
@@ -57,11 +62,11 @@ class RefinementsController extends Controller
      */
     public function store(Refinement $refinement, Request $request)
     {
-        $validator = Validator::make($request->all(), $this->rules);
+        $validator = Validator::make($request->all(), $this->rules, $this->messages);
 
         if ($validator->passes()) {
-            $refinement->name = $validator->valid()['name'];
-            $refinement->description = $validator->valid()['description'];
+            $refinement->name = $request->name;
+            $refinement->description = $request->description;
             $refinement->save();
 
             return response()->json([
@@ -73,9 +78,9 @@ class RefinementsController extends Controller
 
         return response()->json([
             'created' => false,
-            'message' => 'A aparut o eroare. Verificati daca finisajul introdus nu exista deja in baza de date!',
+            'message' => $validator->errors(),
             'type' => 'error'
-        ]);
+        ], 406);
     }
 
     /**
@@ -87,11 +92,11 @@ class RefinementsController extends Controller
      */
     public function update(Refinement $refinement, Request $request)
     {
-        $validator = Validator::make($request->all(), $this->rules);
+        $validator = Validator::make($request->all(), $this->rules, $this->messages);
 
         if ($validator->passes()) {
-            $refinement->name = $validator->valid()['name'];
-            $refinement->description = $validator->valid()['description'];
+            $refinement->name = $request->name;
+            $refinement->description = $request->description;
             $refinement->save();
 
             return response()->json([
@@ -103,9 +108,9 @@ class RefinementsController extends Controller
 
         return response()->json([
             'updated' => false,
-            'message' => 'A aparut o eroare. Reincercati!',
+            'message' => $validator->errors(),
             'type' => 'error'
-        ]);
+        ], 406);
     }
 
     /**

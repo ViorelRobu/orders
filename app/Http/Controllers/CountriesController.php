@@ -21,6 +21,11 @@ class CountriesController extends Controller
         'name' => 'required|unique:countries,name',
     ];
 
+    protected $messages = [
+        'name.required' => 'Introduceti un nume de tara!',
+        'name.unique' => 'Mai exista o tara cu acest nume!'
+    ];
+
     protected $dictionary = [];
 
     /**
@@ -60,10 +65,10 @@ class CountriesController extends Controller
      */
     public function store(Country $country, Request $request)
     {
-        $validator = Validator::make($request->all(), $this->rules);
+        $validator = Validator::make($request->all(), $this->rules, $this->messages);
 
         if ($validator->passes()) {
-            $country->name = $validator->valid()['name'];
+            $country->name = $request->name;
             $country->save();
 
             return response()->json([
@@ -75,9 +80,9 @@ class CountriesController extends Controller
 
         return response()->json([
             'created' => false,
-            'message' => 'A aparut o eroare. Verificati daca tara introdusa nu exista deja in baza de date!',
+            'message' => $validator->errors(),
             'type' => 'error'
-        ]);
+        ], 406);
     }
 
     /**
@@ -89,10 +94,10 @@ class CountriesController extends Controller
      */
     public function update(Country $country, Request $request)
     {
-        $validator = Validator::make($request->all(), $this->rules);
+        $validator = Validator::make($request->all(), $this->rules, $this->messages);
 
         if ($validator->passes()) {
-            $country->name = $validator->valid()['name'];
+            $country->name = $request->name;
             $country->save();
 
             return response()->json([
@@ -104,9 +109,9 @@ class CountriesController extends Controller
 
         return response()->json([
             'updated' => false,
-            'message' => 'A aparut o eroare. Reincercati!',
+            'message' => $validator->errors(),
             'type' => 'error'
-        ]);
+        ], 406);
     }
 
     /**

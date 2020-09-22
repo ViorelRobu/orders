@@ -25,6 +25,12 @@ class CustomersController extends Controller
             'country_id' => 'required'
         ];
 
+    protected $messages = [
+        'fibu.required' => 'Introduceti un FIBU!',
+        'name.required' => 'Introduceti numele furnizorului!',
+        'country_id.required' => 'Selectati o tara!',
+    ];
+
     protected $dictionary = [
             'country_id' => [
                 'new_name' => 'tara',
@@ -93,12 +99,12 @@ class CustomersController extends Controller
      */
     public function store(Customer $customer, Request $request)
     {
-        $validator = Validator::make($request->all(), $this->rules);
+        $validator = Validator::make($request->all(), $this->rules, $this->messages);
 
         if ($validator->passes()) {
-            $customer->fibu = $validator->valid()['fibu'];
-            $customer->name = $validator->valid()['name'];
-            $customer->country_id = $validator->valid()['country_id'];
+            $customer->fibu = $request->fibu;
+            $customer->name = $request->name;
+            $customer->country_id = $request->country_id;
             $customer->save();
 
             return response()->json([
@@ -110,9 +116,9 @@ class CustomersController extends Controller
 
         return response()->json([
             'created' => false,
-            'message' => 'A aparut o eroare. Verificati daca ati completat corect toate campurile marcate cu stea si reincercati.',
+            'message' => $validator->errors(),
             'type' => 'error'
-        ]);
+        ], 406);
     }
 
     /**
@@ -124,12 +130,12 @@ class CustomersController extends Controller
      */
     public function update(Customer $customer, Request $request)
     {
-        $validator = Validator::make($request->all(), $this->rules);
+        $validator = Validator::make($request->all(), $this->rules, $this->messages);
 
         if ($validator->passes()) {
-            $customer->fibu = $validator->valid()['fibu'];
-            $customer->name = $validator->valid()['name'];
-            $customer->country_id = $validator->valid()['country_id'];
+            $customer->fibu = $request->fibu;
+            $customer->name = $request->name;
+            $customer->country_id = $request->country_id;
             $customer->save();
             return response()->json([
                 'updated' => true,
@@ -140,9 +146,9 @@ class CustomersController extends Controller
 
         return response()->json([
             'updated' => false,
-            'message' => 'A aparut o eroare. Verificati daca ati completat corect toate campurile marcate cu stea si reincercati.',
+            'message' => $validator->errors(),
             'type' => 'error'
-        ]);
+        ], 406);
     }
 
     /**

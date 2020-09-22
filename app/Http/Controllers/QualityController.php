@@ -17,6 +17,11 @@ class QualityController extends Controller
         'name' => 'required|unique:quality,name',
     ];
 
+    protected $messages = [
+        'name.required' => 'Introduceti calitatea!',
+        'name.unique' => 'Aceasta calitate mai exista!',
+    ];
+
     protected $dictionary = [];
 
     /**
@@ -56,10 +61,10 @@ class QualityController extends Controller
      */
     public function store(Quality $quality, Request $request)
     {
-        $validator = Validator::make($request->all(), $this->rules);
+        $validator = Validator::make($request->all(), $this->rules, $this->messages);
 
         if ($validator->passes()) {
-            $quality->name = $validator->valid()['name'];
+            $quality->name = $request->name;
             $quality->save();
 
             return response()->json([
@@ -71,9 +76,9 @@ class QualityController extends Controller
 
         return response()->json([
             'created' => false,
-            'message' => 'A aparut o eroare. Verificati daca calitatea introdusa nu exista deja in baza de date!',
+            'message' => $validator->errors(),
             'type' => 'error'
-        ]);
+        ], 406);
     }
 
     /**
@@ -85,10 +90,10 @@ class QualityController extends Controller
      */
     public function update(Quality $quality, Request $request)
     {
-        $validator = Validator::make($request->all(), $this->rules);
+        $validator = Validator::make($request->all(), $this->rules, $this->messages);
 
         if ($validator->passes()) {
-            $quality->name = $validator->valid()['name'];
+            $quality->name = $request->name;
             $quality->save();
 
             return response()->json([
@@ -100,9 +105,9 @@ class QualityController extends Controller
 
         return response()->json([
             'updated' => false,
-            'message' => 'A aparut o eroare. Reincercati!',
+            'message' => $validator->errors(),
             'type' => 'error'
-        ]);
+        ], 406);
     }
 
     /**

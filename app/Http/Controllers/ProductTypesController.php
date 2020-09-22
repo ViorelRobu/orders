@@ -17,6 +17,11 @@ class ProductTypesController extends Controller
         'name' => 'required|unique:product_types,name',
     ];
 
+    protected $messages = [
+        'name.required' => 'Introduceti numele tipului de produs!',
+        'name.unique' => 'Mai exista un tip de produs cu acelasi nume!',
+    ];
+
     protected $dictionary = [];
 
     /**
@@ -56,7 +61,7 @@ class ProductTypesController extends Controller
      */
     public function store(ProductType $product, Request $request)
     {
-        $validator = Validator::make($request->all(), $this->rules);
+        $validator = Validator::make($request->all(), $this->rules, $this->messages);
 
         if ($validator->passes()) {
             $product->name = $validator->valid()['name'];
@@ -71,9 +76,9 @@ class ProductTypesController extends Controller
 
         return response()->json([
             'created' => false,
-            'message' => 'A aparut o eroare. Verificati daca tipul de produs nu exista deja in baza de date!',
+            'message' => $validator->errors(),
             'type' => 'error'
-        ]);
+        ], 406);
     }
 
     /**
@@ -85,7 +90,7 @@ class ProductTypesController extends Controller
      */
     public function update(ProductType $product, Request $request)
     {
-        $validator = Validator::make($request->all(), $this->rules);
+        $validator = Validator::make($request->all(), $this->rules, $this->messages);
 
         if ($validator->passes()) {
             $product->name = $validator->valid()['name'];
@@ -100,9 +105,9 @@ class ProductTypesController extends Controller
 
         return response()->json([
             'updated' => false,
-            'message' => 'A aparut o eroare. Reincercati!',
+            'message' => $validator->errors(),
             'type' => 'error'
-        ]);
+        ], 406);
     }
 
     /**
