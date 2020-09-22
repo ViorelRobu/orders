@@ -281,9 +281,15 @@ class OrderDetailsController extends Controller
                 $copy->details_json = $original->details_json;
                 $copy->save();
             }
+            if($request->copies > 1) {
+                $message = 'Pozitia a fost copiata de ' . $request->copies . ' ori!';
+            } else {
+                $message = 'Pozitia a fost copiata!';
+            }
+
             return response()->json([
                 'copied' => true,
-                'message' => 'Pozitia a fost copiata de ' . $request->copies . ' ori!',
+                'message' => $message,
                 'type' => 'success'
             ]);
         } catch (\Throwable $th) {

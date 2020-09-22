@@ -14,6 +14,7 @@
 @stop
 
 @include('orders.partials.form')
+@include('orders.partials.copy_order')
 @include('audits')
 
 @section('content')
@@ -22,6 +23,14 @@
                 @foreach ($errors->all() as $error)
                     <p>{{ $error }}</p>
                 @endforeach
+                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+    @endif
+    @if (session('success'))
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                    <p>{{ session('success') }}</p>
                 <button type="button" class="close" data-dismiss="alert" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -148,6 +157,10 @@
         firstDay: 1,
         dateFormat: 'dd.mm.yy'
     });
+
+    const setOrder = id => {
+        $('#copyOrderForm').attr('action', `/orders/${id}/copy`);
+    }
 
     // fetch the data for a certain order and update the modal
     const fetch = id => {

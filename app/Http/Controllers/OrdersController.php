@@ -436,14 +436,14 @@ class OrdersController extends Controller
                 $order->order = $latest_order->order + 1;
             }
 
-            $order->customer_id = $validator->valid()['customer_id'];
-            $order->customer_order = $validator->valid()['customer_order'];
-            $order->auftrag = $validator->valid()['auftrag'];
-            $order->destination_id = $validator->valid()['destination_id'];
-            $order->customer_kw = (Carbon::parse($validator->valid()['customer_kw']))->toDateString();
-            $order->production_kw = (Carbon::parse($validator->valid()['production_kw']))->toDateString();
-            $order->delivery_kw = (Carbon::parse($validator->valid()['delivery_kw']))->toDateString();
-            $order->eta = (Carbon::parse($validator->valid()['eta']))->toDateString();
+            $order->customer_id = $request->customer_id;
+            $order->customer_order = $request->customer_order;
+            $order->auftrag = $request->auftrag;
+            $order->destination_id = $request->destination_id;
+            $order->customer_kw = (Carbon::parse($request->customer_kw))->toDateString();
+            $order->production_kw = (Carbon::parse($request->production_kw))->toDateString();
+            $order->delivery_kw = (Carbon::parse($request->delivery_kw))->toDateString();
+            $order->eta = (Carbon::parse($request->eta))->toDateString();
             $order->save();
 
             return redirect('/orders/' . $order->id . '/show');
@@ -760,5 +760,68 @@ class OrdersController extends Controller
     public function audits(Request $request)
     {
         return $this->getAudits(Order::class, $request->id);
+    }
+
+    /**
+     * Copy the order a number of times specified by the user
+     *
+     * @param Order $order
+     * @param Request $request
+     * @return back
+     */
+    public function copy(Order $order, Request $request)
+    {
+        // get the latest order number
+        $latest_order = DB::table('orders')->latest()->first();
+
+        // get the order details
+        $details = OrderDetail::where('order_id', $order->id)->get();
+
+        // copy the order N times
+        for ($i=0; $i < $request->copies; $i++) {
+            $newOrder = new Order();
+            $newOrder->order = $latest_order->order + 1;
+            $newOrder->customer_id = $order->customer_id;
+            $newOrder->customer_order = $order->customer_order;
+            $newOrder->auftrag = $order->auftrag;
+            $newOrder->destination_id = $order->destination_id;
+            $newOrder->customer_kw = $order->customer_kw;
+            $newOrder->production_kw = $order->production_kw;
+            $newOrder->delivery_kw = $order->delivery_kw;
+            $newOrder->eta = $order->eta;
+            $newOrder->observations = $order->observations;
+            $newOrder->details_fields = $order->details_fields;
+            $newOrder->save();
+
+            // copy the order details
+            foreach ($details as $detail) {
+                $newDetail = new OrderDetail();
+                $newDetail->order_id = $newOrder->id;
+                $newDetail->article_id = $detail->article_id;
+                $newDetail->refinements_list = $detail->refinements_list;
+                $newDetail->thickness = $detail->thickness;
+                $newDetail->width = $detail->width;
+                $newDetail->length = $detail->length;
+                $newDetail->pcs = $detail->pcs;
+                $newDetail->volume = $detail->volume;
+                $newDetail->position = $detail->position;
+                $newDetail->pcs_height = $detail->pcs_height;
+                $newDetail->rows = $detail->rows;
+                $newDetail->label = $detail->label;
+                $newDetail->foil = $detail->foil;
+                $newDetail->pal = $detail->pal;
+                $newDetail->details_json = $detail->details_json;
+                $newDetail->save();
+            }
+        }
+
+        // redirect back with success message
+        if ($request->copies > 1) {
+            $message = 'Comanda a fost copiata cu succes de ' . $request->copies . ' ori!';
+        } else {
+            $message = 'Comanda a fost copiata cu succes!';
+        }
+
+        return back()->with('success', $message);
     }
 }
