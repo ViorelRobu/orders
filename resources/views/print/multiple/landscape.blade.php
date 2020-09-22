@@ -150,9 +150,10 @@
                     </thead>
                     <tbody>
                         @inject('injected', 'App\Http\Controllers\OrdersController')
+                        {{ $i = 1 }}
                         @foreach ($order->details as $item)
                             <tr>
-                                <td>{{ $item->index }}</td>
+                                <td>{{ $i }}</td>
                                 <td class="orange">{{ $item->article->name }}</td>
                                 <td class="orange">{{ $injected->translateForHumans($item->refinements_list) }}</td>
                                 <td class="orange">{{ $item->article->quality->name }}</td>
@@ -172,6 +173,7 @@
                                 @endif
                                 <td class="orange">{{ $item->pal }}</td>
                             </tr>
+                            {{ $i++ }}
                         @endforeach
                     </tbody>
                 </table>
