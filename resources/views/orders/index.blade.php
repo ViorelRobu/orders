@@ -309,6 +309,8 @@
             let delivery_kw = $('#delivery_kw').val();
             let eta = $('#eta').val();
             let url = '/orders/' + id + '/update';
+            $('#update').prop('disabled', true);
+
             $.ajax({
                 url: url,
                 method: 'PATCH',
@@ -339,6 +341,7 @@
                         timer: 10000,
                         toast: true
                     });
+                    $('#update').prop('disabled', false);
                 },
                 success: function(response) {
                     $('#newOrder').modal('hide');

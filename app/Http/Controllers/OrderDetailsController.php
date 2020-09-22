@@ -22,6 +22,7 @@ class OrderDetailsController extends Controller
     protected $rules = [
         'pal_pcs' => 'required|integer',
         'article_id' => 'required',
+        'refinements_list' => 'required|array|min:1',
         'length' => 'sometimes',
         'pcs' => 'required|integer',
         'pcs_height' => 'sometimes',
@@ -35,6 +36,8 @@ class OrderDetailsController extends Controller
         'pal_pcs.required' => 'Numarul de paleti este necesar!',
         'pal_pcs.integer' => 'Numarul de paleti trebuie sa fie un numar intreg!',
         'article_id.required' => 'Selectati articolul',
+        'refinements_list.required' => 'Selectati cel putin un finisaj!',
+        'refinements_list.min' => 'Selectati cel putin un finisaj!',
         'pcs.required' => 'Numarul de bucati/palet este necesar!',
         'pcs.integer' => 'Numarul de bucati/palet trebuie sa fie un numar intreg!',
         'foil.required' => 'Selectati daca marfa este infoliata sau nu!',
@@ -42,6 +45,7 @@ class OrderDetailsController extends Controller
     ];
 
     protected $rules_update = [
+        'edit_refinements_list' => 'required|array|min:1',
         'edit_length' => 'sometimes',
         'edit_pcs' => 'required|integer',
         'edit_pcs_height' => 'sometimes',
@@ -52,6 +56,8 @@ class OrderDetailsController extends Controller
     ];
 
     protected $messages_update = [
+        'edit_refinements_list.required' => 'Selectati cel putin un finisaj!',
+        'edit_refinements_list.min' => 'Selectati cel putin un finisaj!',
         'edit_pcs.required' => 'Numarul de bucati/palet este necesar!',
         'edit_pcs.integer' => 'Numarul de bucati/palet trebuie sa fie un numar intreg!',
         'edit_foil.required' => 'Selectati daca marfa este infoliata sau nu!',
@@ -122,7 +128,7 @@ class OrderDetailsController extends Controller
                 $position = $det->position + 1;
             }
 
-            for ($i=0; $i < $validator->valid()['pal_pcs']; $i++) {
+            for ($i=0; $i < $request->pal_pcs; $i++) {
                 $article = Article::find($request->article_id);
                 $detail = new OrderDetail();
                 $detail->order_id = $order->id;

@@ -603,14 +603,14 @@ class OrdersController extends Controller
         $validator = Validator::make($request->all(), $this->rules, $this->messages);
 
         if ($validator->passes()) {
-            $order->customer_id = $validator->valid()['customer_id'];
-            $order->customer_order = $validator->valid()['customer_order'];
-            $order->auftrag = $validator->valid()['auftrag'];
-            $order->destination_id = $validator->valid()['destination_id'];
-            $order->customer_kw = $validator->valid()['customer_kw'];
-            $order->production_kw = $validator->valid()['production_kw'];
-            $order->delivery_kw = $validator->valid()['delivery_kw'];
-            $order->eta = $validator->valid()['eta'];
+            $order->customer_id = $request->customer_id;
+            $order->customer_order = $request->customer_order;
+            $order->auftrag = $request->auftrag;
+            $order->destination_id = $request->destination_id;
+            $order->customer_kw = $request->customer_kw;
+            $order->production_kw = $request->production_kw;
+            $order->delivery_kw = $request->delivery_kw;
+            $order->eta = $request->eta;
             $order->save();
 
             return response()->json([
@@ -637,53 +637,63 @@ class OrdersController extends Controller
      */
     public function fields(Order $order, Request $request)
     {
-        if ($order->details_fields == null) {
-            $order->details_fields = $request->details_fields;
-            $order->save();
+        $validator = Validator::make($request->all(), ['details_fields' => 'required'], ['details_fields.required' => 'Introduceti cel putin un camp!']);
 
-            $fields_arr = explode('|', $order->details_fields);
-            $details = OrderDetail::where('order_id', $order->id)->get();
-            foreach ($fields_arr as $field) {
-                foreach ($details as $detail) {
-                    $data = json_decode($detail->details_json);
-                    $data->$field = '';
-                    $new_json_details = OrderDetail::find($detail->id);
-                    $new_json_details->details_json = json_encode($data);
-                    $new_json_details->save();
-                }
-            }
-        } else {
-            $fields = explode('|', $order->details_fields);
-            $extra = explode('|', trim($request->details_fields, '|'));
+        if ($validator->passes()) {
+            if ($order->details_fields == null) {
+                $order->details_fields = $request->details_fields;
+                $order->save();
 
-            $diff = array_diff($extra, $fields);
-
-            $order->details_fields = rtrim($order->details_fields, '|') . '|' . implode('|', $diff);
-            $order->save();
-
-            $details = OrderDetail::where('order_id',$order->id)->get();
-            foreach ($diff as $field) {
-                foreach ($details as $detail) {
-                    $data = json_decode($detail->details_json);
-                    foreach ($data as $new_detail) {
-                        if (!isset($new_detail->$field)) {
-                            $data->$field = '';
-                        }
+                $fields_arr = explode('|', $order->details_fields);
+                $details = OrderDetail::where('order_id', $order->id)->get();
+                foreach ($fields_arr as $field) {
+                    foreach ($details as $detail) {
+                        $data = json_decode($detail->details_json);
+                        $data->$field = '';
+                        $new_json_details = OrderDetail::find($detail->id);
+                        $new_json_details->details_json = json_encode($data);
+                        $new_json_details->save();
                     }
-                    $new_json_details = OrderDetail::find($detail->id);
-                    $new_json_details->details_json = json_encode($data);
-                    $new_json_details->save();
                 }
+            } else {
+                $fields = explode('|', $order->details_fields);
+                $extra = explode('|', trim($request->details_fields, '|'));
+
+                $diff = array_diff($extra, $fields);
+
+                $order->details_fields = rtrim($order->details_fields, '|') . '|' . implode('|', $diff);
+                $order->save();
+
+                $details = OrderDetail::where('order_id',$order->id)->get();
+                foreach ($diff as $field) {
+                    foreach ($details as $detail) {
+                        $data = json_decode($detail->details_json);
+                        foreach ($data as $new_detail) {
+                            if (!isset($new_detail->$field)) {
+                                $data->$field = '';
+                            }
+                        }
+                        $new_json_details = OrderDetail::find($detail->id);
+                        $new_json_details->details_json = json_encode($data);
+                        $new_json_details->save();
+                    }
+                }
+
             }
 
+            return response()->json([
+                'success' => true,
+                'message' => 'Campuri adaugate/modificate cu succes!',
+                'type' => 'success',
+                'data' => $order->details_fields
+            ]);
         }
 
         return response()->json([
-            'success' => true,
-            'message' => 'Campuri adaugate/modificate cu succes!',
-            'type' => 'success',
-            'data' => $order->details_fields
-        ]);
+            'updated' => false,
+            'message' => $validator->errors(),
+            'type' => 'error'
+        ], 406);
     }
 
     /**

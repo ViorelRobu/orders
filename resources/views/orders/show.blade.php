@@ -684,6 +684,8 @@
             let foil = $('#foil').val();
             let pal = $('#pal').val();
             let json_data = {};
+            $('#save').prop('disabled', true);
+
             $('#details_fields_data').children().each(function() {
                 $(this).children().each(function() {
                     json_data[$(this).attr('id')] = $(this).val();
@@ -718,6 +720,7 @@
                         timer: 10000,
                         toast: true
                     });
+                    $('#save').prop('disabled', false);
                 },
                 success: function(response) {
                     $('#addDetails').modal('hide');
@@ -749,6 +752,8 @@
             let edit_foil = $('#edit_foil').val();
             let edit_pal = $('#edit_pal').val();
             let json_data = {};
+            $('#save_edit_details').prop('disabled', true);
+
             $('#edit_details_fields_data').children().each(function() {
                 $(this).children().each(function() {
                     json_data[$(this).attr('id')] = $(this).val();
@@ -784,10 +789,10 @@
                         timer: 10000,
                         toast: true
                     });
+                    $('#save_edit_details').prop('disabled', false);
                 },
                 success: function(response) {
                     console.log(response.error);
-                    $('#addDetails').modal('hide');
                     Swal.fire({
                         position: 'top-end',
                         type: response.type,
@@ -797,6 +802,7 @@
                         timer: 5000,
                         toast: true
                     });
+                    $('#save_edit_details').prop('disabled', false);
                     $('#editDetails').modal('hide');
                     table.draw()
                 }
@@ -815,6 +821,8 @@
             e.preventDefault();
             let details_fields = $('#details_fields').val().trim();
             let fields_text = $('#details_fields_text').html().trim();
+            $('#save_fields_details').prop('disabled', true);
+
             $.ajax({
                 url: '/orders/{{ $order->id }}/fields',
                 method: 'POST',
@@ -825,18 +833,25 @@
                 },
                 error: function(err) {
                     console.log(err);
+                    let errors = err.responseJSON.message;
+                    let errors_arr = [];
+                    for (let error in errors) {
+                        errors[error].forEach(el => {
+                            errors_arr.push(el + '<br>');
+                        });
+                    }
                     Swal.fire({
                         position: 'top-end',
                         type: 'error',
                         title: 'Eroare',
-                        titleText: err.responseJSON.message,
+                        html: errors_arr.toString().split(',').join(''),
                         showConfirmButton: false,
-                        timer: 5000,
+                        timer: 10000,
                         toast: true
                     });
+                    $('#save_fields_details').prop('disabled', false);
                 },
                 success: function(response) {
-                    $('#addDetails').modal('hide');
                     Swal.fire({
                         position: 'top-end',
                         type: response.type,
@@ -846,6 +861,7 @@
                         timer: 5000,
                         toast: true
                     });
+                    $('#save_fields_details').prop('disabled', false);
                     $('#addFields').modal('hide');
                     $('#details_fields_text').html(response.data);
                     location.reload();
@@ -957,6 +973,7 @@
 
         // save the main details
         $('#save_details').click(function() {
+            $('#save_details').prop('disabled', true);
             $.ajax({
                 url: '/orders/{{ $order->id }}/update/details',
                 method: 'PATCH',
@@ -986,6 +1003,7 @@
                         timer: 10000,
                         toast: true
                     });
+                    $('#save_details').prop('disabled', false);
                 },
                 success: function(response) {
                     Swal.fire({
@@ -1010,6 +1028,7 @@
                     $('#destination_id').val(response.order.destination_id);
                     $('#address_text').show(100).html(response.destination.address);
                     $('#address').hide(100);
+                    $('#save_details').prop('disabled', false);
                     $('#save_details').hide(100);
                     $('#cancel_details').hide(100);
                     $('#edit_details').show(100);
@@ -1086,6 +1105,7 @@
 
         // save the main details
         $('#save_observations').click(function() {
+            $('#save_observations').prop('disabled', true);
             $.ajax({
                 url: '/orders/{{ $order->id }}/update/observations',
                 method: 'PATCH',
@@ -1105,6 +1125,7 @@
                         timer: 5000,
                         toast: true
                     });
+                    $('#save_observations').prop('disabled', false);
                 },
                 success: function(response) {
                     Swal.fire({
@@ -1119,6 +1140,7 @@
                     $('.tox-tinymce').hide(100);
                     tinymce.get('observations').hide(100);
                     $('#observations_text').html(response.order.observations);
+                    $('#save_observations').prop('disabled', false);
                     $('#save_observations').hide(100);
                     $('#cancel_observations').hide(100);
                     $('#observations_text').show(100);
@@ -1163,6 +1185,8 @@
                 let production_kw = $('#production_kw').val();
                 let delivery_kw = $('#delivery_kw').val();
                 let eta = $('#eta').val();
+                $('#save_dates').hide(100);
+                $('#cancel_dates').hide(100);
             $.ajax({
                 url: '/orders/{{ $order->id }}/update/dates',
                 method: 'PATCH',
@@ -1192,6 +1216,8 @@
                         timer: 10000,
                         toast: true
                     });
+                    $('#save_dates').show(100);
+                    $('#cancel_dates').show(100);
                 },
                 success: function(response) {
                     Swal.fire({
