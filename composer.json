@@ -10,6 +10,7 @@
     "require": {
         "php": "^7.2.5",
         "barryvdh/laravel-dompdf": "^0.8.6",
+        "directorytree/ldaprecord-laravel": "^1.7",
         "doctrine/dbal": "^2.10",
         "dompdf/dompdf": "^0.8.5",
         "fideloper/proxy": "^4.2",

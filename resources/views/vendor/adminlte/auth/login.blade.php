@@ -18,13 +18,19 @@
     @php( $password_reset_url = $password_reset_url ? url($password_reset_url) : '' )
 @endif
 
-@section('auth_header', __('adminlte::adminlte.login_message'))
+@section('auth_header', 'Conectati-va')
 
 @section('auth_body')
     <form action="{{ $login_url }}" method="post">
         {{ csrf_field() }}
 
         {{-- Email field --}}
+        <div class="input-group mb-3">
+            <select name="login_method" class="form-control" autofocus>
+                <option value="hsr">Conectare cu cont windows</option>
+                <option value="local">Conectare cu cont local</option>
+            </select>
+        </div>
         <div class="input-group mb-3">
             <input type="email" name="email" class="form-control {{ $errors->has('email') ? 'is-invalid' : '' }}"
                    value="{{ old('email') }}" placeholder="{{ __('adminlte::adminlte.email') }}" autofocus>
@@ -43,7 +49,7 @@
         {{-- Password field --}}
         <div class="input-group mb-3">
             <input type="password" name="password" class="form-control {{ $errors->has('password') ? 'is-invalid' : '' }}"
-                   placeholder="{{ __('adminlte::adminlte.password') }}">
+                   placeholder="Parola">
             <div class="input-group-append">
                 <div class="input-group-text">
                     <span class="fas fa-lock {{ config('adminlte.classes_auth_icon', '') }}"></span>
@@ -61,7 +67,7 @@
             <div class="col-7">
                 <div class="icheck-primary">
                     <input type="checkbox" name="remember" id="remember">
-                    <label for="remember">{{ __('adminlte::adminlte.remember_me') }}</label>
+                    <label for="remember">{{ 'Tine-ma conectat!' }}</label>
                 </div>
             </div>
             <div class="col-5">
