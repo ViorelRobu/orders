@@ -23,7 +23,7 @@
         }
         .headings {
             width: 100%;
-            height: 120px;
+            height: 180px;
         }
         #number {
             width: 30%;
