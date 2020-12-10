@@ -72,14 +72,15 @@
                 {data: 'actions', name: 'actions'},
             ],
             rowCallback: function(row, data, index) {
-                $('td:eq(0)', row).addClass('table-secondary').css('font-weight', 'bold');
-                $('td:eq(1)', row).addClass('table-primary').css('font-weight', 'bold');
-                $('td:eq(2)', row).addClass('table-success').css('font-weight', 'bold');
-                $('td:eq(3)', row).addClass('table-success').css('font-weight', 'bold');
-                $('td:eq(4)', row).addClass('table-success').css('font-weight', 'bold');
-                $('td:eq(5)', row).addClass('table-success').css('font-weight', 'bold');
-                $('td:eq(6)', row).addClass('table-success').css('font-weight', 'bold');
-                $('td:eq(7)', row).addClass('table-success').css('font-weight', 'bold');
+                $('td:eq(0)', row).addClass('table-secondary').css('font-weight', 'bold').css('border', '1px solid black');
+                $('td:eq(1)', row).addClass('table-primary').css('font-weight', 'bold').css('border', '1px solid black');
+                $('td:eq(2)', row).addClass('table-success').css('font-weight', 'bold').css('border', '1px solid black');
+                $('td:eq(3)', row).addClass('table-success').css('font-weight', 'bold').css('border', '1px solid black');
+                $('td:eq(4)', row).addClass('table-success').css('font-weight', 'bold').css('border', '1px solid black');
+                $('td:eq(5)', row).addClass('table-success').css('font-weight', 'bold').css('border', '1px solid black');
+                $('td:eq(6)', row).addClass('table-success').css('font-weight', 'bold').css('border', '1px solid black');
+                $('td:eq(7)', row).addClass('table-success').css('font-weight', 'bold').css('border', '1px solid black');
+                $('td:eq(8)', row).css('font-weight', 'bold').css('border', '1px solid black');
             },
         });
     });

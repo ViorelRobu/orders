@@ -218,6 +218,7 @@
                 <div class="col-lg-1">
                     <p class="text-center"><strong>Total comanda</strong></p>
                     <p class="text-center">{{ $order_total }} mc</p>
+                    <p class="text-center small" style="color: red">{{ $volume_by_type }}</p>
                 </div>
                 <div class="col-lg-1">
                     <p class="text-center"><strong>Rest de produs</strong></p>
@@ -265,31 +266,31 @@
             </div>
             <div class="card-body" style="overflow-x: auto; white-space: nowrap;">
                 <table id="order_details" class="table table-bordered table-hover table-sm">
-                    <thead>
-                        <td><i class="fas fa-chevron-up"></i></td>
-                        <td>Poz</td>
-                        <td>Articol</td>
-                        <td>Finisaje</td>
-                        <td>Gr</td>
-                        <td>Lat</td>
-                        <td>Lung</td>
-                        <td>Buc</td>
-                        <td>Vol</td>
-                        <td>Ticom</td>
-                        <td>Lot</td>
-                        <td>Prod</td>
-                        <td>Buc/H</td>
-                        <td>Rand</td>
-                        <td>Etich</td>
-                        <td>Fol</td>
-                        <td>Pal</td>
-                        <td>Incarcare</td>
+                    <thead class="thead-dark">
+                        <td style="border: 1px solid black"><i class="fas fa-chevron-up"></i></td>
+                        <td style="border: 1px solid black">Poz</td>
+                        <td style="border: 1px solid black">Articol</td>
+                        <td style="border: 1px solid black">Finisaje</td>
+                        <td style="border: 1px solid black">Gr</td>
+                        <td style="border: 1px solid black">Lat</td>
+                        <td style="border: 1px solid black">Lung</td>
+                        <td style="border: 1px solid black">Buc</td>
+                        <td style="border: 1px solid black">Vol</td>
+                        <td style="border: 1px solid black">Ticom</td>
+                        <td style="border: 1px solid black">Lot</td>
+                        <td style="border: 1px solid black">Prod</td>
+                        <td style="border: 1px solid black">Buc/H</td>
+                        <td style="border: 1px solid black">Rand</td>
+                        <td style="border: 1px solid black">Etich</td>
+                        <td style="border: 1px solid black">Fol</td>
+                        <td style="border: 1px solid black">Pal</td>
+                        <td style="border: 1px solid black">Incarcare</td>
                         @if ($fields != [])
                             @foreach ($fields as $field)
-                                <td>{{ $field }}</td>
+                                <td style="border: 1px solid black">{{ $field }}</td>
                             @endforeach
                         @endif
-                        <td></td>
+                        <td style="border: 1px solid black"></td>
                     </thead>
                 </table>
             </div>
@@ -643,7 +644,33 @@
             @endforeach
         @endif
                 {data: 'actions', name: 'actions'},
-            ]
+            ],
+            rowCallback: function(row, data, index) {
+                $('td:eq(0)', row).css('border', '1px solid black');
+                $('td:eq(1)', row).addClass('table-warning').css('border', '1px solid black');
+                $('td:eq(2)', row).addClass('table-warning').css('border', '1px solid black');
+                $('td:eq(3)', row).addClass('table-warning').css('border', '1px solid black');
+                $('td:eq(4)', row).addClass('table-warning').css('border', '1px solid black');
+                $('td:eq(5)', row).addClass('table-warning').css('border', '1px solid black');
+                $('td:eq(6)', row).addClass('table-warning').css('border', '1px solid black');
+                $('td:eq(7)', row).addClass('table-warning').css('border', '1px solid black');
+                $('td:eq(8)', row).addClass('table-success').css('border', '1px solid black');
+                $('td:eq(9)', row).addClass('table-secondary').css('border', '1px solid black');
+                $('td:eq(10)', row).addClass('table-secondary').css('border', '1px solid black');
+                $('td:eq(11)', row).addClass('table-secondary').css('border', '1px solid black');
+                $('td:eq(12)', row).addClass('table-warning').css('border', '1px solid black');
+                $('td:eq(13)', row).addClass('table-warning').css('border', '1px solid black');
+                $('td:eq(14)', row).addClass('table-warning').css('border', '1px solid black');
+                $('td:eq(15)', row).addClass('table-warning').css('border', '1px solid black');
+                $('td:eq(16)', row).addClass('table-warning').css('border', '1px solid black');
+                $('td:eq(17)', row).addClass('table-warning').css('border', '1px solid black');
+                @if ($fields != [])
+                    @for ($i = 1; $i <= count($fields); $i++)
+                        $('td:eq({{ 17 + $i }})', row).addClass('table-warning').css('border', '1px solid black');
+                    @endfor
+                @endif
+                $('td:eq({{ 18 + count($fields) }})', row).css('border', '1px solid black');
+            },
         });
 
         $(document).ready(function() {

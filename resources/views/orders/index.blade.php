@@ -40,7 +40,7 @@
         <div class="col-lg-12">
             <div class="card">
                 <div class="card-body" style="overflow-x: auto; white-space: nowrap;">
-                    <table id="orders" class="table table-hover table-sm">
+                    <table id="orders" class="table table-hover table-sm table-bordered">
                         <thead class="thead-dark">
                             <th></th>
                             <th>Cda</th>
@@ -287,25 +287,27 @@
                 {data: 'actions', name: 'actions'},
             ],
             rowCallback: function(row, data, index) {
-                $('td:eq(1)', row).addClass('table-secondary').css('font-weight', 'bold');
-                $('td:eq(2)', row).addClass('table-primary').css('font-weight', 'bold');
-                $('td:eq(3)', row).addClass('table-secondary').css('font-weight', 'bold');
-                $('td:eq(4)', row).addClass('table-success').css('font-weight', 'bold');
-                $('td:eq(5)', row).addClass('table-success').css('font-weight', 'bold');
-                $('td:eq(6)', row).addClass('table-success').css('font-weight', 'bold');
-                $('td:eq(7)', row).addClass('table-success').css('font-weight', 'bold');
-                $('td:eq(8)', row).addClass('table-success').css('font-weight', 'bold');
-                $('td:eq(9)', row).addClass('table-success').css('font-weight', 'bold');
-                $('td:eq(10)', row).addClass('table-success').css('font-weight', 'bold');
-                $('td:eq(11)', row).addClass('table-success').css('font-weight', 'bold');
-                $('td:eq(12)', row).addClass('table-success').css('font-weight', 'bold');
-                $('td:eq(13)', row).addClass('table-success').css('font-weight', 'bold');
-                $('td:eq(14)', row).addClass('table-success').css('font-weight', 'bold');
-                $('td:eq(15)', row).addClass('table-success').css('font-weight', 'bold');
-                $('td:eq(16)', row).addClass('table-success').css('font-weight', 'bold');
-                $('td:eq(17)', row).addClass('table-success').css('font-weight', 'bold');
-                $('td:eq(18)', row).addClass('table-success').css('font-weight', 'bold');
-                $('td:eq(19)', row).css('color', getColor(data.percentage)).addClass('table-secondary').css('font-weight', 'bold');
+                $('td:eq(0)', row).css('font-weight', 'bold').css('border', '1px solid black');
+                $('td:eq(1)', row).addClass('table-secondary').css('font-weight', 'bold').css('border', '1px solid black');
+                $('td:eq(2)', row).addClass('table-primary').css('font-weight', 'bold').css('border', '1px solid black');
+                $('td:eq(3)', row).addClass('table-secondary').css('font-weight', 'bold').css('border', '1px solid black');
+                $('td:eq(4)', row).addClass('table-success').css('font-weight', 'bold').css('border', '1px solid black');
+                $('td:eq(5)', row).addClass('table-success').css('font-weight', 'bold').css('border', '1px solid black');
+                $('td:eq(6)', row).addClass('table-success').css('font-weight', 'bold').css('border', '1px solid black');
+                $('td:eq(7)', row).addClass('table-success').css('font-weight', 'bold').css('border', '1px solid black');
+                $('td:eq(8)', row).addClass('table-success').css('font-weight', 'bold').css('border', '1px solid black');
+                $('td:eq(9)', row).addClass('table-success').css('font-weight', 'bold').css('border', '1px solid black');
+                $('td:eq(10)', row).addClass('table-success').css('font-weight', 'bold').css('border', '1px solid black');
+                $('td:eq(11)', row).addClass('table-success').css('font-weight', 'bold').css('border', '1px solid black');
+                $('td:eq(12)', row).addClass('table-success').css('font-weight', 'bold').css('border', '1px solid black');
+                $('td:eq(13)', row).addClass('table-success').css('font-weight', 'bold').css('border', '1px solid black');
+                $('td:eq(14)', row).addClass('table-success').css('font-weight', 'bold').css('border', '1px solid black');
+                $('td:eq(15)', row).addClass('table-success').css('font-weight', 'bold').css('border', '1px solid black');
+                $('td:eq(16)', row).addClass('table-success').css('font-weight', 'bold').css('border', '1px solid black');
+                $('td:eq(17)', row).addClass('table-success').css('font-weight', 'bold').css('border', '1px solid black');
+                $('td:eq(18)', row).addClass('table-success').css('font-weight', 'bold').css('border', '1px solid black');
+                $('td:eq(19)', row).css('color', getColor(data.percentage)).addClass('table-secondary').css('font-weight', 'bold').css('border', '1px solid black');
+                $('td:eq(20)', row).css('font-weight', 'bold').css('border', '1px solid black');
             },
         });
 

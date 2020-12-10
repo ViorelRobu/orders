@@ -385,15 +385,15 @@ class OrderTest extends TestCase
         $details = factory(OrderDetail::class)->create(['order_id' => 1]);
 
         $new = $this->actingAs($user)->json('POST', '/orders/1/fields', [
-            'details_fields' => 'camp_nou',
+            'details_fields' => 'camp_nou|test',
         ]);
 
         $this->assertDatabaseHas('orders', [
-            'details_fields' => 'sticker|cod_ean|camp_nou',
+            'details_fields' => 'sticker|cod_ean|camp_nou|test',
         ]);
 
         $this->assertDatabaseHas('order_details', [
-            'details_json' => '{"sticker":"test","cod_ean":"EAN","camp_nou":""}'
+            'details_json' => '{"sticker":"test","cod_ean":"EAN","camp_nou":"","test":""}'
         ]);
     }
 }

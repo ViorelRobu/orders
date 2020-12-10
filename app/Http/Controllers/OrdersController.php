@@ -9,6 +9,7 @@ use App\Destination;
 use App\Order;
 use App\OrderAttachment;
 use App\OrderDetail;
+use App\ProductType;
 use App\Refinement;
 use App\Traits\GetAudits;
 use App\Traits\RefinementsTranslator;
@@ -611,6 +612,27 @@ class OrdersController extends Controller
             $percentage_delivered = 0;
         }
 
+        $details = OrderDetail::where('order_id', $order->id)->get();
+
+        $volume_by_type_arr = [];
+
+        foreach ($details as $detail) {
+            $art = Article::find($detail->article_id);
+            $prod = ProductType::find($art->product_type_id);
+            if (!array_key_exists($prod->name, $volume_by_type_arr)) {
+                $volume_by_type_arr[$prod->name] = $detail->volume;
+            } else {
+                $volume_by_type_arr[$prod->name] = $volume_by_type_arr[$prod->name] + $detail->volume;
+            }
+        }
+
+        $volume_by_type = '';
+        foreach($volume_by_type_arr as $key => $item) {
+            $volume_by_type = $volume_by_type . $key . ' - ' . $item . ' mc, ';
+        }
+
+        rtrim($volume_by_type, ', ');
+
         return view('orders.show', [
             'order' => $order,
             'customer' => $customer,
@@ -632,6 +654,7 @@ class OrdersController extends Controller
             'ready_for_delivery' => $ready_for_delivery,
             'finished' => $finished,
             'percentage_delivered' => $percentage_delivered,
+            'volume_by_type' => $volume_by_type
         ]);
     }
 
@@ -709,18 +732,19 @@ class OrdersController extends Controller
                 $order->save();
 
                 $details = OrderDetail::where('order_id',$order->id)->get();
-                foreach ($diff as $field) {
-                    foreach ($details as $detail) {
-                        $data = json_decode($detail->details_json);
-                        foreach ($data as $new_detail) {
+                foreach ($details as $detail) {
+                    $data = json_decode($detail->details_json);
+                    foreach ($data as $new_detail) {
+                        foreach ($diff as $field) {
                             if (!isset($new_detail->$field)) {
                                 $data->$field = '';
                             }
                         }
-                        $new_json_details = OrderDetail::find($detail->id);
-                        $new_json_details->details_json = json_encode($data);
-                        $new_json_details->save();
                     }
+
+                    $new_json_details = OrderDetail::find($detail->id);
+                    $new_json_details->details_json = json_encode($data);
+                    $new_json_details->save();
                 }
 
             }
