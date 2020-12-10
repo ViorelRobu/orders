@@ -631,7 +631,7 @@ class OrdersController extends Controller
             $volume_by_type = $volume_by_type . $key . ' - ' . $item . ' mc, ';
         }
 
-        rtrim($volume_by_type, ', ');
+        $volume_by_type = rtrim($volume_by_type, ', ');
 
         return view('orders.show', [
             'order' => $order,
