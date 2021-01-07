@@ -184,4 +184,17 @@ Route::middleware(['auth'])->group(function() {
         Route::post('deliveries/start', 'ReportsController@importDeliveries');
     });
 
+    /*
+     |---------------------------------------------------------------
+     |  User management routes
+     |---------------------------------------------------------------
+     */
+    Route::prefix('/users')->group(function () {
+        Route::get('/', 'UsersController@index');
+        Route::post('/add', 'UsersController@store');
+        Route::get('/all', 'UsersController@fetchAll')->name('users.index');
+        Route::get('/fetch', 'UsersController@fetch');
+        Route::patch('/{id}/update', 'UsersController@update');
+    });
+
 });
