@@ -251,20 +251,24 @@ return [
             'text' => 'Arhiva comenzi',
             'url' => 'archive',
             'icon' => 'fas fa-fw fa-list',
+            'can' => 'planificare'
         ],
         [
             'text' => 'Actualizari',
             'url' => 'import',
             'icon' => 'fas fa-fw fa-upload',
+            'can' => 'productie'
         ],
         [
             'text' => 'Rapoarte',
             'url' => 'reports',
             'icon' => 'fas fa-fw fa-file-excel',
+            'can' => 'productie'
         ],
         [
             'text' => 'Istoric excel',
             'icon' => 'fas fa-history',
+            'can' => 'productie',
             'submenu' => [
                 [
                     'text' => 'Actualizari',
@@ -282,6 +286,7 @@ return [
         [
             'text' => 'Nomenclator',
             'icon' => 'fas fa-fw fa-cog',
+            'can' => 'planificare',
             'submenu' => [
                 [
                     'text' => 'Tari',
@@ -330,6 +335,7 @@ return [
             'text' => 'Utilizatori',
             'url'  => 'users',
             'icon' => 'fas fa-fw fa-users',
+            'can' => 'administrator'
         ],
         [
             'text' => 'Schimba parola',

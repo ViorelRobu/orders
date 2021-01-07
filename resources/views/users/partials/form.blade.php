@@ -42,6 +42,16 @@
                                    class="form-control" name="second_pass" id="second_pass" aria-describedby="helpId" placeholder="Repeta Parola">
                         </div>
                     </div>
+                    <div class="row">
+                        <div class="form-group col-lg-12">
+                            <label for="">Grupa de utilizator</label>
+                            <select class="form-control" name="role" id="role">
+                                @foreach ($roles as $role)
+                                    <option value="{{ $role->id }}">{{ $role->role }}</option>
+                                @endforeach
+                            </select>
+                        </div>
+                    </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Inchide</button>
                         <div id="submit"></div>

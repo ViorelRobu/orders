@@ -33,36 +33,44 @@
                         </h5>
                     </div>
                     @if ($order->archived == 0)
-                        <i class="fas fa-truck-loading" style="margin-left:10px" data-toggle="modal" data-target="#loadingDate"></i>
+                        @can('planificare')
+                            <i class="fas fa-truck-loading" style="margin-left:10px" data-toggle="modal" data-target="#loadingDate"></i>
+                        @endcan
                     @endif
                 </div>
-                <div class="col-lg-3">
-                    <form method="POST" action="/orders/{{ $order->id }}/documents/upload" enctype="multipart/form-data">
-                        @csrf
-                        @method('POST')
-                        <div class="row">
-                            <div class="col-lg-10">
-                                <div class="form-group">
-                                  <input type="file" class="form-control-file" name="docs_file" id="docs_file" placeholder="">
+                @can('planificare')
+                    <div class="col-lg-3">
+                        <form method="POST" action="/orders/{{ $order->id }}/documents/upload" enctype="multipart/form-data">
+                            @csrf
+                            @method('POST')
+                            <div class="row">
+                                <div class="col-lg-10">
+                                    <div class="form-group">
+                                    <input type="file" class="form-control-file" name="docs_file" id="docs_file" placeholder="">
+                                    </div>
+                                </div>
+                                <div class="col-lg-2">
+                                    <div>
+                                        <button class="btn btn-primary" type="submit">Incarca</button>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="col-lg-2">
-                                <div>
-                                    <button class="btn btn-primary" type="submit">Incarca</button>
-                                </div>
-                            </div>
-                        </div>
-                    </form>
-                </div>
+                        </form>
+                    </div>
+                @endcan
                 <div class="col-lg-2">
-                    <i class="fas fa-paperclip fa-2x fa-rotate-180 float-right" style="margin-left: 10px" data-toggle="modal" data-target="#documents"></i>
+                    @can('planificare')
+                        <i class="fas fa-paperclip fa-2x fa-rotate-180 float-right" style="margin-left: 10px" data-toggle="modal" data-target="#documents"></i>
+                    @endcan
                     <a href="/orders/{{ $order->id }}/print/portrait" target="_blank" style="color: white">
                         <i id="print_pdf" class="far fa-file-pdf float-right fa-2x" style="margin-left:10px"></i>
                     </a>
                     <a href="/orders/{{ $order->id }}/print/landscape" target="_blank" style="color: white">
                         <i id="print_pdf" class="far fa-file-pdf float-right fa-2x fa-rotate-270" style="margin-left:10px"></i>
                     </a>
-                    <i id="edit_details" class="fas fa-edit float-right fa-2x" style="margin-left:10px"></i>
+                    @can('planificare')
+                        <i id="edit_details" class="fas fa-edit float-right fa-2x" style="margin-left:10px"></i>
+                    @endcan
                 </div>
             </div>
         </div>
@@ -131,7 +139,9 @@
                 <div class="col-lg-8">
                     <div id="observations_title">
                         <strong>Observatii</strong>
-                        <i id="edit_observations" class="fas fa-edit"></i>
+                        @can('planificare')
+                            <i id="edit_observations" class="fas fa-edit"></i>
+                        @endcan
                     </div>
                     <hr>
                     <div id="observations_text">
@@ -145,7 +155,9 @@
                     <br>
                     <div>
                         <strong>Campuri extra</strong>
-                        <i class="fas fa-edit" data-toggle="modal" data-target="#addFields"></i>
+                        @can('planificare')
+                            <i class="fas fa-edit" data-toggle="modal" data-target="#addFields"></i>
+                        @endcan
                     </div>
                     <hr>
                     <div id="details_fields_text">
@@ -167,9 +179,11 @@
                     </div>
                 </div>
                 <div class="col-lg-1">
-                    <i id="save_dates" class="fas fa-save float-right fa-2x" style="margin-left: 10px; color: rgb(35, 231, 35); display: none"></i>
-                    <i id="cancel_dates" class="fas fa-window-close float-right fa-2x" style="margin-left: 10px; color: rgb(243, 14, 14); display: none"></i>
-                    <i id="edit_dates" class="fas fa-edit float-right fa-2x" style="margin-left: 10px"></i>
+                    @can('planificare')
+                        <i id="save_dates" class="fas fa-save float-right fa-2x" style="margin-left: 10px; color: rgb(35, 231, 35); display: none"></i>
+                        <i id="cancel_dates" class="fas fa-window-close float-right fa-2x" style="margin-left: 10px; color: rgb(243, 14, 14); display: none"></i>
+                        <i id="edit_dates" class="fas fa-edit float-right fa-2x" style="margin-left: 10px"></i>
+                    @endcan
                 </div>
             </div>
         </div>
@@ -260,7 +274,9 @@
                         </div>
                     </div>
                     <div class="col-lg-1">
-                        <i id="addNewDetail" class="fas fa-plus float-right fa-2x" data-toggle="modal" data-target="#addDetails"></i>
+                        @can('planificare')
+                            <i id="addNewDetail" class="fas fa-plus float-right fa-2x" data-toggle="modal" data-target="#addDetails"></i>
+                        @endcan
                     </div>
                 </div>
             </div>
@@ -296,16 +312,18 @@
             </div>
         </div>
 
-    @include('orders.partials.ship')
-    @include('orders.partials.details')
-    @include('orders.partials.edit_details')
-    @include('orders.partials.fields')
-    @include('orders.partials.delete_pos')
-    @include('orders.partials.delete_pak')
-    @include('orders.partials.copy')
-    @include('orders.partials.documents')
-    @include('orders.partials.delete_file')
-    @include('audits')
+    @can('planificare')
+        @include('orders.partials.ship')
+        @include('orders.partials.details')
+        @include('orders.partials.edit_details')
+        @include('orders.partials.fields')
+        @include('orders.partials.delete_pos')
+        @include('orders.partials.delete_pak')
+        @include('orders.partials.copy')
+        @include('orders.partials.documents')
+        @include('orders.partials.delete_file')
+        @include('audits')
+    @endcan
 
 @stop
 
@@ -896,58 +914,61 @@
             });
         })
 
-        // allow editing of priority
-        $('#priority').dblclick(function() {
-            $('#priority_value').show(100);
-            $('#priority_text').hide(100);
-        })
-        // save the priority and display the value
-        $('#priority_value').keyup(function(e) {
-            if(e.keyCode == 13) {
-                $('#priority_value').hide(100);
-                $('#priority_text').show(100);
-                $.ajax({
-                    url: '/orders/{{ $order->id }}/update/priority',
-                    method: 'PATCH',
-                    dataType: 'json',
-                    data: {
-                        '_token': '{{ csrf_token() }}',
-                        priority: $('#priority_value').val()
-                    },
-                    error: function(err) {
-                        console.log(err);
-                        let errors = err.responseJSON.message;
-                        let errors_arr = [];
-                        for (let error in errors) {
-                            errors[error].forEach(el => {
-                                errors_arr.push(el + '<br>');
+        @can('planificare')
+            // allow editing of priority
+            $('#priority').dblclick(function() {
+                $('#priority_value').show(100);
+                $('#priority_text').hide(100);
+            })
+
+            // save the priority and display the value
+            $('#priority_value').keyup(function(e) {
+                if(e.keyCode == 13) {
+                    $('#priority_value').hide(100);
+                    $('#priority_text').show(100);
+                    $.ajax({
+                        url: '/orders/{{ $order->id }}/update/priority',
+                        method: 'PATCH',
+                        dataType: 'json',
+                        data: {
+                            '_token': '{{ csrf_token() }}',
+                            priority: $('#priority_value').val()
+                        },
+                        error: function(err) {
+                            console.log(err);
+                            let errors = err.responseJSON.message;
+                            let errors_arr = [];
+                            for (let error in errors) {
+                                errors[error].forEach(el => {
+                                    errors_arr.push(el + '<br>');
+                                });
+                            }
+                            Swal.fire({
+                                position: 'top-end',
+                                type: 'error',
+                                title: 'Eroare',
+                                html: errors_arr.toString(),
+                                showConfirmButton: false,
+                                timer: 10000,
+                                toast: true
                             });
+                        },
+                        success: function(response) {
+                            Swal.fire({
+                                position: 'top-end',
+                                type: response.status,
+                                title: 'Succes',
+                                title: response.message,
+                                showConfirmButton: false,
+                                timer: 5000,
+                                toast: true
+                            });
+                            $('#priority_text').html(response.value)
                         }
-                        Swal.fire({
-                            position: 'top-end',
-                            type: 'error',
-                            title: 'Eroare',
-                            html: errors_arr.toString(),
-                            showConfirmButton: false,
-                            timer: 10000,
-                            toast: true
-                        });
-                    },
-                    success: function(response) {
-                        Swal.fire({
-                            position: 'top-end',
-                            type: response.status,
-                            title: 'Succes',
-                            title: response.message,
-                            showConfirmButton: false,
-                            timer: 5000,
-                            toast: true
-                        });
-                        $('#priority_text').html(response.value)
-                    }
-                });
-            };
-        });
+                    });
+                };
+            });
+        @endcan
 
         // allow editing of the main details
         $('#edit_details').click(function() {
@@ -1175,110 +1196,111 @@
                 }
             });
         });
+        @can('planificare')
+            // allow editing of kw for customer, production, delivery and eta
+            $('#edit_dates').click(function() {
+                $('#customer_kw_text').hide(100);
+                $('#customer_kw').show(100).val($('#customer__kw').val().split('-').reverse().join('.'));
+                $('#production_kw_text').hide(100);
+                $('#production_kw').show(100).val($('#production__kw').val().split('-').reverse().join('.'));
+                $('#delivery_kw_text').hide(100);
+                $('#delivery_kw').show(100).val($('#delivery__kw').val().split('-').reverse().join('.'));
+                $('#eta_text').hide(100);
+                $('#eta').show(100).val($('#eta__').val().split('-').reverse().join('.'));
+                $('#edit_dates').hide(100);
+                $('#save_dates').show(100);
+                $('#cancel_dates').show(100);
+            });
 
-        // allow editing of kw for customer, production, delivery and eta
-        $('#edit_dates').click(function() {
-            $('#customer_kw_text').hide(100);
-            $('#customer_kw').show(100).val($('#customer__kw').val().split('-').reverse().join('.'));
-            $('#production_kw_text').hide(100);
-            $('#production_kw').show(100).val($('#production__kw').val().split('-').reverse().join('.'));
-            $('#delivery_kw_text').hide(100);
-            $('#delivery_kw').show(100).val($('#delivery__kw').val().split('-').reverse().join('.'));
-            $('#eta_text').hide(100);
-            $('#eta').show(100).val($('#eta__').val().split('-').reverse().join('.'));
-            $('#edit_dates').hide(100);
-            $('#save_dates').show(100);
-            $('#cancel_dates').show(100);
-        });
-
-        // cancel the edition of kw for customer, production, delivery and eta
-        $('#cancel_dates').click(function() {
-            $('#customer_kw_text').show(100);
-            $('#customer_kw').hide(100);
-            $('#production_kw_text').show(100);
-            $('#production_kw').hide(100);
-            $('#delivery_kw_text').show(100);
-            $('#delivery_kw').hide(100);
-            $('#eta_text').show(100);
-            $('#eta').hide(100);
-            $('#edit_dates').show(100);
-            $('#save_dates').hide(100);
-            $('#cancel_dates').hide(100);
-        })
-
-        // save the kw for customer, production, delivery and eta
-            $('#save_dates').click(function() {
-                let customer_kw = $('#customer_kw').val();
-                let production_kw = $('#production_kw').val();
-                let delivery_kw = $('#delivery_kw').val();
-                let eta = $('#eta').val();
+            // cancel the edition of kw for customer, production, delivery and eta
+            $('#cancel_dates').click(function() {
+                $('#customer_kw_text').show(100);
+                $('#customer_kw').hide(100);
+                $('#production_kw_text').show(100);
+                $('#production_kw').hide(100);
+                $('#delivery_kw_text').show(100);
+                $('#delivery_kw').hide(100);
+                $('#eta_text').show(100);
+                $('#eta').hide(100);
+                $('#edit_dates').show(100);
                 $('#save_dates').hide(100);
                 $('#cancel_dates').hide(100);
-            $.ajax({
-                url: '/orders/{{ $order->id }}/update/dates',
-                method: 'PATCH',
-                dataType: 'json',
-                data: {
-                    '_token': '{{ csrf_token() }}',
-                    customer_kw: customer_kw.split('.').reverse().join('-'),
-                    production_kw: production_kw.split('.').reverse().join('-'),
-                    delivery_kw: delivery_kw.split('.').reverse().join('-'),
-                    eta: eta.split('.').reverse().join('-')
-                },
-                error: function(err) {
-                    console.log(err);
-                    let errors = err.responseJSON.message;
-                    let errors_arr = [];
-                    for (let error in errors) {
-                        errors[error].forEach(el => {
-                            errors_arr.push(el + '<br>');
-                        });
-                    }
-                    Swal.fire({
-                        position: 'top-end',
-                        type: 'error',
-                        title: 'Eroare',
-                        html: errors_arr.toString().split(',').join(''),
-                        showConfirmButton: false,
-                        timer: 10000,
-                        toast: true
-                    });
-                    $('#save_dates').show(100);
-                    $('#cancel_dates').show(100);
-                },
-                success: function(response) {
-                    Swal.fire({
-                        position: 'top-end',
-                        type: response.status,
-                        title: 'Succes',
-                        title: response.message,
-                        showConfirmButton: false,
-                        timer: 5000,
-                        toast: true
-                    });
-                    $('#customer_kw_text').html(response.order.customer_kw_text);
-                    $('#customer_kw_text').show(100);
-                    $('#customer_kw').hide(100);
-                    $('#customer__kw').val(response.order.customer_kw);
-                    $('#production_kw_text').html(response.order.production_kw_text);
-                    $('#production_kw_text').show(100);
-                    $('#production_kw').hide(100);
-                    $('#production__kw').val(response.order.production_kw);
-                    $('#month').html(response.order.month);
-                    $('#delivery_kw_text').html(response.order.delivery_kw_text);
-                    $('#delivery_kw_text').show(100);
-                    $('#delivery_kw').hide(100);
-                    $('#delivery__kw').val(response.order.delivery_kw);
-                    $('#eta_text').html(response.order.eta_text);
-                    $('#eta_text').show(100);
-                    $('#eta').hide(100);
-                    $('#eta__').val(response.order.eta);
-                    $('#edit_dates').show(100);
+            })
+
+            // save the kw for customer, production, delivery and eta
+                $('#save_dates').click(function() {
+                    let customer_kw = $('#customer_kw').val();
+                    let production_kw = $('#production_kw').val();
+                    let delivery_kw = $('#delivery_kw').val();
+                    let eta = $('#eta').val();
                     $('#save_dates').hide(100);
                     $('#cancel_dates').hide(100);
-                }
+                $.ajax({
+                    url: '/orders/{{ $order->id }}/update/dates',
+                    method: 'PATCH',
+                    dataType: 'json',
+                    data: {
+                        '_token': '{{ csrf_token() }}',
+                        customer_kw: customer_kw.split('.').reverse().join('-'),
+                        production_kw: production_kw.split('.').reverse().join('-'),
+                        delivery_kw: delivery_kw.split('.').reverse().join('-'),
+                        eta: eta.split('.').reverse().join('-')
+                    },
+                    error: function(err) {
+                        console.log(err);
+                        let errors = err.responseJSON.message;
+                        let errors_arr = [];
+                        for (let error in errors) {
+                            errors[error].forEach(el => {
+                                errors_arr.push(el + '<br>');
+                            });
+                        }
+                        Swal.fire({
+                            position: 'top-end',
+                            type: 'error',
+                            title: 'Eroare',
+                            html: errors_arr.toString().split(',').join(''),
+                            showConfirmButton: false,
+                            timer: 10000,
+                            toast: true
+                        });
+                        $('#save_dates').show(100);
+                        $('#cancel_dates').show(100);
+                    },
+                    success: function(response) {
+                        Swal.fire({
+                            position: 'top-end',
+                            type: response.status,
+                            title: 'Succes',
+                            title: response.message,
+                            showConfirmButton: false,
+                            timer: 5000,
+                            toast: true
+                        });
+                        $('#customer_kw_text').html(response.order.customer_kw_text);
+                        $('#customer_kw_text').show(100);
+                        $('#customer_kw').hide(100);
+                        $('#customer__kw').val(response.order.customer_kw);
+                        $('#production_kw_text').html(response.order.production_kw_text);
+                        $('#production_kw_text').show(100);
+                        $('#production_kw').hide(100);
+                        $('#production__kw').val(response.order.production_kw);
+                        $('#month').html(response.order.month);
+                        $('#delivery_kw_text').html(response.order.delivery_kw_text);
+                        $('#delivery_kw_text').show(100);
+                        $('#delivery_kw').hide(100);
+                        $('#delivery__kw').val(response.order.delivery_kw);
+                        $('#eta_text').html(response.order.eta_text);
+                        $('#eta_text').show(100);
+                        $('#eta').hide(100);
+                        $('#eta__').val(response.order.eta);
+                        $('#edit_dates').show(100);
+                        $('#save_dates').hide(100);
+                        $('#cancel_dates').hide(100);
+                    }
+                });
             });
-        });
+        @endcan
 
 
     });

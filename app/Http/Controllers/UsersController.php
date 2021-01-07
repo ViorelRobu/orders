@@ -2,7 +2,9 @@
 
 namespace App\Http\Controllers;
 
+use App\Role;
 use App\User;
+use App\UserRole;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
@@ -48,7 +50,8 @@ class UsersController extends Controller
      */
     public function index()
     {
-        return view('users.index');
+        $roles = Role::all();
+        return view('users.index', ['roles' => $roles]);
     }
 
     /**
@@ -70,6 +73,11 @@ class UsersController extends Controller
                 $user->password = bcrypt($request->first_pass);
                 $user->save();
 
+                $user_role = new UserRole();
+                $user_role->user_id = $user->id;
+                $user_role->role_id = $request->role;
+                $user_role->save();
+
                 return back()->with('success', 'Utilizatorul a fost adaugat cu succes!');
             }
         }
@@ -86,6 +94,10 @@ class UsersController extends Controller
     public function fetchAll()
     {
         $users = User::all();
+        $users->map(function($item, $index) {
+            $role = Role::find($item->role->role_id);
+            $item->rol = $role->role;
+        });
 
         return DataTables::of($users)
             ->addIndexColumn()
@@ -104,6 +116,7 @@ class UsersController extends Controller
     public function fetch(Request $request)
     {
         $user = User::find($request->id);
+        $user->role_id = $user->role->role_id;
         return (new JsonResponse(['message' => 'success', 'message_type' => 'success', 'data' => $user]));
     }
 
@@ -118,6 +131,8 @@ class UsersController extends Controller
 
         $user = User::find($id);
 
+        $user_role = $user->role;
+
         if ($validator->passes()) {
             if ($request->first_pass != null && $request->second_pass != null) {
                 if ($request->first_pass === $request->second_pass) {
@@ -127,6 +142,10 @@ class UsersController extends Controller
                     $user->password = bcrypt($request->first_pass);
                     $user->update();
 
+                    $user_role->user_id = $user->id;
+                    $user_role->role_id = $request->role;
+                    $user_role->update();
+
                     return back()->with('success', 'Datele utilizatorului au fost editate!');
                 }
             }
@@ -135,6 +154,10 @@ class UsersController extends Controller
             $user->email = $request->email;
             $user->username = $request->username;
             $user->update();
+
+            $user_role->user_id = $user->id;
+            $user_role->role_id = $request->role;
+            $user_role->update();
 
             return back()->with('success', 'Datele utilizatorului au fost editate!');
         }

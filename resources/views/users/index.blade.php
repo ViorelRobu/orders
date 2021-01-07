@@ -27,6 +27,7 @@
                         <td>Nume</td>
                         <td>Email</td>
                         <td>Username</td>
+                        <td>Rol</td>
                         <td>Actiuni</td>
                         </thead>
                     </table>
@@ -60,9 +61,10 @@
                         $('#name').val(response.data.name);
                         $('#email').val(response.data.email);
                         $('#username').val(response.data.username);
+                        $('#role').val(response.data.role_id);
                         $('#save').remove();
                         $('#submit').append(update);
-                        console.log(response.data);
+                        console.log(response.data.role_id);
             }
         });
     }
@@ -87,14 +89,15 @@
                 {data: 'name', name: 'name'},
                 {data: 'email', name: 'email'},
                 {data: 'username', name: 'username'},
+                {data: 'rol', name: 'rol'},
                 {data: 'actions', name: 'actions'},
             ]
         });
 
-        $('#newSpecies').on('hidden.bs.modal', function () {
+        $('#newUser').on('hidden.bs.modal', function () {
             $('#name').val('');
-            $('.modal-title').html('Specie noua');
-            $('#newSpeciesForm').attr('action', '/species/add');
+            $('.modal-title').html('Utilizator nou');
+            $('#newUserForm').attr('action', '/users/add');
             $("input[name='_method']").val('POST');
             $('#update').remove();
             $('#save').remove();
