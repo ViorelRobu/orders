@@ -29,6 +29,13 @@
             </div>
             @can('planificare')
                 <div class="list-group">
+                    <a href="#" class="list-group-item list-group-item-action" data-toggle="modal" data-target="#delivery">
+                        Livrari pentru perioada
+                    </a>
+                </div>
+            @endcan
+            @can('planificare')
+                <div class="list-group">
                     <a href="#" class="list-group-item list-group-item-action" data-toggle="modal" data-target="#printOrders">
                         Printare comenzi multiple
                     </a>
@@ -39,6 +46,7 @@
 @stop
 
 @include('reports.partials.print')
+@include('reports.partials.delivery')
 
 @section('footer')
     @include('footer')
@@ -46,7 +54,14 @@
 
 @section('js')
     <script>
-
+        $('#start').datepicker({
+            showWeek: true,
+            firstDay: 1,
+        });
+        $('#end').datepicker({
+            showWeek: true,
+            firstDay: 1,
+        });
     </script>
 @stop
 

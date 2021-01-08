@@ -167,6 +167,7 @@ Route::middleware(['auth'])->group(function() {
         Route::get('archive/fetch', 'ReportsController@fetchArchive')->name('archive.fetch')->middleware('can:productie');
         Route::get('/active', 'ReportsController@exportActiveOrders')->middleware('can:sef_schimb');
         Route::get('/production/plan', 'ReportsController@exportProductionPlan')->middleware('can:productie');
+        Route::get('/deliveries', 'ReportsController@exportDeliveriesDuringTimeRange')->middleware('can:planificare');
      });
 
 

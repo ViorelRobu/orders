@@ -4,12 +4,14 @@ namespace App\Http\Controllers;
 
 use App\DocArchive;
 use App\Exports\ActiveOrdersExport;
+use App\Exports\DeliveriesDuringTimeRangeExport;
 use App\Exports\ProductionPlanExport;
 use App\Imports\DeliveriesImport;
 use App\Imports\ProductionImport;
 use App\Imports\ProductionPlanImport;
 use App\User;
 use Carbon\Carbon;
+use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Storage;
 use Maatwebsite\Excel\Facades\Excel;
 use Yajra\DataTables\Facades\DataTables;
@@ -55,6 +57,23 @@ class ReportsController extends Controller
         $now = Carbon::now()->format('d.m.Y His');
         $filename = 'plan de productie' . $now . '.xlsx';
         Excel::store(new ProductionPlanExport, $filename, 'exports');
+
+        $this->archive('export', '/storage/exports/', $filename);
+
+        return redirect('/storage/exports/' . $filename);
+    }
+
+    /**
+     * Export the production plan
+     *
+     * @return void
+     */
+    public function exportDeliveriesDuringTimeRange(Request $request)
+    {
+        $user = auth()->user()->name;
+        $now = Carbon::now()->format('d.m.Y His');
+        $filename = 'livrari pentru ' . $request->start . '-' . $request->end . ' exportat ' . $now . '.xlsx';
+        Excel::store(new DeliveriesDuringTimeRangeExport($request->start, $request->end), $filename, 'exports');
 
         $this->archive('export', '/storage/exports/', $filename);
 
@@ -230,4 +249,6 @@ class ReportsController extends Controller
         $archive->user_id = auth()->user()->id;
         $archive->save();
     }
+
+
 }

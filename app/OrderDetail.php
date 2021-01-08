@@ -20,8 +20,23 @@ class OrderDetail extends Model implements Auditable
         'deleted'
     ];
 
+    /**
+     * One detail belongs to one article
+     *
+     * @return Eloquent
+     */
     public function article()
     {
         return $this->belongsTo(Article::class);
+    }
+
+    /**
+     * One detail belongs to one order
+     *
+     * @return Eloquent
+     */
+    public function order()
+    {
+        return $this->belongsTo(Order::class);
     }
 }
