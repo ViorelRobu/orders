@@ -59,6 +59,11 @@
                     </div>
                 @endcan
                 <div class="col-lg-2">
+                    @can('productie')
+                        <a href="/orders/{{ $order->id }}/export" target="_blank" style="color: white">
+                            <i id="export" class="far fa-file-excel float-right fa-2x" style="margin-left:10px"></i>
+                        </a>
+                    @endcan
                     @can('planificare')
                         <i class="fas fa-paperclip fa-2x fa-rotate-180 float-right" style="margin-left: 10px" data-toggle="modal" data-target="#documents"></i>
                     @endcan

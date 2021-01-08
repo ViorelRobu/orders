@@ -6,6 +6,7 @@ use App\Article;
 use App\Country;
 use App\Customer;
 use App\Destination;
+use App\Exports\OrderDetailsExport;
 use App\Order;
 use App\OrderAttachment;
 use App\OrderDetail;
@@ -21,6 +22,7 @@ use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
 use Laravel\Ui\Presets\React;
 use Yajra\DataTables\Facades\DataTables;
+use Maatwebsite\Excel\Facades\Excel;
 use PDF;
 
 class OrdersController extends Controller
@@ -248,6 +250,18 @@ class OrdersController extends Controller
         $order->country_id = $country->id;
 
         return (new JsonResponse(['message' => 'success', 'message_type' => 'success', 'data' => $order]));
+    }
+
+    /**
+     * Export a order to excel
+     *
+     * @param int $id
+     * @return Excel
+     */
+    public function export($id)
+    {
+        $order = Order::find($id);
+        return Excel::download(new OrderDetailsExport($id), $order->order . '.xlsx');
     }
 
     /**

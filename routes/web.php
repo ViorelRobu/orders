@@ -117,6 +117,7 @@ Route::middleware(['auth'])->group(function() {
             Route::get('/show', 'OrdersController@show')->middleware('can:sef_schimb');
             Route::post('/copy', 'OrdersController@copy')->middleware('can:planificare');
             Route::get('/print/{orientation}', 'OrdersController@print')->middleware('can:planificare');
+            Route::get('/export', 'OrdersController@export')->middleware('can:productie');
             Route::prefix('/documents')->group(function() {
                 Route::get('/fetch', 'OrdersController@fetchAttachments')->middleware('can:productie');
                 Route::post('/upload', 'OrdersController@uploadAttachment')->middleware('can:planificare');
