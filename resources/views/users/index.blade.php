@@ -14,7 +14,7 @@
 @stop
 
 @include('users.partials.form')
-@include('audits')
+@include('users.partials.status')
 
 @section('content')
     <div class="row">
@@ -28,6 +28,7 @@
                         <td>Email</td>
                         <td>Username</td>
                         <td>Rol</td>
+                        <td>Status</td>
                         <td>Actiuni</td>
                         </thead>
                     </table>
@@ -45,6 +46,18 @@
     <script>
     const save = '<button type="submit" id="save" class="btn btn-primary">Creaza</button>';
     const update = '<button type="submit" id="update" class="btn btn-primary">Modifica</button>';
+
+    const changeStatus = (status, id) => {
+        $('#userStatus').modal('show');
+        if (status === 'active') {
+            $('#message').html('Sunteti sigur ca vreti sa activati utilizatorul?');
+            $('#changeUserStatusForm').attr('action', `/users/${id}/activate`);
+        } else {
+            $('#message').html('Sunteti sigur ca vreti sa dezactivati utilizatorul?');
+            $('#changeUserStatusForm').attr('action', `/users/${id}/deactivate`);
+        }
+
+    }
 
     const fetch = id => {
         $.ajax({
@@ -64,7 +77,6 @@
                         $('#role').val(response.data.role_id);
                         $('#save').remove();
                         $('#submit').append(update);
-                        console.log(response.data.role_id);
             }
         });
     }
@@ -89,7 +101,8 @@
                 {data: 'name', name: 'name'},
                 {data: 'email', name: 'email'},
                 {data: 'username', name: 'username'},
-                {data: 'rol', name: 'rol'},
+                {data: 'role', name: 'role'},
+                {data: 'status', name: 'status'},
                 {data: 'actions', name: 'actions'},
             ]
         });

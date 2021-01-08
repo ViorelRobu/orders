@@ -66,17 +66,18 @@ class UsersController extends Controller
 
         if ($validator->passes()) {
             if ($request->first_pass === $request->second_pass) {
-                $user = new User();
-                $user->name = $request->name;
-                $user->email = $request->email;
-                $user->username = $request->username;
-                $user->password = bcrypt($request->first_pass);
-                $user->save();
-
-                $user_role = new UserRole();
-                $user_role->user_id = $user->id;
-                $user_role->role_id = $request->role;
-                $user_role->save();
+                try {
+                    $user = new User();
+                    $user->name = $request->name;
+                    $user->email = $request->email;
+                    $user->username = $request->username;
+                    $user->role_id = $request->role;
+                    $user->is_active = 1;
+                    $user->password = bcrypt($request->first_pass);
+                    $user->save();
+                } catch (\Throwable $th) {
+                    return back()->with('error', $th);
+                }
 
                 return back()->with('success', 'Utilizatorul a fost adaugat cu succes!');
             }
@@ -95,14 +96,15 @@ class UsersController extends Controller
     {
         $users = User::all();
         $users->map(function($item, $index) {
-            $role = Role::find($item->role->role_id);
-            $item->rol = $role->role;
+            $role = Role::find($item->role_id);
+            $item->role = $role->role;
+            $item->status = $item->is_active == 1 ? 'activ' : 'inactiv';
         });
 
         return DataTables::of($users)
             ->addIndexColumn()
-            ->addColumn('actions', function ($users) {
-                return view('users.partials.actions', ['users' => $users]);
+            ->addColumn('actions', function ($user) {
+                return view('users.partials.actions', ['user' => $user]);
             })
             ->make(true);
     }
@@ -116,7 +118,6 @@ class UsersController extends Controller
     public function fetch(Request $request)
     {
         $user = User::find($request->id);
-        $user->role_id = $user->role->role_id;
         return (new JsonResponse(['message' => 'success', 'message_type' => 'success', 'data' => $user]));
     }
 
@@ -131,20 +132,15 @@ class UsersController extends Controller
 
         $user = User::find($id);
 
-        $user_role = $user->role;
-
         if ($validator->passes()) {
             if ($request->first_pass != null && $request->second_pass != null) {
                 if ($request->first_pass === $request->second_pass) {
                     $user->name = $request->name;
                     $user->email = $request->email;
                     $user->username = $request->username;
+                    $user->role_id = $request->role;
                     $user->password = bcrypt($request->first_pass);
                     $user->update();
-
-                    $user_role->user_id = $user->id;
-                    $user_role->role_id = $request->role;
-                    $user_role->update();
 
                     return back()->with('success', 'Datele utilizatorului au fost editate!');
                 }
@@ -153,15 +149,42 @@ class UsersController extends Controller
             $user->name = $request->name;
             $user->email = $request->email;
             $user->username = $request->username;
+            $user->role_id = $request->role;
             $user->update();
-
-            $user_role->user_id = $user->id;
-            $user_role->role_id = $request->role;
-            $user_role->update();
 
             return back()->with('success', 'Datele utilizatorului au fost editate!');
         }
 
         return back()->with('error', 'Nu au fost completate toate datele!');
+    }
+
+    /**
+     * Activate a user
+     *
+     * @param int $id
+     * @return back
+     */
+    public function activate($id)
+    {
+        $user = User::find($id);
+        $user->is_active = 1;
+        $user->update();
+
+        return back()->with('success', 'Utilizatorul a fost activat!');
+    }
+
+    /**
+     * Deactivate a user
+     *
+     * @param int $id
+     * @return back
+     */
+    public function deactivate($id)
+    {
+        $user = User::find($id);
+        $user->is_active = 0;
+        $user->update();
+
+        return back()->with('success', 'Utilizatorul a fost dezactivat!');
     }
 }

@@ -191,10 +191,14 @@ Route::middleware(['auth'])->group(function() {
      */
     Route::prefix('/users')->group(function () {
         Route::get('/', 'UsersController@index')->middleware('can:administrator');
-        Route::post('/add', 'UsersController@store')->middleware('can:administrator');;
-        Route::get('/all', 'UsersController@fetchAll')->name('users.index')->middleware('can:administrator');;
-        Route::get('/fetch', 'UsersController@fetch')->middleware('can:administrator');;
-        Route::patch('/{id}/update', 'UsersController@update')->middleware('can:administrator');;
+        Route::post('/add', 'UsersController@store')->middleware('can:administrator');
+        Route::get('/all', 'UsersController@fetchAll')->name('users.index')->middleware('can:administrator');
+        Route::get('/fetch', 'UsersController@fetch')->middleware('can:administrator');
+        Route::prefix('/{id}')->group(function () {
+            Route::patch('/update', 'UsersController@update')->middleware('can:administrator');
+            Route::post('/activate', 'UsersController@activate')->middleware('can:administrator');
+            Route::post('/deactivate', 'UsersController@deactivate')->middleware('can:administrator');
+        });
     });
 
 });
