@@ -9,13 +9,19 @@
                     </button>
             </div>
             <div class="modal-body">
-                <form action="/orders/{{ $order->id }}/ship" method="POST">
+                <form id="shipForm" action="/orders/{{ $order->id }}/ship" method="POST">
                     <div class="form-group">
                         @method('PATCH')
                         @csrf
-                        <label for="">Data de incarcare</label>
+                        <label for="loading_date">Data de incarcare</label>
                         <input type="text"
                             class="form-control" name="loading_date" id="loading_date" placeholder="Data incarcare" autocomplete="off">
+
+                        <div id="comment_input">
+                            <label for="comment">Comentariu</label>
+                            <textarea class="form-control" name="comment" id="comment" rows="3"></textarea>
+                        </div>
+
                         <div class="modal-footer">
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Anuleaza</button>
                             <button type="submit" class="btn btn-primary" id="load_truck">Salveaza</button>

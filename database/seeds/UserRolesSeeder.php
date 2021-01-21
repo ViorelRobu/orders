@@ -23,11 +23,5 @@ class UserRolesSeeder extends Seeder
         DB::table('roles')->insert([
             'role' => 'sef schimb'
         ]);
-
-        DB::table('user_role')->insert([
-            'user_id' => 1,
-            'role_id' => 1
-        ]);
-
     }
 }

@@ -210,7 +210,9 @@ class OrdersController extends Controller
             $item->destination = $destination->address . ', ' . $country->name;
             $item->loading_date = (Carbon::parse($item->loading_date))->format('d.m.Y');
             $order_total = round(OrderDetail::where('order_id', $item->id)->sum('volume'), 3, PHP_ROUND_HALF_UP);
+            $order_delivered = round(OrderDetail::where('order_id', $item->id)->whereNotNull('loading_date')->sum('volume'), 3, PHP_ROUND_HALF_UP);
             $item->total = $order_total;
+            $item->delivered = $order_delivered;
         });
 
         return DataTables::of($orders)
@@ -374,10 +376,11 @@ class OrdersController extends Controller
         if ($validator->passes()) {
             $order->loading_date = (Carbon::parse($request->loading_date))->toDateString();
             $order->archived = 1;
+            $order->comment = 'livrare completa';
             $order->save();
 
             // insert the loading dates for the package that have no loading date
-            $details = OrderDetail::where('order_id', $order->id)->get();
+            $details = OrderDetail::where('order_id', $order->id)->whereNull('loading_date')->get();
             foreach ($details as $detail) {
                 $detail->loading_date = (Carbon::parse($request->loading_date))->toDateString();
                 $detail->produced_ticom = 1;
@@ -385,6 +388,38 @@ class OrdersController extends Controller
             }
 
             $date = (Carbon::parse($request->loading_date))->format('d.m.y');
+
+            return back();
+        } else {
+            return back()->with(['errors' => $validator->errors()]);
+        }
+    }
+
+    /**
+     * Set the loading date and archive the order
+     * Packages without delivery dates remain as they are
+     *
+     * @param Order $order
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function shipPartial(Order $order, Request $request)
+    {
+        $validator = Validator::make($request->all(),
+            [
+                'loading_date' => 'required',
+                'comment' => 'required'
+            ],
+            [
+                'loading_date.required' => 'Introduceti o data de livrare!',
+                'comment.required' => 'Introduceti un motiv pentru care comanda nu a fost livrata in totalitate!'
+            ]);
+
+        if ($validator->passes()) {
+            $order->loading_date = (Carbon::parse($request->loading_date))->toDateString();
+            $order->archived = 1;
+            $order->comment = $request->comment;
+            $order->save();
 
             return back();
         } else {

@@ -289,11 +289,65 @@ class OrderTest extends TestCase
 
         $this->assertDatabaseHas('orders', [
             'loading_date' => '9999-12-31',
+            'comment' => 'livrare completa',
         ]);
 
         $this->assertDatabaseMissing('orders', [
             'loading_date' => $order->loading_date,
         ]);
+
+    }
+
+    /**
+     * Logged in user can ship incomplete orders
+     *
+     * @return void
+     */
+    public function testLoggedInUsersCanShipIncompleteOrders()
+    {
+        $user = factory(User::class)->create();
+        $country = factory(Country::class, 4)->create();
+        $customer = factory(Customer::class, 4)->create();
+        $destination = factory(Destination::class, 4)->create();
+        $order = factory(Order::class, 3)->create();
+        $articles = factory(Article::class, 3)->create();
+        $order_details = factory(OrderDetail::class, 2)->create();
+
+        // set one package to be delivered
+        $delivered = OrderDetail::find(1);
+        $delivered->produced_ticom = 1;
+        $delivered->loading_date = '9999-12-31';
+        $delivered->save();
+
+        // set the 2nd package loading date to null
+        $delivered = OrderDetail::find(2);
+        $delivered->produced_ticom = 0;
+        $delivered->loading_date = null;
+        $delivered->save();
+
+        $response = $this->actingAs($user)->from('/orders/1/show')->patch('/orders/1/ship/partial', [
+            'loading_date' => '9999-12-31',
+            'comment' => 'livrare partiala'
+        ]);
+
+        $response->assertStatus(302)
+            ->assertRedirect('/orders/1/show');
+
+        $this->assertDatabaseHas('order_details', [
+            'id' => 1,
+            'loading_date' => '9999-12-31',
+        ]);
+
+        $this->assertDatabaseHas('order_details', [
+            'id' => 2,
+            'loading_date' => null,
+        ]);
+
+        $this->assertDatabaseHas('orders', [
+            'loading_date' => '9999-12-31',
+            'comment' => 'livrare partiala',
+        ]);
+
 
     }
 

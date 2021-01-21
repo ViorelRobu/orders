@@ -143,6 +143,7 @@ Route::middleware(['auth'])->group(function() {
                 Route::patch('/dates', 'OrdersController@setDates')->middleware('can:planificare');
             });
             Route::patch('/ship', 'OrdersController@ship')->middleware('can:planificare');
+            Route::patch('/ship/partial', 'OrdersController@shipPartial')->middleware('can:planificare');
         });
     });
 

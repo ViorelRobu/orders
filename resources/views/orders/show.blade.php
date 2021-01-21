@@ -16,7 +16,7 @@
     <div class="card">
         <div class="card-header bg-dark">
             <div class="row">
-                <div class="col-lg-7">
+                <div class="col-lg-4">
                     <div class="card-title">
                         <h5>Comanda {{ $order->order }}
                             @if ($order->loading_date != null)
@@ -32,9 +32,16 @@
                             @endif
                         </h5>
                     </div>
+                </div>
+                <div class="col-lg-3">
                     @if ($order->archived == 0)
                         @can('planificare')
-                            <i class="fas fa-truck-loading" style="margin-left:10px" data-toggle="modal" data-target="#loadingDate"></i>
+                            <div class="card-title">
+                                <span>Livrare</span>
+                                <span><button class="btn btn-light" onclick="shipComplete()">Completa</button></span>
+                                <span><button class="btn btn-light" onclick="shipPartial()">Partiala</button></span>
+                            </div>
+                            {{-- <i class="fas fa-truck-loading" style="margin-left:10px" onclick="shipComplete()"></i> --}}
                         @endcan
                     @endif
                 </div>
@@ -411,6 +418,20 @@
         $('#edit_refinements_list').select2({
             width: '100%'
         });
+
+        // ship complete
+        const shipComplete = () => {
+            $('#loadingDate').modal('show');
+            $('#comment_input').hide();
+            $('#shipForm').attr('action', '/orders/{{ $order->id }}/ship');
+        }
+
+        // ship partial
+        const shipPartial = () => {
+            $('#loadingDate').modal('show');
+            $('#comment_input').show();
+            $('#shipForm').attr('action', '/orders/{{ $order->id }}/ship/partial');
+        }
 
         // fetch position details
         const fetchPosition = id => {

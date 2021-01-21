@@ -26,7 +26,9 @@
                             <th>Auftrag</th>
                             <th>Destinatie</th>
                             <th>Data incarcare</th>
-                            <th>Volum (m&sup3;)</th>
+                            <th>Comanda (m&sup3;)</th>
+                            <th>Livrat (m&sup3;)</th>
+                            <th>Motiv arhivare</th>
                             <th></th>
                         </thead>
                     </table>
@@ -69,6 +71,8 @@
                 {data: 'destination', name: 'destination'},
                 {data: 'loading_date', name: 'loading_date'},
                 {data: 'total', name: 'total'},
+                {data: 'delivered', name: 'delivered'},
+                {data: 'comment', name: 'comment'},
                 {data: 'actions', name: 'actions'},
             ],
             rowCallback: function(row, data, index) {
@@ -80,7 +84,9 @@
                 $('td:eq(5)', row).addClass('table-success').css('font-weight', 'bold').css('border', '1px solid black');
                 $('td:eq(6)', row).addClass('table-success').css('font-weight', 'bold').css('border', '1px solid black');
                 $('td:eq(7)', row).addClass('table-success').css('font-weight', 'bold').css('border', '1px solid black');
-                $('td:eq(8)', row).css('font-weight', 'bold').css('border', '1px solid black');
+                $('td:eq(8)', row).addClass('table-success').css('font-weight', 'bold').css('border', '1px solid black');
+                $('td:eq(9)', row).addClass('table-success').css('font-weight', 'bold').css('border', '1px solid black');
+                $('td:eq(10)', row).css('font-weight', 'bold').css('border', '1px solid black');
             },
         });
     });
