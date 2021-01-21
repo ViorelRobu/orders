@@ -144,6 +144,7 @@ Route::middleware(['auth'])->group(function() {
             });
             Route::patch('/ship', 'OrdersController@ship')->middleware('can:planificare');
             Route::patch('/ship/partial', 'OrdersController@shipPartial')->middleware('can:planificare');
+            Route::patch('/archive', 'OrdersController@archiveOrder')->middleware('can:planificare');
         });
     });
 

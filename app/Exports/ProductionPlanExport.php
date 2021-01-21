@@ -61,6 +61,7 @@ class ProductionPlanExport implements FromCollection, WithHeadings
             'orders.production_kw as saptamana_productie',
         ])
             ->whereIn('order_id', $active)
+            ->where('orders.archived', 0)
             ->whereNull('order_details.loading_date')
             ->orderBy('orders.order', 'asc')
             ->orderBy('quality.name', 'asc')

@@ -32,6 +32,9 @@
                             @endif
                         </h5>
                     </div>
+                    @if ($order->archived == 0)
+                        <i style="margin-left: 10px" class="fas fa-file-archive fa-2x" data-toggle="modal" data-target="#archiveOrder"></i>
+                    @endif
                 </div>
                 <div class="col-lg-3">
                     @if ($order->archived == 0)
@@ -41,7 +44,6 @@
                                 <span><button class="btn btn-light" onclick="shipComplete()">Completa</button></span>
                                 <span><button class="btn btn-light" onclick="shipPartial()">Partiala</button></span>
                             </div>
-                            {{-- <i class="fas fa-truck-loading" style="margin-left:10px" onclick="shipComplete()"></i> --}}
                         @endcan
                     @endif
                 </div>
@@ -325,6 +327,7 @@
         </div>
 
     @can('planificare')
+        @include('orders.partials.arch')
         @include('orders.partials.ship')
         @include('orders.partials.details')
         @include('orders.partials.edit_details')

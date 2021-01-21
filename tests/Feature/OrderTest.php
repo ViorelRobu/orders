@@ -347,8 +347,33 @@ class OrderTest extends TestCase
             'loading_date' => '9999-12-31',
             'comment' => 'livrare partiala',
         ]);
+    }
 
+    /**
+     * Logged in user can archive orders
+     *
+     * @return void
+     */
+    public function testLoggedInUsersCanArchiveOrders()
+    {
+        $user = factory(User::class)->create();
+        $country = factory(Country::class, 4)->create();
+        $customer = factory(Customer::class, 4)->create();
+        $destination = factory(Destination::class, 4)->create();
+        $order = factory(Order::class)->create();
 
+        $response = $this->actingAs($user)->from('/orders/1/show')->patch('/orders/1/archive', [
+            'comment' => 'this is a test',
+        ]);
+
+        $response->assertStatus(302)
+            ->assertRedirect('/orders/1/show');
+
+        $this->assertDatabaseHas('orders', [
+            'loading_date' => $order->loading_date,
+            'archived' => 1,
+            'comment' => 'this is a test',
+        ]);
     }
 
     /**

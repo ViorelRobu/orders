@@ -208,7 +208,9 @@ class OrdersController extends Controller
             $country = Country::find($destination->country_id);
             $item->customer = $customer->name;
             $item->destination = $destination->address . ', ' . $country->name;
-            $item->loading_date = (Carbon::parse($item->loading_date))->format('d.m.Y');
+            if ($item->loading_date != null) {
+                $item->loading_date = (Carbon::parse($item->loading_date))->format('d.m.Y');
+            }
             $order_total = round(OrderDetail::where('order_id', $item->id)->sum('volume'), 3, PHP_ROUND_HALF_UP);
             $order_delivered = round(OrderDetail::where('order_id', $item->id)->whereNotNull('loading_date')->sum('volume'), 3, PHP_ROUND_HALF_UP);
             $item->total = $order_total;
@@ -417,6 +419,28 @@ class OrdersController extends Controller
 
         if ($validator->passes()) {
             $order->loading_date = (Carbon::parse($request->loading_date))->toDateString();
+            $order->archived = 1;
+            $order->comment = $request->comment;
+            $order->save();
+
+            return back();
+        } else {
+            return back()->with(['errors' => $validator->errors()]);
+        }
+    }
+
+    /**
+     * Archive the order
+     *
+     * @param Order $order
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function archiveOrder(Order $order, Request $request)
+    {
+        $validator = Validator::make($request->all(), ['comment' => 'required'], ['comment.required' => 'Introduceti un motiv de arhivare!']);
+
+        if ($validator->passes()) {
             $order->archived = 1;
             $order->comment = $request->comment;
             $order->save();
