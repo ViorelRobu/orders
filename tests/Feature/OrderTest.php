@@ -2,6 +2,7 @@
 
 namespace Tests\Feature;
 
+use App\ArchivedOrderVolume;
 use App\Article;
 use App\Country;
 use App\Customer;
@@ -71,6 +72,7 @@ class OrderTest extends TestCase
         $customers = factory(Customer::class, 4)->create();
         $destinations = factory(Destination::class, 4)->create();
         $orders = factory(Order::class)->create(['archived' => 1]);
+        $archive = factory(ArchivedOrderVolume::class)->create();
 
         // run asserts
         $this->allowAccess('/archive');

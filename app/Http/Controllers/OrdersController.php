@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\ArchivedOrderVolume;
 use App\Article;
 use App\Country;
 use App\Customer;
@@ -20,7 +21,6 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Storage;
 use Illuminate\Support\Facades\Validator;
-use Laravel\Ui\Presets\React;
 use Yajra\DataTables\Facades\DataTables;
 use Maatwebsite\Excel\Facades\Excel;
 use PDF;
@@ -211,10 +211,10 @@ class OrdersController extends Controller
             if ($item->loading_date != null) {
                 $item->loading_date = (Carbon::parse($item->loading_date))->format('d.m.Y');
             }
-            $order_total = round(OrderDetail::where('order_id', $item->id)->sum('volume'), 3, PHP_ROUND_HALF_UP);
-            $order_delivered = round(OrderDetail::where('order_id', $item->id)->whereNotNull('loading_date')->sum('volume'), 3, PHP_ROUND_HALF_UP);
-            $item->total = $order_total;
-            $item->delivered = $order_delivered;
+            $archive_volume = ArchivedOrderVolume::where('order_id', $item->id)->get();
+
+            $item->total = $archive_volume[0]->order_volume;
+            $item->delivered = $archive_volume[0]->delivered_volume;
         });
 
         return DataTables::of($orders)
@@ -389,6 +389,20 @@ class OrdersController extends Controller
                 $detail->save();
             }
 
+            // insert order volume to archived_orders_volume pivot
+            $existing = ArchivedOrderVolume::where('order_id', $order->id)->get();
+            if ($existing->count() == 0) {
+                $order_total = round(OrderDetail::where('order_id', $order->id)->sum('volume'), 3, PHP_ROUND_HALF_UP);
+                $order_delivered = round(OrderDetail::where('order_id', $order->id)->whereNotNull('loading_date')->sum('volume'), 3, PHP_ROUND_HALF_UP);
+
+                $pivot = new ArchivedOrderVolume();
+                $pivot->order_id = $order->id;
+                $pivot->order_volume = $order_total;
+                $pivot->delivered_volume = $order_delivered;
+                $pivot->save();
+            }
+
+
             $date = (Carbon::parse($request->loading_date))->format('d.m.y');
 
             return back();
@@ -423,6 +437,19 @@ class OrdersController extends Controller
             $order->comment = $request->comment;
             $order->save();
 
+            // insert order volume to archived_orders_volume pivot
+            $existing = ArchivedOrderVolume::where('order_id', $order->id)->get();
+            if ($existing->count() == 0) {
+                $order_total = round(OrderDetail::where('order_id', $order->id)->sum('volume'), 3, PHP_ROUND_HALF_UP);
+                $order_delivered = round(OrderDetail::where('order_id', $order->id)->whereNotNull('loading_date')->sum('volume'), 3, PHP_ROUND_HALF_UP);
+
+                $pivot = new ArchivedOrderVolume();
+                $pivot->order_id = $order->id;
+                $pivot->order_volume = $order_total;
+                $pivot->delivered_volume = $order_delivered;
+                $pivot->save();
+            }
+
             return back();
         } else {
             return back()->with(['errors' => $validator->errors()]);
@@ -444,6 +471,19 @@ class OrdersController extends Controller
             $order->archived = 1;
             $order->comment = $request->comment;
             $order->save();
+
+            // insert order volume to archived_orders_volume pivot
+            $existing = ArchivedOrderVolume::where('order_id', $order->id)->get();
+            if ($existing->count() == 0) {
+                $order_total = round(OrderDetail::where('order_id', $order->id)->sum('volume'), 3, PHP_ROUND_HALF_UP);
+                $order_delivered = round(OrderDetail::where('order_id', $order->id)->whereNotNull('loading_date')->sum('volume'), 3, PHP_ROUND_HALF_UP);
+
+                $pivot = new ArchivedOrderVolume();
+                $pivot->order_id = $order->id;
+                $pivot->order_volume = $order_total;
+                $pivot->delivered_volume = $order_delivered;
+                $pivot->save();
+            }
 
             return back();
         } else {

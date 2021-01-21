@@ -28,6 +28,7 @@ class Kernel extends ConsoleKernel
     protected function schedule(Schedule $schedule)
     {
         // $schedule->command('inspire')->hourly();
+        $schedule->command('archive:pivot')->dailyAt('05:00');
         $schedule->command('docArchive:delete')->dailyAt('19:00');
         $schedule->command('audits:pune')->dailyAt('19:00');
         $schedule->command('telescope:prune --hours=96')->daily();
