@@ -188,6 +188,21 @@ Route::middleware(['auth'])->group(function() {
         Route::post('deliveries/start', 'ReportsController@importDeliveries')->middleware('can:planificare');
     });
 
+     /*
+     |---------------------------------------------------------------
+     |  Budget routes
+     |---------------------------------------------------------------
+     */
+    Route::prefix('/budget')->group(function () {
+        Route::get('/', 'BudgetController@index')->middleware('can:planificare');
+        Route::get('/all', 'BudgetController@fetchAll')->name('budget.index')->middleware('can:planificare');
+        Route::get('/fetch', 'BudgetController@fetch')->middleware('can:planificare');
+        Route::get('/audits', 'BudgetController@audits')->middleware('can:planificare');
+        Route::post('/add', 'BudgetController@store')->middleware('can:planificare');
+        Route::post('/check/unique', 'BudgetController@isUnique')->middleware('can:planificare');
+        Route::patch('/{id}/update', 'BudgetController@update')->middleware('can:planificare');
+    });
+
     /*
      |---------------------------------------------------------------
      |  User management routes
