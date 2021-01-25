@@ -43,6 +43,7 @@
                           <input type="number"
                             class="form-control" name="volume" id="volume" placeholder="" min="1" step="0.001">
                         </div>
+                        <div class="form-group col-lg-12" id="error-msg" style="color: red"></div>
                     </div>
                     <div class="modal-footer">
                         <button type="button" class="btn btn-secondary" data-dismiss="modal">Inchide</button>

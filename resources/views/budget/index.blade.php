@@ -53,7 +53,6 @@
             data: {id: id},
             type: 'GET',
             success: function(response){
-                console.log(response.data);
                         $('#id').val(response.data.id);
                         $('.modal-title').html('Editeaza pozitie buget');
                         $('#newBudgetForm').attr('action', '/budget/' + id + '/update');
@@ -139,49 +138,79 @@
 
             $('#save').prop('disabled', true);
 
-            $.ajax({
-                url: `/budget/add`,
+            $.when($.ajax({
+                url: '/budget/check/unique',
                 method: 'POST',
                 dataType: 'json',
                 data: {
-                    '_token': '{{ csrf_token() }}',
-                    id, group, year, week, volume
-                },
-                error: function(err) {
-                    console.log(err);
-                    let errors = err.responseJSON.message;
-                    let errors_arr = [];
-                    for (let error in errors) {
-                        errors[error].forEach(el => {
-                            errors_arr.push(el + '<br>');
-                        });
+                        '_token': '{{ csrf_token() }}',
+                        id, group, year, week
+                    },
+                success: function (result) {
+                    if (result.exists) {
+                        $('#group').addClass('is-invalid');
+                        $('#year').addClass('is-invalid');
+                        $('#week').addClass('is-invalid');
+
+                        $('#error-msg').html('Combinatia dintre grupa de produs, an si saptamana exista deja!');
+                        $('#save').prop('disabled', false);
                     }
-                    Swal.fire({
-                        position: 'top-end',
-                        type: 'error',
-                        title: 'Eroare',
-                        html: errors_arr.toString().split(',').join(''),
-                        showConfirmButton: false,
-                        timer: 10000,
-                        toast: true
-                    });
-                    $('#save').prop('disabled', false);
-                },
-                success: function(response) {
-                    console.log(response.error);
-                    Swal.fire({
-                        position: 'top-end',
-                        type: response.type,
-                        title: 'Succes',
-                        title: response.message,
-                        showConfirmButton: false,
-                        timer: 5000,
-                        toast: true
-                    });
-                    $('#newBudget').modal('hide');
-                    table.draw()
+                    if (!result.exists) {
+                        $('#group').removeClass('is-invalid');
+                        $('#year').removeClass('is-invalid');
+                        $('#week').removeClass('is-invalid');
+
+                        $('#error-msg').html('');
+                        $('#save').prop('disabled', true);
+                    }
                 }
-            });
+            }).then(function (result) {
+                if (!result.exists) {
+                    $.ajax({
+                        url: `/budget/add`,
+                        method: 'POST',
+                        dataType: 'json',
+                        data: {
+                            '_token': '{{ csrf_token() }}',
+                            id, group, year, week, volume
+                        },
+                        error: function(err) {
+                            console.log(err);
+                            let errors = err.responseJSON.message;
+                            let errors_arr = [];
+                            for (let error in errors) {
+                                errors[error].forEach(el => {
+                                    errors_arr.push(el + '<br>');
+                                });
+                            }
+                            Swal.fire({
+                                position: 'top-end',
+                                type: 'error',
+                                title: 'Eroare',
+                                html: errors_arr.toString().split(',').join(''),
+                                showConfirmButton: false,
+                                timer: 10000,
+                                toast: true
+                            });
+                            $('#save').prop('disabled', false);
+                        },
+                        success: function(response) {
+                            console.log(response.error);
+                            Swal.fire({
+                                position: 'top-end',
+                                type: response.type,
+                                title: 'Succes',
+                                title: response.message,
+                                showConfirmButton: false,
+                                timer: 5000,
+                                toast: true
+                            });
+                            $('#newBudget').modal('hide');
+                            table.draw()
+                        }
+                    });
+                }
+            }))
 
         });
 
@@ -196,51 +225,79 @@
 
             $('#update').prop('disabled', true);
 
-            $.ajax({
-                url: uri,
-                method: 'PATCH',
+            $.when($.ajax({
+                url: '/budget/check/unique',
+                method: 'POST',
                 dataType: 'json',
                 data: {
-                    '_token': '{{ csrf_token() }}',
-                    id, group, year, week, volume
-                },
-                error: function(err) {
-                    console.log(err);
-                    let errors = err.responseJSON.message;
-                    let errors_arr = [];
-                    for (let error in errors) {
-                        errors[error].forEach(el => {
-                            errors_arr.push(el + '<br>');
-                        });
+                        '_token': '{{ csrf_token() }}',
+                        id, group, year, week
+                    },
+                success: function (result) {
+                    if (result.exists) {
+                        $('#group').addClass('is-invalid');
+                        $('#year').addClass('is-invalid');
+                        $('#week').addClass('is-invalid');
+
+                        $('#error-msg').html('Combinatia dintre grupa de produs, an si saptamana exista deja!');
+                        $('#update').prop('disabled', false);
                     }
-                    Swal.fire({
-                        position: 'top-end',
-                        type: 'error',
-                        title: 'Eroare',
-                        html: errors_arr.toString().split(',').join(''),
-                        showConfirmButton: false,
-                        timer: 10000,
-                        toast: true
-                    });
-                    $('#update').prop('disabled', false);
+                    if (!result.exists) {
+                        $('#group').removeClass('is-invalid');
+                        $('#year').removeClass('is-invalid');
+                        $('#week').removeClass('is-invalid');
 
-                },
-                success: function(response) {
-                    console.log(response.error);
-                    Swal.fire({
-                        position: 'top-end',
-                        type: response.type,
-                        title: 'Succes',
-                        title: response.message,
-                        showConfirmButton: false,
-                        timer: 5000,
-                        toast: true
-                    });
-                    $('#newBudget').modal('hide');
-                    table.draw()
+                        $('#error-msg').html('');
+                        $('#update').prop('disabled', true);
+                    }
                 }
-            });
-
+            }).then(function (result) {
+                if (!result.exists) {
+                    $.ajax({
+                        url: uri,
+                        method: 'PATCH',
+                        dataType: 'json',
+                        data: {
+                            '_token': '{{ csrf_token() }}',
+                            id, group, year, week, volume
+                        },
+                        error: function(err) {
+                            console.log(err);
+                            let errors = err.responseJSON.message;
+                            let errors_arr = [];
+                            for (let error in errors) {
+                                errors[error].forEach(el => {
+                                    errors_arr.push(el + '<br>');
+                                });
+                            }
+                            Swal.fire({
+                                position: 'top-end',
+                                type: 'error',
+                                title: 'Eroare',
+                                html: errors_arr.toString().split(',').join(''),
+                                showConfirmButton: false,
+                                timer: 10000,
+                                toast: true
+                            });
+                            $('#update').prop('disabled', false);
+                        },
+                        success: function(response) {
+                            console.log(response.error);
+                            Swal.fire({
+                                position: 'top-end',
+                                type: response.type,
+                                title: 'Succes',
+                                title: response.message,
+                                showConfirmButton: false,
+                                timer: 5000,
+                                toast: true
+                            });
+                            $('#newBudget').modal('hide');
+                            table.draw()
+                        }
+                    });
+                }
+            }))
         });
 
         $('#newBudget').on('hidden.bs.modal', function () {
