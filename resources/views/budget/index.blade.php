@@ -27,7 +27,8 @@
                         <td>Grupa produs</td>
                         <td>An</td>
                         <td>Saptamana</td>
-                        <td>Volum</td>
+                        <td>Volum buget</td>
+                        <td>Volum livrat</td>
                         <td></td>
                         </thead>
                     </table>
@@ -124,6 +125,7 @@
                 {data: 'year', name: 'year'},
                 {data: 'week', name: 'week'},
                 {data: 'volume', name: 'volume'},
+                {data: 'delivered', name: 'delivered'},
                 {data: 'actions', name: 'actions'},
             ]
         });

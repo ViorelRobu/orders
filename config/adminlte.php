@@ -254,6 +254,12 @@ return [
             'can' => 'planificare'
         ],
         [
+            'text' => 'Buget',
+            'url' => 'budget',
+            'icon' => 'fas fa-fw fa-dollar-sign',
+            'can' => 'planificare'
+        ],
+        [
             'text' => 'Actualizari',
             'url' => 'import',
             'icon' => 'fas fa-fw fa-upload',

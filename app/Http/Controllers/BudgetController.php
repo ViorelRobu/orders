@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers;
 
+use App\Article;
 use App\Budget;
 use App\ProductType;
 use App\Traits\GetAudits;
 use Carbon\Carbon;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
 use Yajra\DataTables\DataTables;
 

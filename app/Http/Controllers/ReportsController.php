@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\DocArchive;
+use App\Events\FinishedUpdatingProductionAndDeliveries;
 use App\Exports\ActiveOrdersExport;
 use App\Exports\DeliveriesDuringTimeRangeExport;
 use App\Exports\ProductionPlanExport;
@@ -226,6 +227,9 @@ class ReportsController extends Controller
 
                 $this->archive('import', '/storage/imports/', $filename);
             }
+
+            event(new FinishedUpdatingProductionAndDeliveries());
+
             return back()->with('success', 'Livrarile au fost actualizate cu success!');
         } catch (\Throwable $th) {
             return back()->with('failure', 'Actualizarea livrarilor nu a reusit.');

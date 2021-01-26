@@ -7,6 +7,7 @@ use App\Article;
 use App\Country;
 use App\Customer;
 use App\Destination;
+use App\Events\FinishedUpdatingProductionAndDeliveries;
 use App\Exports\OrderDetailsExport;
 use App\Order;
 use App\OrderAttachment;
@@ -405,6 +406,8 @@ class OrdersController extends Controller
 
             $date = (Carbon::parse($request->loading_date))->format('d.m.y');
 
+            event(new FinishedUpdatingProductionAndDeliveries());
+
             return back();
         } else {
             return back()->with(['errors' => $validator->errors()]);
@@ -449,6 +452,8 @@ class OrdersController extends Controller
                 $pivot->delivered_volume = $order_delivered;
                 $pivot->save();
             }
+
+            event(new FinishedUpdatingProductionAndDeliveries());
 
             return back();
         } else {
