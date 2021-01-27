@@ -49,7 +49,7 @@ class BudgetController extends Controller
         $product_group = ProductType::all();
         $year = Carbon::now()->year;
         $weeks = [];
-        for ($i=1; $i < 55; $i++) {
+        for ($i=1; $i < 54; $i++) {
             $weeks[] = $i;
         }
 

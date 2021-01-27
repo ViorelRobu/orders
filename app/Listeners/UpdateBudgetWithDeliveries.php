@@ -31,7 +31,9 @@ class UpdateBudgetWithDeliveries implements ShouldQueue
      */
     public function handle(FinishedUpdatingProductionAndDeliveries $event)
     {
-        $data = DB::table('order_details')->whereNotNull('loading_date')->get(['id', 'article_id', 'loading_date', 'volume']);
+        $start = Carbon::now()->subMonth();
+        $end = Carbon::now()->endOfYear();
+        $data = DB::table('order_details')->whereNotNull('loading_date')->whereBetween('loading_date', [$start, $end])->get(['id', 'article_id', 'loading_date', 'volume']);
 
         $volumes = [];
 

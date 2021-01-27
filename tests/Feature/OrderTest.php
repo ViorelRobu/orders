@@ -312,6 +312,7 @@ class OrderTest extends TestCase
         $customer = factory(Customer::class, 4)->create();
         $destination = factory(Destination::class, 4)->create();
         $order = factory(Order::class, 3)->create();
+        $product = factory(ProductType::class)->create();
         $articles = factory(Article::class, 3)->create();
         $order_details = factory(OrderDetail::class, 2)->create();
 
