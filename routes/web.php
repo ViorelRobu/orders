@@ -171,6 +171,7 @@ Route::middleware(['auth'])->group(function() {
         Route::get('/active', 'ReportsController@exportActiveOrders')->middleware('can:sef_schimb');
         Route::get('/production/plan', 'ReportsController@exportProductionPlan')->middleware('can:productie');
         Route::get('/deliveries', 'ReportsController@exportDeliveriesDuringTimeRange')->middleware('can:planificare');
+        Route::get('/budget', 'ReportsController@exportBudget')->middleware('can:planificare');
      });
 
 

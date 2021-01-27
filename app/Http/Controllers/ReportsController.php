@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\DocArchive;
 use App\Events\FinishedUpdatingProductionAndDeliveries;
 use App\Exports\ActiveOrdersExport;
+use App\Exports\BudgetExport;
 use App\Exports\DeliveriesDuringTimeRangeExport;
 use App\Exports\ProductionPlanExport;
 use App\Imports\DeliveriesImport;
@@ -75,6 +76,24 @@ class ReportsController extends Controller
         $now = Carbon::now()->format('d.m.Y His');
         $filename = 'livrari pentru ' . $request->start . '-' . $request->end . ' exportat ' . $now . '.xlsx';
         Excel::store(new DeliveriesDuringTimeRangeExport($request->start, $request->end), $filename, 'exports');
+
+        $this->archive('export', '/storage/exports/', $filename);
+
+        return redirect('/storage/exports/' . $filename);
+    }
+
+    /**
+     * Export the budget with the deliveries
+     *
+     * @return void
+     */
+    public function exportBudget(Request $request)
+    {
+        $user = auth()->user()->name;
+        $now = Carbon::now()->format('d.m.Y His');
+        $filename = 'buget pentru anul ' . $request->year . ' exportat ' . $now . '.xlsx';
+
+        Excel::store(new BudgetExport($request->year), $filename, 'exports');
 
         $this->archive('export', '/storage/exports/', $filename);
 

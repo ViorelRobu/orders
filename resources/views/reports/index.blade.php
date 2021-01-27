@@ -36,6 +36,13 @@
             @endcan
             @can('planificare')
                 <div class="list-group">
+                    <a href="#" class="list-group-item list-group-item-action" data-toggle="modal" data-target="#budget">
+                        Buget pentru an
+                    </a>
+                </div>
+            @endcan
+            @can('planificare')
+                <div class="list-group">
                     <a href="#" class="list-group-item list-group-item-action" data-toggle="modal" data-target="#printOrders">
                         Printare comenzi multiple
                     </a>
@@ -47,6 +54,7 @@
 
 @include('reports.partials.print')
 @include('reports.partials.delivery')
+@include('reports.partials.budget')
 
 @section('footer')
     @include('footer')
