@@ -344,9 +344,10 @@ return [
             'can' => 'administrator'
         ],
         [
-            'text' => 'Schimba parola',
-            'url'  => 'admin/settings',
-            'icon' => 'fas fa-fw fa-lock',
+            'text' => 'Telescope App Info',
+            'url'  => 'telescope',
+            'icon' => 'fas fa-fw fa-binoculars',
+            'can' => 'administrator'
         ]
     ],
 
