@@ -184,6 +184,122 @@ class OrderDetailsTest extends TestCase
     }
 
     /**
+     * Users can update the each position in bulk (all packages at once)
+     *
+     * @return void
+     */
+    public function testUsersCanUpdateTheDetailsForOnePosition()
+    {
+        $user = factory(User::class)->create();
+        $country = factory(Country::class, 3)->create();
+        $species = factory(Species::class, 4)->create();
+        $quality = factory(Quality::class, 4)->create();
+        $product_types = factory(ProductType::class, 4)->create();
+        $customers = factory(Customer::class, 4)->create();
+        $destinations = factory(Destination::class, 4)->create();
+        $article = factory(Article::class)->create([
+            'thickness' => 18,
+            'width' => 200
+        ]);
+        $order = factory(Order::class)->create();
+        $details = factory(OrderDetail::class, 5)->create([
+            'order_id' => $order->id,
+            'article_id' => $article->id,
+            'refinements_list' => '1,2',
+            'thickness' => 18,
+            'width' => 200,
+            'length' => '2000',
+            'pcs' => '100',
+            'pcs_height' => '100',
+            'rows' => '100',
+            'label' => '100',
+            'foil' => 'infoliat',
+            'pal' => 'palet',
+            'position' => 1,
+            'details_json' => '{"ean":"44444"}'
+        ]);
+
+        $edit = $this->actingAs($user)->json('PATCH', '/orders/1/details/1/update/one', [
+            'edit_article_id' => $article->id,
+            'edit_refinements_list' => [4,5],
+            'edit_length' => null,
+            'edit_pcs' => 30,
+            'edit_pcs_height' => '200',
+            'edit_rows' => '200',
+            'edit_label' => '200',
+            'edit_foil' => 1,
+            'edit_pal' => 'tac',
+            'edit_details_json' => '{"ean":"44445"}'
+        ]);
+
+        $edit->assertStatus(200)
+            ->assertJson(['updated' => true]);
+
+        $this->assertDatabaseCount('order_details', 5);
+
+        $this->assertDatabaseHas('order_details', [
+            'article_id' => $article->id,
+            'refinements_list' => '4,5',
+            'length' => null,
+            'pcs' => 30,
+            'pcs_height' => '200',
+            'rows' => '200',
+            'label' => '200',
+            'foil' => 1,
+            'position' => 2,
+            'pal' => 'tac',
+            'details_json' => '{"ean":"44445"}'
+        ]);
+
+        $this->assertDatabaseHas('order_details', [
+            'thickness' => 18,
+            'width' => 200,
+            'length' => '2000',
+            'pcs' => '100',
+            'pcs_height' => '100',
+            'rows' => '100',
+            'label' => '100',
+            'foil' => 'infoliat',
+            'pal' => 'palet',
+            'position' => 1,
+            'details_json' => '{"ean":"44444"}'
+        ]);
+
+        // if there is a single package on the position do not change the position number
+        $edit2 = $this->actingAs($user)->json('PATCH', '/orders/1/details/1/update/one', [
+            'edit_article_id' => $article->id,
+            'edit_refinements_list' => [4, 5],
+            'edit_length' => null,
+            'edit_pcs' => 30,
+            'edit_pcs_height' => '400',
+            'edit_rows' => '200',
+            'edit_label' => '200',
+            'edit_foil' => 1,
+            'edit_pal' => 'tac',
+            'edit_details_json' => '{"ean":"44445"}'
+        ]);
+
+        $edit2->assertStatus(200)
+            ->assertJson(['updated' => true]);
+
+        $this->assertDatabaseCount('order_details', 5);
+
+        $this->assertDatabaseHas('order_details', [
+            'article_id' => $article->id,
+            'refinements_list' => '4,5',
+            'length' => null,
+            'pcs' => 30,
+            'pcs_height' => '400',
+            'rows' => '200',
+            'label' => '200',
+            'foil' => 1,
+            'position' => 2,
+            'pal' => 'tac',
+            'details_json' => '{"ean":"44445"}'
+        ]);
+    }
+
+    /**
      * A user can delete all the packages for one position
      *
      * @return void

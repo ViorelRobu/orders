@@ -199,6 +199,35 @@ class OrderDetailsController extends Controller
     }
 
     /**
+     * Get all the details of a certain position
+     *
+     * @param Order $order
+     * @param int $position
+     * @return JsonResponse
+     */
+    public function getPackage(Order $order, $id)
+    {
+        $pos = DB::table('order_details')
+            ->select('article_id', 'refinements_list', 'length', 'pcs', 'pcs_height', 'rows', 'label', 'foil', 'pal', 'details_json', DB::raw('count(*) as pallets'))
+            ->where('order_id', $order->id)
+            ->where('id', $id)
+            ->groupBy(['article_id', 'refinements_list', 'length', 'pcs','pcs_height', 'rows', 'label', 'foil', 'pal','details_json'])
+            ->get();
+
+        $pos->map(function($item, $index) {
+            $article = Article::find($item->article_id);
+            $item->details = json_decode($item->details_json);
+            $item->article = $article->name;
+            $item->refinements_list = explode(',', $item->refinements_list);
+        });
+
+        return response()->json([
+            'status' => 'success',
+            'data' => $pos
+        ]);
+    }
+
+    /**
      * Update all the packages from the position of a certain order
      *
      * @param Order $order
@@ -239,6 +268,64 @@ class OrderDetailsController extends Controller
             return response()->json([
                 'updated' => true,
                 'message' => 'Pozitiile au fost modificate cu succes!',
+                'type' => 'success'
+            ]);
+        } else {
+            return response()->json([
+                'updated' => false,
+                'message' => $validator->errors(),
+                'type' => 'error',
+                'error' => ''
+            ], 406);
+        }
+    }
+
+    /**
+     * Update all the packages from the position of a certain order
+     *
+     * @param Order $order
+     * @param int $position
+     * @param Request $request
+     * @return JsonResponse
+     */
+    public function updateOne(Order $order, $id, Request $request)
+    {
+        $validator = Validator::make($request->all(), $this->rules_update, $this->messages_update);
+
+        if ($validator->passes()) {
+            $article = Article::find($request->edit_article_id);
+            $latest = DB::table('order_details')->where('order_id', $order->id)->orderBy('position', 'desc')->first();
+
+            $package = OrderDetail::find($id);
+            $package->article_id = $article->id;
+            $package->refinements_list = implode(',', $request->edit_refinements_list);
+            $package->thickness = $article->thickness;
+            $package->width = $article->width;
+            $package->length = $request->edit_length;
+            $package->pcs = $request->edit_pcs;
+            if ($request->edit_length != null) {
+                $package->volume = ($article->thickness * $article->width * $request->edit_length * $request->edit_pcs) / 1000000000;
+            } else {
+                $r = $article->width / 2;
+                $h = $article->thickness;
+                $package->volume = round(($this->pi * ($r ** 2) * $h * $request->edit_pcs / 1000000000), 3, PHP_ROUND_HALF_UP);
+            }
+            $package->pcs_height = $request->edit_pcs_height;
+            $package->rows = $request->edit_rows;
+            $package->label = $request->edit_label;
+            $package->foil = $request->edit_foil;
+            $package->pal = $request->edit_pal;
+            $package->details_json = $request->edit_details_json;
+            // check if the position contains a single entry
+            $list = OrderDetail::where('position', $package->position)->get();
+            if ($list->count() > 1) {
+                $package->position = $latest->position + 1;
+            }
+            $package->save();
+
+            return response()->json([
+                'updated' => true,
+                'message' => 'Pachetul a fost modificat cu succes!',
                 'type' => 'success'
             ]);
         } else {

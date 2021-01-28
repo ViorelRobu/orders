@@ -14,7 +14,7 @@
                     @csrf
                     <div class="form-group">
                         <div class="row">
-                            <div class="col-lg-3">
+                            <div class="col-lg-5">
                                 <label for="article_id">Articol</label>
                                 <select class="form-control" name="article_id" id="article_id">
                                     @foreach ($articles as $article)
@@ -32,14 +32,14 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-lg-3">
+                            <div class="col-lg-2">
                                 <div class="form-group">
                                     <label for="length">Lungime</label>
                                     <input type="number"
                                         class="form-control" name="length" id="length" placeholder="Lungime" min="0" max="8000" step="1">
                                 </div>
                             </div>
-                            <div class="col-lg-3">
+                            <div class="col-lg-2">
                                 <div class="form-group">
                                     <label for="pcs">Bucati</label>
                                     <input type="number"

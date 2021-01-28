@@ -351,6 +351,8 @@
         // save and update buttons markup
         const save = '<input id="save" type="submit" class="btn btn-primary float-right" value="Adauga">';
         const update = '<button type="submit" id="update" class="btn btn-primary">Modifica</button>';
+        const save_edit_details = '<button type="button" class="btn btn-primary" id="save_edit_details">Salveaza pozitiile</button>';
+        const save_edit_package = '<button type="button" class="btn btn-primary" id="save_edit_package">Salveaza pachet</button>';
 
         // initialize the TinyMCE editor
         tinymce.init({
@@ -438,6 +440,9 @@
 
         // fetch position details
         const fetchPosition = id => {
+            $('#save_edit_details').remove();
+            $('#submit_edit').append(save_edit_details);
+            $('#save_edit_package').remove();
             $.ajax({
                 url: `/orders/{{ $order->id }}/details/${id}/fetch`,
                 dataType: 'json',
@@ -462,7 +467,48 @@
                         for (let detail in details) {
                             let name = detail.split('_').join(' ');
                             let label = name.charAt(0).toUpperCase() + name.slice(1);
-                            let html = `<div class="col-lg-3">
+                            let html = `<div class="col-lg-4">
+                                            <label for="${detail}">${label}</label>
+                                            <input type="text"
+                                                class="form-control" name="${detail}" id="${detail}" placeholder="${label}" value="${details[detail]}">
+                                        </div>`;
+                            $('#edit_details_fields_data').append(html);
+                        }
+                    }
+                }
+            });
+        }
+
+        // fetch package details
+        const fetchPackage = id => {
+            $('#save_edit_package').remove();
+            $('#submit_edit').append(save_edit_package);
+            $('#save_edit_details').remove();
+            $.ajax({
+                url: `/orders/{{ $order->id }}/details/${id}/fetch/one`,
+                dataType: 'json',
+                type: 'GET',
+                success: function(response){
+                    $('#position').val(id);
+                    $('#edit_article_id').val(response.data[0].article_id);
+                    $('#select2-edit_article_id-container').html(response.data[0].article);
+                    $('#select2-edit_article_id-container').attr('title', response.data[0].article);
+                    $('#edit_refinements_list').val(response.data[0].refinements_list).trigger('change');
+                    $('#edit_length').val(response.data[0].length)
+                    $('#edit_pcs').val(response.data[0].pcs)
+                    $('#edit_pcs_height').val(response.data[0].pcs_height)
+                    $('#edit_rows').val(response.data[0].rows)
+                    $('#edit_label').val(response.data[0].label)
+                    $('#edit_foil').val(response.data[0].foil)
+                    $('#edit_pal').val(response.data[0].pal)
+                    $('#edit_pal_pcs').val(response.data[0].pallets)
+                    // add the inputs for the custom position details
+                    const details = response.data[0].details;
+                    if (details !== {}) {
+                        for (let detail in details) {
+                            let name = detail.split('_').join(' ');
+                            let label = name.charAt(0).toUpperCase() + name.slice(1);
+                            let html = `<div class="col-lg-4">
                                             <label for="${detail}">${label}</label>
                                             <input type="text"
                                                 class="form-control" name="${detail}" id="${detail}" placeholder="${label}" value="${details[detail]}">
@@ -734,7 +780,7 @@
                         let el = element.trim();
                         let name = element.split('_').join(' ');
                         let label = name.charAt(0).toUpperCase() + name.slice(1);
-                        let html =  `<div class="col-lg-3">
+                        let html =  `<div class="col-lg-4">
                                         <label for="${el}">${label}</label>
                                         <input type="text"
                                             class="form-control" name="${el}" id="${el}" placeholder="${label}">
@@ -877,6 +923,77 @@
                         toast: true
                     });
                     $('#save_edit_details').prop('disabled', false);
+                    $('#editDetails').modal('hide');
+                    table.draw()
+                }
+            });
+        });
+
+        // edit the details in the DB for the selected package
+        $(document).on('click', '#save_edit_package', function(event) {
+            event.preventDefault();
+            let position = $('#position').val();
+            let edit_article_id = $('#edit_article_id').val();
+            let edit_refinements_list = $('#edit_refinements_list').val();
+            let edit_length = $('#edit_length').val();
+            let edit_pcs = $('#edit_pcs').val();
+            let edit_pcs_height = $('#edit_pcs_height').val();
+            let edit_rows = $('#edit_rows').val();
+            let edit_label = $('#edit_label').val();
+            let edit_foil = $('#edit_foil').val();
+            let edit_pal = $('#edit_pal').val();
+            let json_data = {};
+            $('#save_edit_details').prop('disabled', true);
+
+            $('#edit_details_fields_data').children().each(function() {
+                $(this).children().each(function() {
+                    json_data[$(this).attr('id')] = $(this).val();
+                    delete json_data.undefined;
+                })
+            });
+
+            $.ajax({
+                url: `/orders/{{ $order->id }}/details/${position}/update/one`,
+                method: 'PATCH',
+                dataType: 'json',
+                data: {
+                '_token': '{{ csrf_token() }}',
+                edit_article_id, edit_refinements_list, edit_length, edit_pcs, edit_pcs_height,
+                edit_rows, edit_label, edit_foil, edit_pal,
+                edit_details_json: JSON.stringify(json_data)
+                },
+                error: function(err) {
+                    console.log(err);
+                    let errors = err.responseJSON.message;
+                    let errors_arr = [];
+                    for (let error in errors) {
+                        errors[error].forEach(el => {
+                            errors_arr.push(el + '<br>');
+                        });
+                    }
+                    Swal.fire({
+                        position: 'top-end',
+                        type: 'error',
+                        title: 'Eroare',
+                        html: errors_arr.toString().split(',').join(''),
+                        showConfirmButton: false,
+                        timer: 10000,
+                        toast: true
+                    });
+                    $('#save_edit_package').prop('disabled', false);
+                },
+                success: function(response) {
+                    console.log(response.error);
+                    Swal.fire({
+                        position: 'top-end',
+                        type: response.type,
+                        title: 'Succes',
+                        title: response.message,
+                        showConfirmButton: false,
+                        timer: 5000,
+                        toast: true
+                    });
+                    $('#save_edit_package').prop('disabled', false);
                     $('#editDetails').modal('hide');
                     table.draw()
                 }

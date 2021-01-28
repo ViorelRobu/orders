@@ -15,7 +15,7 @@
                     <input type="hidden" name="position" id="position">
                     <div class="form-group">
                         <div class="row">
-                            <div class="col-lg-3">
+                            <div class="col-lg-5">
                                 <label for="edit_article_id">Articol</label>
                                 <select class="form-control" name="edit_article_id" id="edit_article_id">
                                     @foreach ($articles as $article)
@@ -33,14 +33,14 @@
                                     </select>
                                 </div>
                             </div>
-                            <div class="col-lg-3">
+                            <div class="col-lg-2">
                                 <div class="form-group">
                                     <label for="edit_length">Lungime</label>
                                     <input type="number"
                                         class="form-control" name="edit_length" id="edit_length" placeholder="Lungime" min="0" max="8000" step="1">
                                 </div>
                             </div>
-                            <div class="col-lg-3">
+                            <div class="col-lg-2">
                                 <div class="form-group">
                                     <label for="edit_pcs">Bucati</label>
                                     <input type="number"
@@ -104,9 +104,8 @@
                 </form>
             </div>
             <div class="modal-footer">
-                <div id="submit">
+                <div id="submit_edit">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Anuleaza</button>
-                    <button type="button" class="btn btn-primary" id="save_edit_details">Salveaza</button>
                 </div>
             </div>
         </div>

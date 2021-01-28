@@ -133,7 +133,9 @@ Route::middleware(['auth'])->group(function() {
                 Route::delete('/package/delete', 'OrderDetailsController@destroyPackage')->middleware('can:planificare');
                 Route::prefix('/{position}')->group(function() {
                     Route::get('/fetch', 'OrderDetailsController@getPosition')->middleware('can:planificare');
+                    Route::get('/fetch/one', 'OrderDetailsController@getPackage')->middleware('can:planificare');
                     Route::patch('/update', 'OrderDetailsController@update')->middleware('can:planificare');
+                    Route::patch('/update/one', 'OrderDetailsController@updateOne')->middleware('can:planificare');
                     Route::delete('/delete', 'OrderDetailsController@destroyPosition')->middleware('can:planificare');
                 });
             });
