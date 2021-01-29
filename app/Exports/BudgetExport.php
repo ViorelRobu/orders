@@ -40,7 +40,7 @@ class BudgetExport implements FromCollection, WithHeadings
         $data = DB::table('budget')
                     ->where('budget.year', $this->year)
                     ->leftJoin('product_types', 'product_types.id', '=', 'budget.product_type_id')
-                    ->select(['product_types.name', 'budget.year', 'budget.volume', 'budget.delivered'])
+                    ->select(['product_types.name', 'budget.year', 'budget.week', 'budget.volume', 'budget.delivered'])
                     ->get();
 
         return $data;
