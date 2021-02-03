@@ -26,6 +26,10 @@ class DashboardController extends Controller
             for ($i=$start_of_month; $i <= $end_of_month ; $i++) {
                 $weeks[] = $i;
             }
+        } else {
+            for ($i = $start_of_month; $i <= $end_of_month; $i++) {
+                $weeks[] = $i;
+            }
         }
 
         $query = '';
